@@ -12,7 +12,7 @@ interface Input {
 
 const Input = (props: Input) => {
   return (
-    <>
+    <div >
       {/* <div className="flex flex-col mb-4">
         {props.label && (
           <label className="text-green-600 font-semibold text-sm mb-1">
@@ -38,7 +38,7 @@ const Input = (props: Input) => {
           </label>
         )}
 
-        <div className="flex items-center border-b border-gray-300 border-0 focus-within:border-blue-500 mb-5">
+        <div className="flex items-center border-b border-gray-300 border-0 focus-within:border-blue-500 mb-0.5">
           <input
             type={props.type}
             placeholder={props.placeholder}
@@ -49,7 +49,7 @@ const Input = (props: Input) => {
           {props.icon && <div className="mr-2 text-gray-400">{props.icon}</div>}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,3 +1,4 @@
+"use client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -17,7 +18,6 @@ const SignInForm = () => {
     email: "",
     password: "",
   });
-  // console.log(signIn);
   const [errors, setErrors] = useState<Partial<ISignIn>>({});
   const validateForm = () => {
     try {

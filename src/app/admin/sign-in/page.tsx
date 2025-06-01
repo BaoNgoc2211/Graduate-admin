@@ -1,14 +1,10 @@
-"use client";
-
-import React from "react";
-
 import SignInForm from "../components/sign-in-form";
-const SignIn = () => {
+
+const SignInPage = () => {
   return (
     <div>
       <SignInForm />
     </div>
   );
 };
-
-export default SignIn;
+export default SignInPage;
