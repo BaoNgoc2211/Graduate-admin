@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { assets } from "../../../public/image/logo/assets";
 const Footer = () => {
   return (
     <div className="">
@@ -55,7 +54,7 @@ const Footer = () => {
                 <li>
                   <Link href="/" className="flex flex-row">
                     <Image
-                      src={assets.logo_vnpay}
+                      src="/image/logo/logo_vnpay.png"
                       alt="Logo VN Pay"
                       width={30}
                       height={20}
@@ -66,7 +65,7 @@ const Footer = () => {
                 <li>
                   <Link href="/" className="flex flex-row">
                     <Image
-                      src={assets.logoMoMo}
+                      src="/image/logo/logo_momo.webp"
                       alt="Logo MoMo"
                       width={30}
                       height={20}

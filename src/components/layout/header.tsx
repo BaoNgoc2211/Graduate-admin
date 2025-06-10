@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import SearchBar from "./search-bar";
+// import SearchBar from "./search-bar";
 // import DropdownMenu from "../home/drop-dow";
 // import { useContext } from "react";
 
@@ -66,7 +66,7 @@ const Header = () => {
             </Link>
           </li>
         </ul>
-        <SearchBar />
+        {/* <SearchBar /> */}
       </div>
       <div className="flex items-center gap-6">
         <div className="group relative">
