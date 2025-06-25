@@ -2,17 +2,17 @@ import SidebarSection from "./sidebar-section";
 import SidebarGroup from "./sidebar-group";
 import SidebarItem from "./sidebar-item";
 
-import {
-  // Layers,
-  // History,
-  // Star,
-  // Settings,
-  // Box,
-  // BookOpen,
-  // Sliders,
-  // PlusCircle,
-  // Clock,
-} from "lucide-react";
+// import {
+//   Layers,
+//   History,
+//   Star,
+//   Settings,
+//   Box,
+//   BookOpen,
+//   Sliders,
+//   PlusCircle,
+//   Clock,
+// } from "lucide-react";
 
 const Sidebar = () => {
   return (
