@@ -1,16 +1,9 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-// import SearchBar from "./search-bar";
-// import DropdownMenu from "../home/drop-dow";
-// import { useContext } from "react";
 
 const Header = () => {
-  // const cart: ICart = {
-  // user_id: String,
-  // medicine_item: String,
-  // };
-  // const { getCartCount } = useContext(ShopContext);
+  
   return (
     <div className="grid grid-cols-[auto_1fr_auto] font-medium border-b px-4">
       <div className="flex items-center">

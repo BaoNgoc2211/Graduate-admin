@@ -30,10 +30,10 @@ export default function RootLayout({
           <Header />
           <div className="flex flex-col md:flex-row px-5 gap-4">
             {" "}
-            <div className="md:basis-1/5 w-full">
+            <div className="md:basis-1/6 w-full">
               <Sidebar />
             </div>
-            <div className="md:basis-4/5 w-full">
+            <div className="md:basis-5/6 w-full">
               <main className="min-h-screen">
                 <div className="px-4">
                   <div className="flex flex-wrap gap-4">
