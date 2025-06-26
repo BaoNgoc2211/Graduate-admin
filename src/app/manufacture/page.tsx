@@ -30,6 +30,7 @@ import {
 import type { IManufacturer } from "@/interface/inventory/manufacture.interface";
 import { useManufactures } from "@/hooks/inventory/manufacture.hooks";
 import ManufacturerForm from "@/components/inventory/manufacture/manufacturer-form";
+import PageHeader from "@/components/layout/page-header";
 
 export default function ManufacturePage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,12 +93,10 @@ export default function ManufacturePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-2">Quản lý Nhà sản xuất</h1>
-          <p className="text-blue-100">Danh sách và quản lý các nhà sản xuất</p>
-        </div>
-      </div>
+      <PageHeader
+        title="Quản lý Nhà sản xuất"
+        subtitle="Danh sách và quản lý các nhà sản xuất"
+      />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">

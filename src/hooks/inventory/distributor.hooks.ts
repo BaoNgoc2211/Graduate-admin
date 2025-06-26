@@ -1,6 +1,7 @@
 import {
   createDistributorAPI,
   getAllDistributorAPI,
+  getByIdDistributorAPI,
   updateDistributorAPI,
 } from "@/api/inventory/distributor.api";
 import { IDistributor } from "@/interface/inventory/distributor.interface";
@@ -14,13 +15,13 @@ export const useDistributors = () => {
     queryFn: getAllDistributorAPI,
   });
 };
-// export const useDistributorById = (distributor_id: string) => {
-//   return useQuery({
-//     queryKey: ["distributor", distributor_id],
-//     queryFn: () => getAllDistributorAPI(distributor_id),
-//     enabled: !!distributor_id,
-//   });
-// };
+export const useDistributorById = (distributor_id: string) => {
+  return useQuery({
+    queryKey: ["distributor", distributor_id],
+    queryFn: () => getByIdDistributorAPI(distributor_id),
+    enabled: !!distributor_id,
+  });
+};
 
 export const useCreateDistributor = () => {
   const router = useRouter();

@@ -4,7 +4,7 @@ import Input from "@/components/ui/input-01";
 import React, { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/ui/button-01";
-import { Mail, Lock, User } from "lucide-react"; //CircleCheckBig, Circle
+import { Mail, Lock, User } from "lucide-react";
 import { registerSchema } from "@/schema/auth.schema";
 import { z } from "zod";
 import { ISignUp } from "@/interface/auth/admin.interface";

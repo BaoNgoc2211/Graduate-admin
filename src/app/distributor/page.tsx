@@ -28,9 +28,9 @@ import {
 } from "@/components/ui/dialog";
 import type { IDistributor } from "@/interface/inventory/distributor.interface";
 import { useDistributors } from "@/hooks/inventory/distributor.hooks";
-// import DistributorForm from "@/components/inventory/distributor/distributor-form";
 import { useRouter } from "next/navigation";
 import DistributorForm from "@/components/inventory/distributor/distributor-form";
+import PageHeader from "@/components/layout/page-header";
 
 export default function DistributorPage() {
   const router = useRouter();
@@ -103,14 +103,10 @@ export default function DistributorPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-2">Quản lý Distributor</h1>
-          <p className="text-blue-100">
-            Danh sách và quản lý các nhà phân phối
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Quản lý Distributor"
+        subtitle="Danh sách và quản lý các nhà phân phối"
+      />
       <div className="container mx-auto px-4 py-8">
         <Card>
           <CardHeader className="bg-gray-50 border-b">
