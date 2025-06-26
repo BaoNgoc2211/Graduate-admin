@@ -37,7 +37,6 @@ import {
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-// import { useImportBatch, useUpdateImportBatchStatus } from "@/hooks/useImportBatch"
 import type { IImportBatch } from "@/interface/inventory/import-batch.interface";
 import { IMPORT_BATCH_STATUS } from "@/interface/inventory/import-batch.interface";
 import {
@@ -45,7 +44,7 @@ import {
   useUpdateImportBatchStatus,
 } from "@/hooks/inventory/import-batch.hooks";
 import ImportBatchForm from "@/components/inventory/import-batch/import-batch-form";
-// import ImportBatchForm from "@/components/import-batch-form"/
+import PageHeader from "@/components/layout/page-header";
 
 export default function ImportBatchPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -169,14 +168,10 @@ export default function ImportBatchPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-2">Quản lý Lô hàng nhập</h1>
-          <p className="text-blue-100">
-            Danh sách và quản lý các lô hàng nhập kho
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Quản lý Lô hàng nhập"
+        subtitle=" Danh sách và quản lý các lô hàng nhập kho"
+      />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
