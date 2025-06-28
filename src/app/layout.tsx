@@ -28,7 +28,15 @@ export default function RootLayout({
         <QueryProvider>
           <Toaster position="top-right" richColors />
           <Header />
-          <div className="flex flex-col md:flex-row px-5 gap-4">
+          <div className="flex min-h-screen">
+            <div className="flex-shrink-0">
+              <Sidebar />
+            </div>
+            <main className="flex-1 p-4">
+              <section className="w-full">{children}</section>
+            </main>
+          </div>
+          {/* <div className="flex flex-col md:flex-row px-5 gap-4">
             {" "}
             <div className="md:basis-1/6 w-full">
               <Sidebar />
@@ -42,7 +50,7 @@ export default function RootLayout({
                 </div>
               </main>
             </div>
-          </div>
+          </div> */}
 
           <Footer />
         </QueryProvider>

@@ -11,7 +11,7 @@ import { IApiError } from "@/interface/error.interface";
 import { loginSchema } from "@/schema/auth.schema";
 import { z } from "zod";
 import { ISignIn } from "@/interface/auth/admin.interface";
-import { signInAPI } from "@/api/auth.api";
+import { signInAPI } from "@/api/admin.api";
 const SignInForm = () => {
   const router = useRouter();
   const [signIn, setSignIn] = useState({
