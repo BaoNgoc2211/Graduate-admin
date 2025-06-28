@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,8 +32,14 @@ import {
   useCreateImportBatch,
   useUpdateImportBatch,
 } from "@/hooks/inventory/import-batch.hooks";
+import { useDistributors } from "@/hooks/inventory/distributor.hooks";
 // import { useCreateImportBatch, useUpdateImportBatch } from "@/hooks/useImportBatch"
+// import { useDistributors } from "@/hooks/useDistributor"
 
+/**
+ * Component form nhập liệu thông tin lô hàng nhập
+ * Hỗ trợ cả chế độ tạo mới và cập nhật
+ */
 export default function ImportBatchForm({
   defaultValue,
   onSuccess,
@@ -48,6 +54,7 @@ export default function ImportBatchForm({
     setFocus,
     setValue,
     watch,
+    control,
   } = useForm<Omit<IImportBatchFormData, "_id">>({
     defaultValues: {
       batchNumber: defaultValue?.batchNumber || "",
@@ -75,6 +82,10 @@ export default function ImportBatchForm({
   // Khởi tạo mutations với custom hooks
   const createMutation = useCreateImportBatch();
   const updateMutation = useUpdateImportBatch();
+
+  // Lấy danh sách distributors cho dropdown
+  const { data: distributorsData } = useDistributors();
+  const distributors = distributorsData?.data || [];
 
   // Xác định mutation hiện tại và trạng thái loading
   const currentMutation = isEditMode ? updateMutation : createMutation;
@@ -159,20 +170,34 @@ export default function ImportBatchForm({
 
             {/* Nhà phân phối */}
             <div className="space-y-2">
-              <Label
-                htmlFor="distributor_id"
-                className="text-sm font-medium text-gray-700"
-              >
-                ID Nhà phân phối <span className="text-red-500">*</span>
+              <Label className="text-sm font-medium text-gray-700">
+                Nhà phân phối <span className="text-red-500">*</span>
               </Label>
-              <Input
-                id="distributor_id"
-                {...register("distributor_id", {
-                  required: "ID nhà phân phối là bắt buộc",
-                })}
-                placeholder="Nhập ID nhà phân phối"
-                className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled={isLoading}
+              <Controller
+                name="distributor_id"
+                control={control}
+                rules={{ required: "Nhà phân phối là bắt buộc" }}
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger className="focus:ring-2 focus:ring-blue-500">
+                      <SelectValue placeholder="Chọn nhà phân phối" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {distributors.map((distributor) => (
+                        <SelectItem
+                          key={distributor._id}
+                          value={distributor._id!}
+                        >
+                          {distributor.nameCo} - {distributor.country}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               {errors.distributor_id && (
                 <p className="text-sm text-red-600">
@@ -187,7 +212,7 @@ export default function ImportBatchForm({
                   <p className="text-sm text-gray-600">
                     Nhà phân phối hiện tại:{" "}
                     <span className="font-medium">
-                      {defaultValue.distributor_id.name}
+                      {defaultValue.distributor_id.nameCo}
                     </span>
                   </p>
                 )}
@@ -271,22 +296,35 @@ export default function ImportBatchForm({
               >
                 Giá nhập (VNĐ) <span className="text-red-500">*</span>
               </Label>
-              <Input
-                id="importPrice"
-                type="number"
-                step="0.01"
-                min="0"
-                {...register("importPrice", {
+              <Controller
+                name="importPrice"
+                control={control}
+                rules={{
                   required: "Giá nhập là bắt buộc",
                   min: {
                     value: 0,
                     message: "Giá nhập phải lớn hơn 0",
                   },
-                  valueAsNumber: true,
-                })}
-                placeholder="Nhập giá nhập"
-                className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                disabled={isLoading}
+                }}
+                render={({ field }) => (
+                  <Input
+                    id="importPrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={field.value?.toString() || ""}
+                    onChange={(e) => {
+                      const value =
+                        e.target.value === ""
+                          ? 0
+                          : Number.parseFloat(e.target.value);
+                      field.onChange(value);
+                    }}
+                    placeholder="Nhập giá nhập"
+                    className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    disabled={isLoading}
+                  />
+                )}
               />
               {errors.importPrice && (
                 <p className="text-sm text-red-600">

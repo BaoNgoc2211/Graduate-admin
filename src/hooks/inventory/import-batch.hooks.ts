@@ -74,6 +74,7 @@
 
 import {
   createImportBatchAPI,
+  deleteImportBatchAPI,
   getAllImportBatchAPI,
   updateImportBatchAPI,
   updateImportBatchStatusAPI,
@@ -140,6 +141,19 @@ export const useUpdateImportBatchStatus = () => {
     onError: (error) => {
       console.error("Lỗi cập nhật trạng thái:", error);
       toast.error("Cập nhật trạng thái thất bại!");
+    },
+  });
+};
+export const useDeleteImportBatch = () => {
+  return useMutation({
+    mutationKey: ["delete-import-batch"],
+    mutationFn: (batch_id: string) => deleteImportBatchAPI(batch_id),
+    onSuccess: () => {
+      toast.success("Xóa lô hàng nhập thành công!");
+    },
+    onError: (error) => {
+      console.error("Lỗi xóa:", error);
+      toast.error("Xóa lô hàng nhập thất bại!");
     },
   });
 };

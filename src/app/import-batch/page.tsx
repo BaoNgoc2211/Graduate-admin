@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Eye, Edit, RefreshCw, Search, Plus } from "lucide-react";
+import { Eye, Edit, RefreshCw, Search, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,23 +34,38 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+// import { useImportBatch, useUpdateImportBatchStatus, useDeleteImportBatch } from "@/hooks/useImportBatch"
 import type { IImportBatch } from "@/interface/inventory/import-batch.interface";
 import { IMPORT_BATCH_STATUS } from "@/interface/inventory/import-batch.interface";
 import {
+  useDeleteImportBatch,
   useImportBatch,
   useUpdateImportBatchStatus,
 } from "@/hooks/inventory/import-batch.hooks";
 import ImportBatchForm from "@/components/inventory/import-batch/import-batch-form";
-import PageHeader from "@/components/layout/page-header";
+// import ImportBatchForm from "@/components/import-batch-form"
+
+// Type cho status values
+type ImportBatchStatus =
+  | "expired"
+  | "out_of_stock"
+  | "discontinued"
+  | "in_stock";
 
 export default function ImportBatchPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingBatch, setEditingBatch] = useState<IImportBatch | undefined>();
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deletingBatch, setDeletingBatch] = useState<
+    IImportBatch | undefined
+  >();
   const itemsPerPage = 5;
 
   // Lấy danh sách import batches từ API
@@ -59,6 +74,9 @@ export default function ImportBatchPage() {
 
   // Hook để cập nhật trạng thái
   const updateStatusMutation = useUpdateImportBatchStatus();
+
+  // Hook để xóa import batch
+  const deleteMutation = useDeleteImportBatch();
 
   // Lọc batches theo từ khóa tìm kiếm (theo mã lô hàng và tên nhà phân phối)
   const filteredBatches = useMemo(() => {
@@ -71,8 +89,8 @@ export default function ImportBatchPage() {
       const distributorNameMatch =
         batch.distributor_id &&
         typeof batch.distributor_id === "object" &&
-        batch.distributor_id.name
-          ? batch.distributor_id.name.toLowerCase().includes(searchLower)
+        batch.distributor_id.nameCo
+          ? batch.distributor_id.nameCo.toLowerCase().includes(searchLower)
           : false;
 
       return batchNumberMatch || distributorNameMatch;
@@ -84,7 +102,7 @@ export default function ImportBatchPage() {
   const endIndex = startIndex + itemsPerPage;
   const currentBatches = filteredBatches.slice(startIndex, endIndex);
 
-  //Lấy thông tin hiển thị của trạng thái
+  // Lấy thông tin hiển thị của trạng thái
   const getStatusInfo = (status: string) => {
     return (
       IMPORT_BATCH_STATUS.find((s) => s.value === status) ||
@@ -97,10 +115,18 @@ export default function ImportBatchPage() {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
+      // maximumFractionDigits: 0,
     }).format(price);
   };
 
-  //Xử lý mở form tạo mới
+  // Kiểm tra xem value có phải là ImportBatchStatus hợp lệ không
+  const isValidStatus = (value: string): value is ImportBatchStatus => {
+    return ["expired", "out_of_stock", "discontinued", "in_stock"].includes(
+      value
+    );
+  };
+
+  // Xử lý mở form tạo mới
   const handleCreate = () => {
     setEditingBatch(undefined);
     setIsFormOpen(true);
@@ -112,13 +138,13 @@ export default function ImportBatchPage() {
     setIsFormOpen(true);
   };
 
-  //Xử lý xem chi tiết
+  // Xử lý xem chi tiết
   const handleViewDetails = (batch: IImportBatch) => {
     console.log("Chi tiết lô hàng:", {
       ...batch,
       distributorName:
         batch.distributor_id && typeof batch.distributor_id === "object"
-          ? batch.distributor_id.name || "N/A"
+          ? batch.distributor_id.nameCo || "N/A"
           : batch.distributor_id || "N/A",
       distributorId:
         batch.distributor_id && typeof batch.distributor_id === "object"
@@ -126,29 +152,49 @@ export default function ImportBatchPage() {
           : batch.distributor_id || "N/A",
     });
   };
-  // Xử lý cập nhật trạng thái lô hàng
-  type ImportBatchStatus =
-    | "expired"
-    | "out_of_stock"
-    | "discontinued"
-    | "in_stock";
-  const handleUpdateStatus = (
-    batchId: string,
-    newStatus: ImportBatchStatus
-  ) => {
-    updateStatusMutation.mutate(
-      { id: batchId, status: newStatus },
-      {
-        onSuccess: () => refetch(),
-      }
-    );
+
+  // Xử lý cập nhật trạng thái
+  const handleUpdateStatus = (batchId: string, newStatus: string) => {
+    // Kiểm tra status hợp lệ trước khi gọi mutation
+    if (isValidStatus(newStatus)) {
+      updateStatusMutation.mutate(
+        { id: batchId, status: newStatus },
+        {
+          onSuccess: () => {
+            refetch();
+          },
+        }
+      );
+    }
   };
+
+  // Xử lý mở dialog xác nhận xóa
+  const handleDeleteClick = (batch: IImportBatch) => {
+    setDeletingBatch(batch);
+    setIsDeleteOpen(true);
+  };
+
+  // Xử lý xác nhận xóa
+  const handleConfirmDelete = () => {
+    if (deletingBatch?._id) {
+      deleteMutation.mutate(deletingBatch._id, {
+        onSuccess: () => {
+          setIsDeleteOpen(false);
+          setDeletingBatch(undefined);
+          refetch();
+        },
+      });
+    }
+  };
+
+  // Xử lý thành công form (tạo mới hoặc cập nhật)
   const handleFormSuccess = () => {
     setIsFormOpen(false);
     setEditingBatch(undefined);
     refetch();
   };
 
+  // Xử lý hủy form
   const handleFormCancel = () => {
     setIsFormOpen(false);
     setEditingBatch(undefined);
@@ -168,10 +214,14 @@ export default function ImportBatchPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <PageHeader
-        title="Quản lý Lô hàng nhập"
-        subtitle=" Danh sách và quản lý các lô hàng nhập kho"
-      />
+      <div className="bg-blue-900 text-white py-8">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl font-bold mb-2">Quản lý Lô hàng nhập</h1>
+          <p className="text-blue-100">
+            Danh sách và quản lý các lô hàng nhập kho
+          </p>
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
@@ -243,14 +293,7 @@ export default function ImportBatchPage() {
                             <div className="font-medium">
                               {batch.distributor_id &&
                               typeof batch.distributor_id === "object"
-                                ? batch.distributor_id.name || "N/A"
-                                : batch.distributor_id || "N/A"}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              ID:{" "}
-                              {batch.distributor_id &&
-                              typeof batch.distributor_id === "object"
-                                ? batch.distributor_id._id || "N/A"
+                                ? batch.distributor_id.nameCo || "N/A"
                                 : batch.distributor_id || "N/A"}
                             </div>
                           </div>
@@ -291,34 +334,15 @@ export default function ImportBatchPage() {
                               <Edit className="h-4 w-4 mr-1" />
                               Sửa
                             </Button>
-                            <Select
-                              value={batch.status}
-                              onValueChange={(value) =>
-                                handleUpdateStatus(batch._id!, value)
-                              }
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+                              onClick={() => handleDeleteClick(batch)}
                             >
-                              <SelectTrigger className="w-32 h-8 text-xs">
-                                <RefreshCw className="h-3 w-3 mr-1" />
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {IMPORT_BATCH_STATUS.map((status) => (
-                                  <SelectItem
-                                    key={status.value}
-                                    value={status.value}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <div
-                                        className={`w-2 h-2 rounded-full ${
-                                          status.color.split(" ")[0]
-                                        }`}
-                                      />
-                                      {status.label}
-                                    </div>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Xóa
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -345,14 +369,7 @@ export default function ImportBatchPage() {
                               <p className="text-sm text-gray-600">
                                 {batch.distributor_id &&
                                 typeof batch.distributor_id === "object"
-                                  ? batch.distributor_id.name || "N/A"
-                                  : batch.distributor_id || "N/A"}
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                ID:{" "}
-                                {batch.distributor_id &&
-                                typeof batch.distributor_id === "object"
-                                  ? batch.distributor_id._id || "N/A"
+                                  ? batch.distributor_id.nameCo || "N/A"
                                   : batch.distributor_id || "N/A"}
                               </p>
                             </div>
@@ -363,19 +380,35 @@ export default function ImportBatchPage() {
                           <div className="space-y-1">
                             <p className="text-sm">
                               <span className="font-medium">Ngày nhập:</span>{" "}
-                              {format(
+                              {/* {format(
                                 new Date(batch.importDate),
                                 "dd/MM/yyyy",
                                 { locale: vi }
-                              )}
+                              )} */}
+                              {batch.importDate &&
+                              !isNaN(new Date(batch.importDate).getTime())
+                                ? format(
+                                    new Date(batch.importDate),
+                                    "dd/MM/yyyy",
+                                    { locale: vi }
+                                  )
+                                : "Không rõ ngày"}
                             </p>
                             <p className="text-sm">
                               <span className="font-medium">Hạn sử dụng:</span>{" "}
-                              {format(
+                              {/* {format(
                                 new Date(batch.expiryDate),
                                 "dd/MM/yyyy",
                                 { locale: vi }
-                              )}
+                              )} */}
+                              {batch.importDate &&
+                              !isNaN(new Date(batch.importDate).getTime())
+                                ? format(
+                                    new Date(batch.importDate),
+                                    "dd/MM/yyyy",
+                                    { locale: vi }
+                                  )
+                                : "Không rõ ngày"}
                             </p>
                             <p className="text-sm">
                               <span className="font-medium">Giá nhập:</span>{" "}
@@ -401,12 +434,21 @@ export default function ImportBatchPage() {
                               <Edit className="h-4 w-4 mr-1" />
                               Sửa
                             </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100 flex-1"
+                              onClick={() => handleDeleteClick(batch)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Xóa
+                            </Button>
                           </div>
                           <div className="pt-2">
                             <Select
                               value={batch.status}
                               onValueChange={(value) =>
-                                handleUpdateStatus(batch._id!, value)
+                                handleUpdateStatus(batch._id, value)
                               }
                             >
                               <SelectTrigger className="w-full">
@@ -538,6 +580,33 @@ export default function ImportBatchPage() {
             onSuccess={handleFormSuccess}
             onCancel={handleFormCancel}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Xác nhận xóa lô hàng nhập</DialogTitle>
+            <DialogDescription>
+              Bạn có chắc chắn muốn xóa lô hàng &ldquo;
+              {deletingBatch?.batchNumber}&rdquo;? Hành động này không thể hoàn
+              tác.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
+              Hủy
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              disabled={deleteMutation.isPending}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleteMutation.isPending ? "Đang xóa..." : "Xóa"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

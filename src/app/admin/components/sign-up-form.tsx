@@ -11,7 +11,7 @@ import { ISignUp } from "@/interface/auth/admin.interface";
 import { useMutation } from "@tanstack/react-query";
 import { IApiError } from "@/interface/error.interface";
 import { toast } from "sonner";
-import { signUpAPI } from "@/api/auth.api";
+import { signUpAPI } from "@/api/admin.api";
 const SignUpForm = () => {
   const router = useRouter();
   const [signUp, setSignUp] = useState({
