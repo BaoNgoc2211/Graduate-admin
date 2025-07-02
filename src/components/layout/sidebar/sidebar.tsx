@@ -68,10 +68,10 @@ const Sidebar = () => {
           icon={Star}
           items={[
             { label: "Quản lý đơn hàng", href: "/orders", icon: Clock },
-            { label: "Quản lý nhập hàng", href: "/import-orders", icon: Clock },
+            { label: "Quản lý nhập hàng", href: "/import-batch", icon: Clock },
             {
               label: "Quản lý doanh thu",
-              href: "/import-orders",
+              href: "/reports",
               icon: Settings,
             },
             {
