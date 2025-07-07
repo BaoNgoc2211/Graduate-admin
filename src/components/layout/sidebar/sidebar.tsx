@@ -15,7 +15,7 @@ import {
   Clock,
   UserCog,
   Briefcase,
-  Ticket
+  Ticket,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -55,6 +55,11 @@ const Sidebar = () => {
           icon={History}
           items={[
             { label: "Quản lý bệnh", href: "/disease", icon: BookOpen },
+            {
+              label: "Quản lý danh mục bệnh",
+              href: "/disease-category",
+              icon: Sliders,
+            },
             {
               label: "Quản lý nhóm bệnh",
               href: "/disease-group",
