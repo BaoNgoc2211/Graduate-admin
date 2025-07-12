@@ -38,9 +38,6 @@ import { IMedicine } from "@/interface/medicine/medicine.interface";
 import Image from "next/image";
 import MedicineForm from "@/components/medicine/medicine/medicine-form";
 import PageHeader from "@/components/layout/page-header";
-// import { useMedicines, useDeleteMedicine } from "@/hooks/useMedicine"
-// import type { IMedicine } from "@/interface/medicine/medicine.interface"
-// import MedicineForm from "@/components/medicine-form"
 
 export default function MedicinePage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,8 +51,7 @@ export default function MedicinePage() {
     IMedicine | undefined
   >();
   const itemsPerPage = 10;
-
-  // Lấy danh sách medicines từ API
+  // Hook để lấy danh sách medicines
   const { data: medicinesData, isLoading, refetch } = useMedicines();
   const medicines = medicinesData?.data || [];
 

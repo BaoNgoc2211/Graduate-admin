@@ -111,7 +111,7 @@ export default function MedicineRowInput({
                       <span className="font-medium">{batch.batchNumber}</span>
                       <span className="text-xs text-gray-500">
                         {typeof batch.distributor_id === "object"
-                          ? batch.distributor_id.nameCo
+                          ? batch.distributor_id?.nameCo || "N/A"
                           : "N/A"}
                       </span>
                     </div>

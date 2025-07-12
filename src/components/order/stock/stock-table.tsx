@@ -8,11 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { AlertTriangle } from "lucide-react";
 import { Eye, Edit } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 const StockTable: React.FC<{
   stocks: IStock[];
   currentPage: number;
   itemsPerPage: number;
 }> = ({ stocks, currentPage, itemsPerPage }) => {
+  const router = useRouter();
   const start = (currentPage - 1) * itemsPerPage;
   const visible = stocks.slice(start, start + itemsPerPage);
 
@@ -55,14 +57,19 @@ const StockTable: React.FC<{
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {visible.map((s) => (
+                // <tr
+                //   key={s._id}
+                //   className={`group cursor-pointer hover:bg-gray-50 ${
+                //     isLow(s.quantity) ? "bg-red-50" : ""
+                //   }`}
+                //   onClick={() => toast.info(`Xem chi tiết ${s.medicine.name}`)}
+                // >
                 <tr
                   key={s._id}
                   className={`group cursor-pointer hover:bg-gray-50 ${
                     isLow(s.quantity) ? "bg-red-50" : ""
                   }`}
-                  onClick={() =>
-                    toast.info(`Xem chi tiết ${s.medicine.name}`)
-                  }
+                  onClick={() => router.push(`/stock/${s.medicine._id}`)}
                 >
                   {/* Thuốc + meta */}
                   <td className="px-6 py-4">
@@ -122,6 +129,7 @@ const StockTable: React.FC<{
                         variant="ghost"
                         onClick={(e) => {
                           e.stopPropagation();
+                          router.push(`/stock/${s.medicine._id}`);
                           toast.info("Xem chi tiết");
                         }}
                       >
