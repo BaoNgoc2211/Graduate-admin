@@ -47,7 +47,7 @@ const Sidebar = () => {
               icon: Settings,
             },
             { label: "Quản lý Nhà phân phối", href: "/distributor", icon: Box },
-            { label: "Quản lý Kho", href: "/warehouse", icon: Layers },
+            { label: "Quản lý Kho", href: "/stock", icon: Layers },
           ]}
         />
         <SidebarGroup
@@ -81,7 +81,7 @@ const Sidebar = () => {
             },
             {
               label: "Quản lý voucher",
-              href: "/import-orders",
+              href: "/voucher",
               icon: Ticket,
             },
           ]}
