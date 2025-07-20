@@ -28,7 +28,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { IManufacturer } from "@/interface/inventory/manufacture.interface";
-import { useManufactures } from "@/hooks/inventory/manufacture.hooks";
+import {
+  useDeleteManufacture,
+  useManufactures,
+} from "@/hooks/inventory/manufacture.hooks";
 import ManufacturerForm from "@/components/inventory/manufacture/manufacturer-form";
 import PageHeader from "@/components/layout/page-header";
 
@@ -41,6 +44,7 @@ export default function ManufacturePage() {
   >();
   const itemsPerPage = 5;
   const { data: manufacturersData, isLoading, refetch } = useManufactures();
+  const deleteMutation = useDeleteManufacture();
   const manufacturers = manufacturersData?.data || [];
   const filteredManufacturers = manufacturers.filter(
     (manufacturer) =>
@@ -66,8 +70,11 @@ export default function ManufacturePage() {
   const handleViewDetails = (id: string) => {
     console.log("View details for manufacturer:", id);
   };
+
   const handleDelete = (id: string) => {
-    console.log("Delete manufacturer:", id);
+    if (confirm("Bạn có chắc chắn muốn xoá nhà sản xuất này không?")) {
+      deleteMutation.mutate(id);
+    }
   };
   const handleFormSuccess = () => {
     setIsFormOpen(false);
@@ -106,7 +113,7 @@ export default function ManufacturePage() {
               <CardTitle className="text-xl text-blue-900">
                 Danh sách Nhà sản xuất
               </CardTitle>
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <div className="flex flex-col lg:flex-row lg:gap-5 sm:flex-col gap-3 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input

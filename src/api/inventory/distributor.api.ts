@@ -1,16 +1,21 @@
 import { IDistributor } from "@/interface/inventory/distributor.interface";
 import APIConfig from "../api.config";
-export const getAllDistributorAPI = async (): Promise<{
+export const getAllDistributorAPI = async (
+  page: number = 1,
+  pageSize: number = 5
+): Promise<{
   data: IDistributor[];
 }> => {
-  const response = await APIConfig.get(`/api/distributor/`);
-  return response.data as Promise<{ data: IDistributor[] }>;
+  const response = await APIConfig.get(
+    `/api/distributor?page=${page}&pageSize=${pageSize}`
+  );
+  return response.data;
 };
 export const getByIdDistributorAPI = async (
   distributor_id: string
 ): Promise<{ data: IDistributor }> => {
   const response = await APIConfig.get<{ data: IDistributor }>(
-    `/api/medicine/cate/${distributor_id}`
+    `/api/distributor/${distributor_id}`
   );
   return response.data;
 };
@@ -28,7 +33,6 @@ export const updateDistributorAPI = async (
   );
   return res.data;
 };
-export const deleteDistributorAPI = async (distributor_id: string) =>
-  await APIConfig.delete(
-    `/api/distributor/delete-distributor/${distributor_id}`
-  );
+export const deleteDistributorAPI = (id: string) => {
+  return APIConfig.delete(`/api/distributor/delete-distributor/${id}`);
+};

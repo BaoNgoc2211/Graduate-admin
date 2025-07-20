@@ -160,6 +160,7 @@
 //   });
 // };
 //#endregion
+//#region version 03 chua lất tổng
 "use client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
@@ -247,4 +248,223 @@ export const useDeletePurchaseOrder = () => {
     },
   })
 }
+//#endregion
+// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// import { toast } from "sonner";
+// import {
+//   getPurchaseEntries,
+//   getPurchaseEntry,
+//   createPurchaseEntry,
+//   updatePurchaseEntry,
+//   deletePurchaseEntry,
+//   approvePurchaseEntry,
+//   rejectPurchaseEntry,
+//   getPurchaseStats,
+//   getMedicines,
+//   createMedicine,
+//   getImportBatches,
+//   createImportBatch,
+//   getSuppliers,
+//   exportPurchaseEntries,
+// } from "@/api/order/purchase.api";
+// import type {
+//   IPurchaseFilter,
+//   ICreatePurchaseEntry,
+// } from "@/interface/order/purchase.interface";
 
+// // Purchase Entries
+// export const usePurchaseEntries = (filters?: IPurchaseFilter) => {
+//   return useQuery({
+//     queryKey: ["purchase-entries", filters],
+//     queryFn: () => getPurchaseEntries(filters),
+//     staleTime: 5 * 60 * 1000, // 5 minutes
+//   });
+// };
+
+// export const usePurchaseEntry = (id: string) => {
+//   return useQuery({
+//     queryKey: ["purchase-entry", id],
+//     queryFn: () => getPurchaseEntry(id),
+//     enabled: !!id,
+//   });
+// };
+
+// export const useCreatePurchaseEntry = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: createPurchaseEntry,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["purchase-entries"] });
+//       queryClient.invalidateQueries({ queryKey: ["purchase-stats"] });
+//       toast.success("Tạo phiếu nhập kho thành công!");
+//     },
+//     onError: () => {
+//       toast.error("Có lỗi xảy ra khi tạo phiếu nhập kho");
+//     },
+//   });
+// };
+
+// export const useUpdatePurchaseEntry = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: ({
+//       id,
+//       data,
+//     }: {
+//       id: string;
+//       data: Partial<ICreatePurchaseEntry>;
+//     }) => updatePurchaseEntry(id, data),
+//     onSuccess: (_, variables) => {
+//       queryClient.invalidateQueries({ queryKey: ["purchase-entries"] });
+//       queryClient.invalidateQueries({
+//         queryKey: ["purchase-entry", variables.id],
+//       });
+//       queryClient.invalidateQueries({ queryKey: ["purchase-stats"] });
+//       toast.success("Cập nhật phiếu nhập kho thành công!");
+//     },
+//     onError: () => {
+//       toast.error("Có lỗi xảy ra khi cập nhật phiếu nhập kho");
+//     },
+//   });
+// };
+
+// export const useDeletePurchaseEntry = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: deletePurchaseEntry,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["purchase-entries"] });
+//       queryClient.invalidateQueries({ queryKey: ["purchase-stats"] });
+//       toast.success("Xóa phiếu nhập kho thành công!");
+//     },
+//     onError: () => {
+//       toast.error("Có lỗi xảy ra khi xóa phiếu nhập kho");
+//     },
+//   });
+// };
+
+// export const useApprovePurchaseEntry = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: approvePurchaseEntry,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["purchase-entries"] });
+//       queryClient.invalidateQueries({ queryKey: ["purchase-stats"] });
+//       toast.success("Duyệt phiếu nhập kho thành công!");
+//     },
+//     onError: () => {
+//       toast.error("Có lỗi xảy ra khi duyệt phiếu nhập kho!");
+//     },
+//   });
+// };
+
+// export const useRejectPurchaseEntry = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
+//       rejectPurchaseEntry(id, reason),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["purchase-entries"] });
+//       queryClient.invalidateQueries({ queryKey: ["purchase-stats"] });
+//       toast.success("Từ chối phiếu nhập kho thành công!");
+//     },
+//     onError: () => {
+//       toast.error("Có lỗi xảy ra khi từ chối phiếu nhập kho");
+//     },
+//   });
+// };
+
+// // Statistics
+// export const usePurchaseStats = () => {
+//   return useQuery({
+//     queryKey: ["purchase-stats"],
+//     queryFn: getPurchaseStats,
+//     staleTime: 10 * 60 * 1000, // 10 minutes
+//   });
+// };
+
+// // Medicines
+// export const useMedicines = (search?: string) => {
+//   return useQuery({
+//     queryKey: ["medicines", search],
+//     queryFn: () => getMedicines(search),
+//     staleTime: 5 * 60 * 1000,
+//   });
+// };
+
+// export const useCreateMedicine = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: createMedicine,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["medicines"] });
+//       toast.success("Tạo thuốc mới thành công!");
+//     },
+//     onError: () => {
+//       toast.error("Có lỗi xảy ra khi tạo thuốc mới");
+//     },
+//   });
+// };
+
+// // Import Batches
+// export const useImportBatches = (medicineId?: string) => {
+//   return useQuery({
+//     queryKey: ["import-batches", medicineId],
+//     queryFn: () => getImportBatches(medicineId),
+//     enabled: !!medicineId,
+//     staleTime: 5 * 60 * 1000,
+//   });
+// };
+
+// export const useCreateImportBatch = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: createImportBatch,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["import-batches"] });
+//       toast.success("Tạo lô hàng mới thành công!");
+//     },
+//     onError: () => {
+//       toast.error("Có lỗi xảy ra khi tạo lô hàng mới");
+//     },
+//   });
+// };
+
+// // Suppliers
+// export const useSuppliers = () => {
+//   return useQuery({
+//     queryKey: ["suppliers"],
+//     queryFn: getSuppliers,
+//     staleTime: 10 * 60 * 1000,
+//   });
+// };
+
+// // Export
+// export const useExportPurchaseEntries = () => {
+//   return useMutation({
+//     mutationFn: exportPurchaseEntries,
+//     onSuccess: (blob) => {
+//       const url = window.URL.createObjectURL(blob);
+//       const link = document.createElement("a");
+//       link.href = url;
+//       link.download = `purchase-entries-${
+//         new Date().toISOString().split("T")[0]
+//       }.xlsx`;
+//       document.body.appendChild(link);
+//       link.click();
+//       document.body.removeChild(link);
+//       window.URL.revokeObjectURL(url);
+//       toast.success("Xuất file Excel thành công!");
+//     },
+//     onError: () => {
+//       toast.error("Có lỗi xảy ra khi xuất file Excel");
+//     },
+//   });
+// };

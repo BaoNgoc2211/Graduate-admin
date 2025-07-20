@@ -16,6 +16,8 @@ import {
   UserCog,
   Briefcase,
   Ticket,
+  Blocks,
+  UngroupIcon,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -34,20 +36,27 @@ const Sidebar = () => {
             {
               label: "Quản lý loại thuốc",
               href: "/medicine-category",
-              icon: Star,
+              icon: Sliders,
             },
             {
               label: "Quản lý nhóm thuốc",
               href: "/medicine-usage",
-              icon: Star,
+              icon: UngroupIcon,
             },
+          ]}
+        />
+        <SidebarGroup
+          title="Thông tin kho"
+          icon={History}
+          items={[
+            { label: "Quản lý Kho", href: "/stock", icon: Layers },
+            { label: "Quản lý Lô", href: "/import-batch", icon: Blocks },
             {
               label: "Quản lý Nhà sản xuất",
               href: "/manufacture",
               icon: Settings,
             },
             { label: "Quản lý Nhà phân phối", href: "/distributor", icon: Box },
-            { label: "Quản lý Kho", href: "/stock", icon: Layers },
           ]}
         />
         <SidebarGroup
@@ -56,15 +65,16 @@ const Sidebar = () => {
           items={[
             { label: "Quản lý bệnh", href: "/disease", icon: BookOpen },
             {
+              label: "Quản lý nhóm bệnh",
+              href: "/disease-group",
+              icon: UngroupIcon,
+            },
+            {
               label: "Quản lý danh mục bệnh",
               href: "/disease-category",
               icon: Sliders,
             },
-            {
-              label: "Quản lý nhóm bệnh",
-              href: "/disease-group",
-              icon: Sliders,
-            },
+
             { label: "Dược liệu", href: "/herbs", icon: PlusCircle },
           ]}
         />
@@ -73,7 +83,7 @@ const Sidebar = () => {
           icon={Star}
           items={[
             { label: "Quản lý đơn hàng", href: "/orders", icon: Clock },
-            { label: "Quản lý nhập hàng", href: "/import-batch", icon: Clock },
+            { label: "Quản lý nhập hàng", href: "/purchase", icon: Clock },
             {
               label: "Quản lý doanh thu",
               href: "/reports",
@@ -94,6 +104,11 @@ const Sidebar = () => {
             {
               label: "Quản lý khách hàng",
               href: "/import-orders",
+              icon: Briefcase,
+            },
+            {
+              label: "Chat với khách hàng",
+              href: "/chat",
               icon: Briefcase,
             },
           ]}

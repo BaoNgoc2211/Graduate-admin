@@ -31,8 +31,6 @@ import {
 import Image from "next/image";
 import { DiseaseCategoryForm } from "./disease-category-form";
 import { DiseaseCategoryDeleteDialog } from "./disease-category-delete-dialog";
-// import { DiseaseCategoryForm } from "./DiseaseCategoryForm"
-// import { DiseaseCategoryDeleteDialog } from "./DiseaseCategoryDeleteDialog"
 
 interface DiseaseCategoryTableProps {
   categories: IDiseaseCategory[];
@@ -184,8 +182,8 @@ export function DiseaseCategoryTable({
                               src={category.icon || "/placeholder.svg"}
                               alt={category.name}
                               className="w-full h-full object-cover"
-                              width={20}
-                              height={20}
+                              width={40}
+                              height={40}
                             />
                           ) : (
                             <ImageIcon className="h-5 w-5 text-gray-400" />

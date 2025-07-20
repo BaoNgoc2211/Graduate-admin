@@ -27,7 +27,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { IDistributor } from "@/interface/inventory/distributor.interface";
-import { useDistributors } from "@/hooks/inventory/distributor.hooks";
+import {
+  useDeleteDistributor,
+  useDistributors,
+} from "@/hooks/inventory/distributor.hooks";
 import { useRouter } from "next/navigation";
 import DistributorForm from "@/components/inventory/distributor/distributor-form";
 import PageHeader from "@/components/layout/page-header";
@@ -41,6 +44,7 @@ export default function DistributorPage() {
     IDistributor | undefined
   >();
   const itemsPerPage = 5;
+  const deleteDistributor = useDeleteDistributor();
   const { data: distributorsData, isLoading, refetch } = useDistributors();
   const distributors = distributorsData?.data || [];
   const filteredDistributors = distributors.filter(
@@ -61,23 +65,26 @@ export default function DistributorPage() {
     setIsFormOpen(true);
   };
 
-  // const handleEdit = (distributor: IDistributor) => {
-  //   setEditingDistributor(distributor);
-  //   setIsFormOpen(true);
-  // };
   const handleEdit = (distributor: IDistributor) => {
     router.push(`/distributor/edit/${distributor._id}`);
   };
   const handleViewDetails = (id: string) => {
     console.log("View details for distributor:", id);
-    // TODO: Implement view details functionality
   };
 
   const handleDelete = (id: string) => {
-    console.log("Delete distributor:", id);
-    // TODO: Implement delete functionality with confirmation dialog
+    if (confirm("Bạn có chắc muốn xóa nhà phân phối này không?")) {
+      deleteDistributor.mutate(id, {
+        onSuccess: () => {
+          refetch(); // Làm mới danh sách sau khi xoá
+          alert("Xoá thành công!");
+        },
+        onError: () => {
+          alert("Đã có lỗi xảy ra khi xoá.");
+        },
+      });
+    }
   };
-
   const handleFormSuccess = () => {
     setIsFormOpen(false);
     setEditingDistributor(undefined);
@@ -102,7 +109,6 @@ export default function DistributorPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <PageHeader
         title="Quản lý Distributor"
         subtitle="Danh sách và quản lý các nhà phân phối"
@@ -112,9 +118,9 @@ export default function DistributorPage() {
           <CardHeader className="bg-gray-50 border-b">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <CardTitle className="text-xl text-blue-900">
-                Danh sách Distributor
+                Danh sách Nhà phân phối
               </CardTitle>
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <div className="flex flex-col lg:flex-row lg:gap-5 sm:flex-col gap-3 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
@@ -199,6 +205,7 @@ export default function DistributorPage() {
                             <Edit className="h-4 w-4 mr-1" />
                             Sửa
                           </Button>
+
                           <Button
                             size="sm"
                             variant="outline"

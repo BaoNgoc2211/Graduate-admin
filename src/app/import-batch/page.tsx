@@ -39,7 +39,6 @@ import {
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-// import { useImportBatch, useUpdateImportBatchStatus, useDeleteImportBatch } from "@/hooks/useImportBatch"
 import type { IImportBatch } from "@/interface/inventory/import-batch.interface";
 import { IMPORT_BATCH_STATUS } from "@/interface/inventory/import-batch.interface";
 import {
@@ -48,9 +47,8 @@ import {
   useUpdateImportBatchStatus,
 } from "@/hooks/inventory/import-batch.hooks";
 import ImportBatchForm from "@/components/inventory/import-batch/import-batch-form";
-// import ImportBatchForm from "@/components/import-batch-form"
-
-// Type cho status values
+import { formatPrice } from "@/lib/format-price";
+import PageHeader from "@/components/layout/page-header";
 type ImportBatchStatus =
   | "expired"
   | "out_of_stock"
@@ -108,15 +106,6 @@ export default function ImportBatchPage() {
       IMPORT_BATCH_STATUS.find((s) => s.value === status) ||
       IMPORT_BATCH_STATUS[0]
     );
-  };
-
-  //Format giá tiền
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-      // maximumFractionDigits: 0,
-    }).format(price);
   };
 
   // Kiểm tra xem value có phải là ImportBatchStatus hợp lệ không
@@ -214,14 +203,10 @@ export default function ImportBatchPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-2">Quản lý Lô hàng nhập</h1>
-          <p className="text-blue-100">
-            Danh sách và quản lý các lô hàng nhập kho
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Quản lý lô hàng nhập"
+        subtitle="Danh sách và quản lý các lô hàng nhập kho"
+      />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
@@ -231,7 +216,7 @@ export default function ImportBatchPage() {
               <CardTitle className="text-xl text-blue-900">
                 Danh sách Lô hàng nhập
               </CardTitle>
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <div className="flex flex-col lg:flex-row lg:gap-5 sm:flex-col gap-3 w-full sm:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input

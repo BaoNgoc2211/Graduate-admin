@@ -1,13 +1,23 @@
 import { IMedicineCategory } from "@/interface/medicine/category.interface";
 import APIConfig from "../api.config";
 
+// export const getAllMedicineCategoryAPI = async (
+//   page: number = 1,
+//   pageSize: number = 5
+// ): Promise<{
+//   data: IMedicineCategory[];
+// }> => {
+//   const response = await APIConfig.get(
+//     `/api/medicine/cate?page=${page}&pageSize=${pageSize}`
+//   );
+//   return response.data;
+// };
 export const getAllMedicineCategoryAPI = async (): Promise<{
   data: IMedicineCategory[];
 }> => {
   const response = await APIConfig.get(`/api/medicine/cate`);
-  return response.data as Promise<{ data: IMedicineCategory[] }>;
+  return response.data;
 };
-
 export const getByIdMedicineCategoryAPI = async (
   medCategory_id: string
 ): Promise<{ data: IMedicineCategory }> => {
@@ -36,9 +46,9 @@ export const updateMedicineCategoryAPI = async (
   );
   return res.data;
 };
-export const deleteMedicineCategoryAPI = async (
-  medCategory_id: string
-) => {
-  const res = await APIConfig.delete(`/api/medicine/usage/remove/${medCategory_id}`);
+export const deleteMedicineCategoryAPI = async (medCategory_id: string) => {
+  const res = await APIConfig.delete(
+    `/api/medicine/usage/remove/${medCategory_id}`
+  );
   return res.data;
 };

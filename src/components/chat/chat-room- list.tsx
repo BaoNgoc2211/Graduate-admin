@@ -3,8 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-// import { useUnassignedChatRooms } from "@/hooks/chat/useChat"
-// import type { IChatRoom } from "@/interface/chat/chat.interface"
 import { MessageCircle, User, Clock, AlertCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { IChatRoom } from "@/interface/chat.interface";
@@ -139,7 +137,8 @@ export function ChatRoomList({
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-gray-500" />
                       <span className="font-medium text-gray-900 text-sm">
-                        {room.user}
+                        {/* {room.user} */}
+                        {room.user.email}
                       </span>
                     </div>
                     {getStatusBadge(room)}

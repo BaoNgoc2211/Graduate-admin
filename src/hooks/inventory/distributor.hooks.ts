@@ -1,5 +1,6 @@
 import {
   createDistributorAPI,
+  deleteDistributorAPI,
   getAllDistributorAPI,
   getByIdDistributorAPI,
   updateDistributorAPI,
@@ -9,10 +10,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const useDistributors = () => {
+export const useDistributors = (page: number = 1, pageSize: number = 5) => {
   return useQuery<{ data: IDistributor[] }>({
     queryKey: ["distributors"],
-    queryFn: getAllDistributorAPI,
+    queryFn: () => getAllDistributorAPI(page, pageSize),
   });
 };
 export const useDistributorById = (distributor_id: string) => {
@@ -48,6 +49,21 @@ export const useUpdateDistributor = () => {
     onError: (error) => {
       console.error("Lỗi cập nhật:", error);
       toast.error("Cập nhật nhà phân phối thất bại!");
+    },
+  });
+};
+export const useDeleteDistributor = () => {
+  const router = useRouter();
+  return useMutation({
+    mutationKey: ["delete-distributor"],
+    mutationFn: (id: string) => deleteDistributorAPI(id),
+    onSuccess: () => {
+      toast.success("Xóa nhà phân phối thành công!");
+      router.push("/distributor");
+    },
+    onError: (error) => {
+      console.error("Lỗi xóa:", error);
+      toast.error("Xóa nhà phân phối thất bại!");
     },
   });
 };

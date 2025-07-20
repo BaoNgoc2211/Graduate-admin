@@ -28,9 +28,30 @@
 //   content: string;
 //   senderId: string;
 // }
+export interface IUser extends Document {
+  _id: string;
+  googleId?: string;
+  email: string;
+  password: string;
+  info: {
+    name?: string;
+    phone?: string;
+    avatar?: string;
+    gender?: string;
+    point?: number;
+    birthday?: Date;
+    address?: {
+      provinceId: string;
+      provinceName: string;
+      wardId: string;
+      wardName: string;
+      street?: string;
+    };
+  };
+}
 export interface IChatRoom {
   _id: string;
-  user: string;
+  user: IUser;
   staff?: string;
   isHandled: boolean;
   status: "open" | "closed";

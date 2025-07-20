@@ -1,9 +1,10 @@
 "use client";
 import DistributorEditForm from "@/components/inventory/distributor/form-edit";
 import { useDistributorById } from "@/hooks/inventory/distributor.hooks";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 const EditDistributorPage = () => {
+  const router = useRouter();
   const { id } = useParams();
   const { data, isLoading, isError } = useDistributorById(id as string);
 
@@ -16,6 +17,7 @@ const EditDistributorPage = () => {
         defaultValue={data?.data}
         onSuccess={() => {
           toast.success("Cập nhật nhà phân phối thành công!");
+          router.push("/distributor");
         }}
       />
     </>

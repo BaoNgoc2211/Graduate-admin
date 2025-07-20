@@ -1,75 +1,3 @@
-// import {} from "@/api/inventory/distributor.api";
-// import {
-//   createImportBatchAPI,
-//   getAllImportBatchAPI,
-//   updateImportBatchAPI,
-//   updateImportBatchStatusAPI,
-// } from "@/api/inventory/import-batch.api";
-// import { IImportBatch } from "@/interface/inventory/import-batch.interface";
-// import { useMutation, useQuery } from "@tanstack/react-query";
-// import { useRouter } from "next/navigation";
-// import { toast } from "sonner";
-
-// export const useImportBatch = () => {
-//   return useQuery<{ data: IImportBatch[] }>({
-//     queryKey: ["import-batches"],
-//     queryFn: getAllImportBatchAPI,
-//   });
-// };
-// // export const useDistributorById = (distributor_id: string) => {
-// //   return useQuery({
-// //     queryKey: ["distributor", distributor_id],
-// //     queryFn: () => getAllDistributorAPI(distributor_id),
-// //     enabled: !!distributor_id,
-// //   });
-// // };
-
-// export const useCreateImportBatch = () => {
-//   const router = useRouter();
-//   return useMutation({
-//     mutationKey: ["create-import-batch"],
-//     mutationFn: (payload: IImportBatch) => createImportBatchAPI(payload),
-//     onSuccess: () => {
-//       toast.success("Tạo lô hàng thành công!");
-//       router.push("/import-batch");
-//     },
-//     onError: () => {
-//       toast.error("Tạo lô hàng thất bại!");
-//     },
-//   });
-// };
-// export const useUpdateImportBatch = () => {
-//   const router = useRouter();
-//   return useMutation({
-//     mutationKey: ["update-import-batch"],
-//     mutationFn: ({ id, data }: { id: string; data: IImportBatch }) =>
-//       updateImportBatchAPI(id, data),
-//     onSuccess: () => {
-//       toast.success("Cập nhật lô hàng thành công!");
-//       router.push("/import-batch");
-//     },
-//     onError: (error) => {
-//       console.error("Lỗi cập nhật:", error);
-//       toast.error("Cập nhật lô hàng thất bại!");
-//     },
-//   });
-// };
-// export const useUpdateImportBatchStatus = () => {
-//   const router = useRouter();
-//   return useMutation({
-//     mutationKey: ["update-import-batch-status"],
-//     mutationFn: ({ id, status }: { id: string; status: string }) =>
-//       updateImportBatchStatusAPI(id, status),
-//     onSuccess: () => {
-//       toast.success("Cập nhật trạng thái lô hàng thành công!");
-//       router.push("/import-batch");
-//     },
-//     onError: (error) => {
-//       console.error("Lỗi cập nhật trạng thái:", error);
-//       toast.error("Cập nhật trạng thái lô hàng thất bại!");
-//     },
-//   });
-// };
 "use client";
 
 import {
@@ -80,20 +8,34 @@ import {
   updateImportBatchStatusAPI,
 } from "@/api/inventory/import-batch.api";
 import type {
-  IImportBatch,
+  // IImportBatch,
   IImportBatchFormData,
 } from "@/interface/inventory/import-batch.interface";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const useImportBatch = () => {
-  return useQuery<{ data: IImportBatch[] }>({
-    queryKey: ["import-batches"],
-    queryFn: getAllImportBatchAPI,
+// export const useImportBatch = () => {
+//   return useQuery<{ data: IImportBatch[] }>({
+//     queryKey: ["import-batches"],
+//     queryFn: getAllImportBatchAPI,
+//     select: (data) => {
+//       data.data.sort(
+//         (a, b) =>
+//           new Date(b.importDate).getTime() - new Date(a.importDate).getTime()
+//       );
+//       data.data = data.data.slice(0, 5); // lấy 20 dòng đầu
+//       return data;
+//     },
+//   });
+// };
+export const useImportBatch = (page: number = 1, pageSize: number = 20) => {
+  return useQuery({
+    queryKey: ["import-batches", page],
+    queryFn: () => getAllImportBatchAPI(page, pageSize),
+    // keepPreviousData: true, // giữ dữ liệu cũ khi chuyển trang
   });
 };
-
 export const useCreateImportBatch = () => {
   const router = useRouter();
   return useMutation({
