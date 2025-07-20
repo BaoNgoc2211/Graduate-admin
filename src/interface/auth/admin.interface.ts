@@ -1,20 +1,57 @@
-export interface ISignIn {
-  email: string;
-  password: string;
-}
 export interface ISignUp {
   name: string;
+  email: string;
+  password: string;
+  phone: number;
+}
+export interface ISignIn {
   email: string;
   password: string;
 }
 export interface IVerify {
   email: string;
-  OTP: string;
+  otp: string;
+}
+
+export interface IInfo {
+  name?: string;
+  phone?: string;
+  avatar?: string;
+  gender?: string;
+  point?: number;
+  birthday?: Date;
+  address?: string;
+  // address?: {
+  //   provinceId: string;
+  //   provinceName: string;
+  //   wardId: string;
+  //   wardName: string;
+  //   street?: string;
+  // };
+}
+export interface ICheckAuth {
+  message: string;
+  data: string;
 }
 export interface IForgotPassword {
   email: string;
 }
 export interface IReset {
-  OTP: string;
+  email: string;
+  otp: string;
   newPassword: string;
+}
+export interface Province {
+  code: number;
+  name: string;
+}
+
+export interface District {
+  code: number;
+  name: string;
+}
+
+export interface Ward {
+  code: number;
+  name: string;
 }

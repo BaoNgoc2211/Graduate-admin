@@ -1,4 +1,3 @@
-"use client";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useCreateDistributor } from "@/hooks/inventory/distributor.hooks";
@@ -7,8 +6,10 @@ import DistributorFormUI from "./distributor-form-2";
 
 export default function DistributorCreateForm({
   onSuccess,
+  onCancel,
 }: {
   onSuccess?: () => void;
+  onCancel?: () => void;
 }) {
   const form = useForm<Omit<IDistributor, "_id">>({
     defaultValues: {
@@ -32,6 +33,11 @@ export default function DistributorCreateForm({
     });
   };
 
+  const handleCancel = () => {
+    form.reset();
+    onCancel?.();
+  };
+
   useEffect(() => {
     form.setFocus("nameCo");
   }, []);
@@ -41,7 +47,7 @@ export default function DistributorCreateForm({
       title="Thêm mới nhà phân phối"
       form={form}
       onSubmit={onSubmit}
-      onCancel={form.reset}
+      onCancel={handleCancel}
       isLoading={isLoading}
     />
   );

@@ -221,7 +221,10 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold text-blue-900 flex items-center gap-2">
             <User className="w-5 h-5" />
-            {selectedRoom.user}
+            {/* {selectedRoom.user} */}
+            {typeof selectedRoom.user === "object"
+              ? selectedRoom.user.email
+              : selectedRoom.user}
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge

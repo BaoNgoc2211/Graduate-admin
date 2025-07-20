@@ -4,9 +4,6 @@ import { ChatRoomList } from "@/components/chat/chat-room- list";
 import { ChatWindow } from "@/components/chat/chat-window";
 import { IChatRoom } from "@/interface/chat.interface";
 import { useState } from "react";
-// import { ChatRoomList } from "@/components/chat/ChatRoomList"
-// import { ChatWindow } from "@/components/chat/ChatWindow"
-// import type { IChatRoom } from "@/interface/chat/chat.interface"
 
 export default function ChatPage() {
   const [selectedRoom, setSelectedRoom] = useState<IChatRoom | undefined>();

@@ -7,6 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import type { IDistributor } from "@/interface/inventory/distributor.interface";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DistributorFormUIProps {
   title: string;
@@ -40,37 +47,53 @@ export default function DistributorFormUI({
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Tên công ty */}
             <div className="space-y-2">
-              <Label htmlFor="nameCo">Tên công ty <span className="text-red-500">*</span></Label>
+              <Label htmlFor="nameCo">
+                Tên công ty <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="nameCo"
                 {...register("nameCo", {
                   required: "Tên công ty là bắt buộc",
-                  minLength: { value: 2, message: "Tên công ty phải có ít nhất 2 ký tự" },
+                  minLength: {
+                    value: 2,
+                    message: "Tên công ty phải có ít nhất 2 ký tự",
+                  },
                 })}
                 placeholder="Nhập tên công ty"
                 disabled={isLoading}
               />
-              {errors.nameCo && <p className="text-sm text-red-600">{errors.nameCo.message}</p>}
+              {errors.nameCo && (
+                <p className="text-sm text-red-600">{errors.nameCo.message}</p>
+              )}
             </div>
 
             {/* Người đại diện */}
             <div className="space-y-2">
-              <Label htmlFor="nameRep">Người đại diện <span className="text-red-500">*</span></Label>
+              <Label htmlFor="nameRep">
+                Người đại diện <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="nameRep"
                 {...register("nameRep", {
                   required: "Người đại diện là bắt buộc",
-                  minLength: { value: 2, message: "Tên người đại diện phải có ít nhất 2 ký tự" },
+                  minLength: {
+                    value: 2,
+                    message: "Tên người đại diện phải có ít nhất 2 ký tự",
+                  },
                 })}
                 placeholder="Nhập tên người đại diện"
                 disabled={isLoading}
               />
-              {errors.nameRep && <p className="text-sm text-red-600">{errors.nameRep.message}</p>}
+              {errors.nameRep && (
+                <p className="text-sm text-red-600">{errors.nameRep.message}</p>
+              )}
             </div>
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
+              <Label htmlFor="email">
+                Email <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -84,56 +107,86 @@ export default function DistributorFormUI({
                 placeholder="Nhập địa chỉ email"
                 disabled={isLoading}
               />
-              {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-sm text-red-600">{errors.email.message}</p>
+              )}
             </div>
 
             {/* Số điện thoại */}
             <div className="space-y-2">
-              <Label htmlFor="phone">Số điện thoại <span className="text-red-500">*</span></Label>
+              <Label htmlFor="phone">
+                Số điện thoại <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="phone"
                 {...register("phone", {
                   required: "Số điện thoại là bắt buộc",
-                  pattern: { value: /^[0-9+\-\s()]+$/, message: "Số điện thoại không hợp lệ" },
-                  minLength: { value: 10, message: "Số điện thoại phải có ít nhất 10 số" },
+                  pattern: {
+                    value: /^[0-9+\-\s()]+$/,
+                    message: "Số điện thoại không hợp lệ",
+                  },
+                  minLength: {
+                    value: 10,
+                    message: "Số điện thoại phải có ít nhất 10 số",
+                  },
                 })}
                 placeholder="Nhập số điện thoại"
                 disabled={isLoading}
               />
-              {errors.phone && <p className="text-sm text-red-600">{errors.phone.message}</p>}
+              {errors.phone && (
+                <p className="text-sm text-red-600">{errors.phone.message}</p>
+              )}
             </div>
 
             {/* Địa chỉ */}
             <div className="space-y-2">
-              <Label htmlFor="address">Địa chỉ <span className="text-red-500">*</span></Label>
+              <Label htmlFor="address">
+                Địa chỉ <span className="text-red-500">*</span>
+              </Label>
               <Textarea
                 id="address"
                 {...register("address", {
                   required: "Địa chỉ là bắt buộc",
-                  minLength: { value: 10, message: "Địa chỉ phải có ít nhất 10 ký tự" },
+                  minLength: {
+                    value: 10,
+                    message: "Địa chỉ phải có ít nhất 10 ký tự",
+                  },
                 })}
                 placeholder="Nhập địa chỉ chi tiết"
                 className="min-h-[80px]"
                 disabled={isLoading}
               />
-              {errors.address && <p className="text-sm text-red-600">{errors.address.message}</p>}
+              {errors.address && (
+                <p className="text-sm text-red-600">{errors.address.message}</p>
+              )}
             </div>
-
             {/* Quốc gia */}
-            <div className="space-y-2">
-              <Label htmlFor="country">Quốc gia <span className="text-red-500">*</span></Label>
-              <Input
-                id="country"
-                {...register("country", {
-                  required: "Quốc gia là bắt buộc",
-                  minLength: { value: 2, message: "Tên quốc gia phải có ít nhất 2 ký tự" },
-                })}
-                placeholder="Nhập tên quốc gia"
+            <div className="min-w-auto space-y-2">
+              <Label htmlFor="country">
+                Quốc gia <span className="text-red-500">*</span>
+              </Label>
+              <Select
+                onValueChange={(value) => form.setValue("country", value)}
+                defaultValue={form.getValues("country")}
                 disabled={isLoading}
-              />
-              {errors.country && <p className="text-sm text-red-600">{errors.country.message}</p>}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn quốc gia" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Việt Nam", "Hoa Kỳ", "Nhật Bản", "Anh", "Pháp"].map(
+                    (country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
+              {errors.country && (
+                <p className="text-sm text-red-600">{errors.country.message}</p>
+              )}
             </div>
-
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Button

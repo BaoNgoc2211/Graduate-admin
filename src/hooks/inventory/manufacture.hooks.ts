@@ -1,6 +1,7 @@
 import {} from "@/api/inventory/distributor.api";
 import {
   createManufactureAPI,
+  deleteManufactureAPI,
   getAllManufactureAPI,
   updateManufactureAPI,
 } from "@/api/inventory/manufacture.api";
@@ -9,19 +10,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const useManufactures = () => {
+export const useManufactures = (page: number = 1, pageSize: number = 5) => {
   return useQuery<{ data: IManufacturer[] }>({
-    queryKey: ["distributors"],
-    queryFn: getAllManufactureAPI,
+    queryKey: ["manufacturers"],
+    queryFn: () => getAllManufactureAPI(page, pageSize),
   });
 };
-// export const useDistributorById = (distributor_id: string) => {
-//   return useQuery({
-//     queryKey: ["distributor", distributor_id],
-//     queryFn: () => getAllDistributorAPI(distributor_id),
-//     enabled: !!distributor_id,
-//   });
-// };
 
 export const useCreateManufacture = () => {
   const router = useRouter();
@@ -53,4 +47,18 @@ export const useUpdateManufacture = () => {
     },
   });
 };
-
+export const useDeleteManufacture = () => {
+  const router = useRouter();
+  return useMutation({
+    mutationKey: ["delete-manufacture"],
+    mutationFn: (id: string) => deleteManufactureAPI(id),
+    onSuccess: () => {
+      toast.success("Xóa nhà sản xuất thành công!");
+      router.push("/manufacture");
+    },
+    onError: (error) => {
+      console.error("Lỗi xóa:", error);
+      toast.error("Xóa nhà sản xuất thất bại!");
+    },
+  });
+};

@@ -18,6 +18,15 @@ interface UpdatePayload {
   id: string;
   data: Omit<IMedicineCategory, "_id" | "medicine">;
 }
+// export const useMedicineCategories = (
+//   page: number = 1,
+//   pageSize: number = 5
+// ) => {
+//   return useQuery<{ data: IMedicineCategory[] }>({
+//     queryKey: ["medicine-categories"],
+//     queryFn: () => getAllMedicineCategoryAPI(page, pageSize),
+//   });
+// };
 export const useMedicineCategories = () => {
   return useQuery<{ data: IMedicineCategory[] }>({
     queryKey: ["medicine-categories"],
@@ -77,5 +86,4 @@ export const useDeleteMedicineCategory = () => {
       toast.error("Xoá danh mục thất bại!");
     },
   });
-
-}
+};

@@ -3,6 +3,7 @@ import React from "react";
 
 interface IButtonProps {
   name: string;
+  type?: "button" | "submit" | "reset";
   isLoading?: boolean;
   onClick?: () => void;
 }
