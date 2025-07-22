@@ -12,12 +12,10 @@ export interface IMedicine {
   _id?: string;
   code: string; // Mã thuốc
   name: string; // Tên thuốc
-  dosageForm: string; // Dạng bào chế
-  quantity: number; // Số lượng
-  sellingPrice: number; // Giá bán
   thumbnail: string; // Ảnh đại diện
   image?: string[]; // Danh sách ảnh
   packaging: string; // Đóng gói
+  dosageForm: string; // Dạng bào chế
   use: string; // Cách dùng
   dosage?: string; // Liều dùng
   indication?: string; // Công dụng
@@ -33,13 +31,14 @@ export interface IMedicine {
   age_group: string; // Nhóm tuổi
   medCategory_id: string[]; // Danh mục thuốc
   medUsage_id: string[]; // Cách sử dụng
-  manufacturer_id:
-    | string
-    | {
-        _id: string;
-        nameCo: string;
-        country: string;
-      }; // ID nhà sản xuất hoặc object nhà sản xuất
+  manufacturer_id: {
+    _id: string; // ID của nhà sản xuất
+    nameCo: string; // Tên công ty sản xuất
+  };
+  stock_id: {
+    quantity: number; // Số lượng tồn kho
+    sellingPrice: number; // Giá bán
+  };
 }
 
 /**

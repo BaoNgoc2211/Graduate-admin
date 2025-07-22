@@ -1,54 +1,81 @@
-import { IMedicineCategory } from "@/interface/medicine/category.interface";
 import APIConfig from "../api.config";
+import type {
+  IMedicineCategory,
+  IMedicineCategoryPayload,
+  IMedicineCategoryFilter,
+} from "@/interface/medicine/category.interface";
 
-// export const getAllMedicineCategoryAPI = async (
-//   page: number = 1,
-//   pageSize: number = 5
-// ): Promise<{
-//   data: IMedicineCategory[];
-// }> => {
-//   const response = await APIConfig.get(
-//     `/api/medicine/cate?page=${page}&pageSize=${pageSize}`
-//   );
-//   return response.data;
-// };
 export const getAllMedicineCategoryAPI = async (): Promise<{
   data: IMedicineCategory[];
 }> => {
-  const response = await APIConfig.get(`/api/medicine/cate`);
+  const response = await APIConfig.get("/api/medicine/cate/");
   return response.data;
 };
-export const getByIdMedicineCategoryAPI = async (
-  medCategory_id: string
+
+export const getMedicineCategoryByIdAPI = async (
+  id: string
 ): Promise<{ data: IMedicineCategory }> => {
-  const response = await APIConfig.get<{ data: IMedicineCategory }>(
-    `/api/medicine/cate/${medCategory_id}`
-  );
+  const response = await APIConfig.get(`/api/medicine/cate/${id}`);
   return response.data;
 };
-export const createMedicineCategoryAPI = async (payload: {
-  name: string;
-  icon: string;
-}) => {
-  const res = await APIConfig.post(`/api/medicine/cate`, payload);
-  return res.data;
+
+export const createMedicineCategoryAPI = async (
+  payload: IMedicineCategoryPayload
+): Promise<{ data: IMedicineCategory }> => {
+  const response = await APIConfig.post("/api/medicine/cate/", payload);
+  return response.data;
 };
+
 export const updateMedicineCategoryAPI = async (
-  medCategory_id: string,
-  payload: {
-    name: string;
-    icon: string;
-  }
-): Promise<IMedicineCategory> => {
-  const res = await APIConfig.put(
-    `/api/medicine/cate/${medCategory_id}`,
-    payload
-  );
-  return res.data;
+  id: string,
+  payload: IMedicineCategoryPayload
+): Promise<{ data: IMedicineCategory }> => {
+  const response = await APIConfig.put(`/api/medicine/cate/${id}`, payload);
+  return response.data;
 };
-export const deleteMedicineCategoryAPI = async (medCategory_id: string) => {
-  const res = await APIConfig.delete(
-    `/api/medicine/usage/remove/${medCategory_id}`
+
+export const deleteMedicineCategoryAPI = async (id: string): Promise<void> => {
+  await APIConfig.delete(`/api/medicine/cate/${id}`);
+};
+
+export const getMedicineCategoryStatsAPI = async (): Promise<{
+  data: {
+    totalCategories: number;
+    totalMedicines: number;
+    categoriesWithMedicines: number;
+    emptyCategories: number;
+  };
+}> => {
+  // Dữ liệu ảo
+  const mockData = {
+    totalCategories: 8,
+    totalMedicines: 65,
+    categoriesWithMedicines: 6,
+    emptyCategories: 2,
+  };
+
+  return Promise.resolve({ data: mockData });
+  // const response = await APIConfig.get("/api/medicine/cate/stats");
+  // return response.data;
+};
+/**
+ * Tìm kiếm danh mục thuốc
+ */
+export const searchMedicineCategoriesAPI = async (
+  filter: IMedicineCategoryFilter
+): Promise<{ data: IMedicineCategory[]; total: number }> => {
+  const params = new URLSearchParams();
+
+  if (filter.search) params.append("search", filter.search);
+  if (filter.isActive !== undefined)
+    params.append("isActive", filter.isActive.toString());
+  if (filter.sortBy) params.append("sortBy", filter.sortBy);
+  if (filter.sortOrder) params.append("sortOrder", filter.sortOrder);
+  if (filter.page) params.append("page", filter.page.toString());
+  if (filter.limit) params.append("limit", filter.limit.toString());
+
+  const response = await APIConfig.get(
+    `/api/medicine/cate/search?${params.toString()}`
   );
-  return res.data;
+  return response.data;
 };

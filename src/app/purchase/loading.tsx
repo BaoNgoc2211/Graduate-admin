@@ -25,7 +25,7 @@ import Link from "next/link";
 import type { IPurchaseOrderFilters } from "@/interface/order/purchase.interface";
 import { usePurchaseOrders, useSuppliers } from "@/hooks/order/purchase.hooks";
 import { PurchaseOrderTable } from "@/components/order/purchase/New/table";
-import { PurchaseStatusOptions } from "@/constants/purchase-status";
+
 export default function PurchaseOrderListPage() {
   const [filters, setFilters] = useState<IPurchaseOrderFilters>({
     page: 1,
@@ -53,10 +53,10 @@ export default function PurchaseOrderListPage() {
     });
   };
 
-  const handleStatusFilter = (note: string) => {
+  const handleStatusFilter = (notes: string) => {
     setFilters({
       ...filters,
-      note: note === "all" ? undefined : note,
+      note: notes === "all" ? undefined : notes,
       page: 1,
     });
   };
@@ -197,20 +197,6 @@ export default function PurchaseOrderListPage() {
                 </div>
 
                 {/* Status Filter */}
-                {/* <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Trạng thái
-                  </label>
-                  <Select onValueChange={handleStatusFilter} defaultValue="all">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn trạng thái" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Đẫ thanh toán</SelectItem>
-                      <SelectItem value="draft">Ghi nợ</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div> */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
                     Trạng thái
@@ -220,14 +206,15 @@ export default function PurchaseOrderListPage() {
                       <SelectValue placeholder="Chọn trạng thái" />
                     </SelectTrigger>
                     <SelectContent>
-                      {PurchaseStatusOptions.map((status) => (
-                        <SelectItem key={status.value} value={status.value}>
-                          {status.label}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="all">Tất cả trạng thái</SelectItem>
+                      <SelectItem value="Đã thanh toán">
+                        Tất cả trạng thái
+                      </SelectItem>
+                      <SelectItem value="Ghi nợ">Tất cả trạng thái</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
                 {/* Supplier Filter */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">
