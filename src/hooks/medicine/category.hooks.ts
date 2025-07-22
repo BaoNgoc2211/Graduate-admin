@@ -1,89 +1,138 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
 import {
   getAllMedicineCategoryAPI,
-  getByIdMedicineCategoryAPI,
+  getMedicineCategoryByIdAPI,
   createMedicineCategoryAPI,
   updateMedicineCategoryAPI,
   deleteMedicineCategoryAPI,
-} from "@/api/medicine/category.api";
-import { IMedicineCategory } from "@/interface/medicine/category.interface";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
-import { toast } from "sonner";
-interface CreateCategoryPayload {
-  name: string;
-  icon: string;
+  getMedicineCategoryStatsAPI,
+} from "@/api/medicine/category.api"
+import type { IMedicineCategoryPayload, IMedicineCategoryFilter } from "@/interface/medicine/category.interface"
+
+
+export const useMedicineCategories = (filter?: IMedicineCategoryFilter) => {
+  return useQuery({
+    queryKey: ["medicine-categories", filter],
+    queryFn: getAllMedicineCategoryAPI,
+  })
 }
 
-interface UpdatePayload {
-  id: string;
-  data: Omit<IMedicineCategory, "_id" | "medicine">;
-}
-// export const useMedicineCategories = (
-//   page: number = 1,
-//   pageSize: number = 5
-// ) => {
-//   return useQuery<{ data: IMedicineCategory[] }>({
-//     queryKey: ["medicine-categories"],
-//     queryFn: () => getAllMedicineCategoryAPI(page, pageSize),
-//   });
-// };
-export const useMedicineCategories = () => {
-  return useQuery<{ data: IMedicineCategory[] }>({
-    queryKey: ["medicine-categories"],
-    queryFn: getAllMedicineCategoryAPI,
-  });
-};
-export const useMedicineCategoryById = () => {
-  const params = useParams<{ _id: string }>();
-  const categoryId = params._id;
-  console.log("Category ID:", categoryId);
-  const isIdReady = !!categoryId;
+export const useMedicineCategoryById = (id: string) => {
   return useQuery({
-    queryKey: ["medicine-category-by-id", categoryId],
-    queryFn: () => getByIdMedicineCategoryAPI(categoryId),
-    enabled: isIdReady,
-  });
-};
+    queryKey: ["medicine-category", id],
+    queryFn: () => getMedicineCategoryByIdAPI(id),
+    enabled: !!id,
+  })
+}
+
 export const useCreateMedicineCategory = () => {
-  const router = useRouter();
+  const queryClient = useQueryClient()
+
   return useMutation({
-    mutationKey: ["create-medicine-category"],
-    mutationFn: (payload: CreateCategoryPayload) =>
-      createMedicineCategoryAPI(payload),
+    mutationFn: createMedicineCategoryAPI,
     onSuccess: () => {
-      toast.success("Tạo danh mục thành công!");
-      router.push("/medicine-category");
-    },
-    onError: () => {
-      toast.error("Tạo danh mục thất bại!");
-    },
-  });
-};
-export const useUpdateMedicineCategory = () => {
-  return useMutation({
-    mutationFn: ({ id, data }: UpdatePayload) =>
-      updateMedicineCategoryAPI(id, data),
-    onSuccess: () => {
-      toast.success("Cập nhật danh mục thành công!");
+      toast.success("Tạo danh mục thuốc thành công!")
+      queryClient.invalidateQueries({ queryKey: ["medicine-categories"] })
+      queryClient.invalidateQueries({ queryKey: ["medicine-category-stats"] })
     },
     onError: (error) => {
-      console.error("Lỗi cập nhật:", error);
-      toast.error("Cập nhật danh mục thất bại!");
+      console.error("Lỗi tạo danh mục thuốc:", error)
+      toast.error("Tạo danh mục thuốc thất bại!")
     },
-  });
-};
-export const useDeleteMedicineCategory = () => {
-  const router = useRouter();
+  })
+}
+
+export const useUpdateMedicineCategory = () => {
+  const queryClient = useQueryClient()
+
   return useMutation({
-    mutationKey: ["delete-medicine-category"],
-    mutationFn: (medCategory_id: string) =>
-      deleteMedicineCategoryAPI(medCategory_id),
+    mutationFn: ({ id, data }: { id: string; data: IMedicineCategoryPayload }) => updateMedicineCategoryAPI(id, data),
+    onSuccess: (_, { id }) => {
+      toast.success("Cập nhật danh mục thuốc thành công!")
+      queryClient.invalidateQueries({ queryKey: ["medicine-categories"] })
+      queryClient.invalidateQueries({ queryKey: ["medicine-category", id] })
+      queryClient.invalidateQueries({ queryKey: ["medicine-category-stats"] })
+    },
+    onError: (error) => {
+      console.error("Lỗi cập nhật danh mục thuốc:", error)
+      toast.error("Cập nhật danh mục thuốc thất bại!")
+    },
+  })
+}
+
+export const useDeleteMedicineCategory = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteMedicineCategoryAPI,
     onSuccess: () => {
-      toast.success("Xoá danh mục thành công!");
-      router.push("/medicine-category");
+      toast.success("Xóa danh mục thuốc thành công!")
+      queryClient.invalidateQueries({ queryKey: ["medicine-categories"] })
+      queryClient.invalidateQueries({ queryKey: ["medicine-category-stats"] })
+    },
+    onError: (error) => {
+      console.error("Lỗi xóa danh mục thuốc:", error)
+      toast.error("Xóa danh mục thuốc thất bại!")
+    },
+  })
+}
+
+// Hook lấy thống kê danh mục thuốc
+export const useMedicineCategoryStats = () => {
+  return useQuery({
+    queryKey: ["medicine-category-stats"],
+    queryFn: getMedicineCategoryStatsAPI,
+  })
+}
+
+// Hook tổng hợp cho quản lý danh mục thuốc
+export const useMedicineCategory = () => {
+  const queryClient = useQueryClient()
+
+  const getAll = useQuery({
+    queryKey: ["medicine-categories"],
+    queryFn: getAllMedicineCategoryAPI,
+  })
+
+  const create = useMutation({
+    mutationFn: createMedicineCategoryAPI,
+    onSuccess: () => {
+      toast.success("Tạo danh mục thuốc thành công!")
+      queryClient.invalidateQueries({ queryKey: ["medicine-categories"] })
     },
     onError: () => {
-      toast.error("Xoá danh mục thất bại!");
+      toast.error("Tạo danh mục thuốc thất bại!")
     },
-  });
-};
+  })
+
+  const update = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string
+      payload: IMedicineCategoryPayload
+    }) => updateMedicineCategoryAPI(id, payload),
+    onSuccess: () => {
+      toast.success("Cập nhật danh mục thuốc thành công!")
+      queryClient.invalidateQueries({ queryKey: ["medicine-categories"] })
+    },
+    onError: () => {
+      toast.error("Cập nhật danh mục thuốc thất bại!")
+    },
+  })
+
+  const remove = useMutation({
+    mutationFn: deleteMedicineCategoryAPI,
+    onSuccess: () => {
+      toast.success("Xóa danh mục thuốc thành công!")
+      queryClient.invalidateQueries({ queryKey: ["medicine-categories"] })
+    },
+    onError: () => {
+      toast.error("Xóa danh mục thuốc thất bại!")
+    },
+  })
+
+  return { getAll, create, update, remove }
+}

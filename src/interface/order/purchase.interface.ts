@@ -1,202 +1,89 @@
-// export interface IMedicineDetail {
-//   medicine_id: string // ID thuốc
-//   batch_id: string // ID lô hàng
-//   quantity: number // Số lượng
-//   price: number // Đơn giá
-//   VAT_Rate: number // VAT (%)
-//   CK_Rate: number // Chiết khấu (%)
-//   totalPrice: number // Thành tiền (tự động tính)
-// }
-// export interface IPurchaseOrder {
-//   _id?: string
-//   date_in: Date // Ngày nhập kho
-//   note: string // Ghi chú
-//   medicines: IMedicineDetail[] // Danh sách thuốc
-//   totalAmount: number // Tổng tiền (tự động tính)
-//   createdAt?: Date
-//   updatedAt?: Date
-// }
-
-// export interface IPurchaseOrderPayload {
-//   date_in: string // ISO string
-//   note: string
-//   medicines: {
-//     medicine_id: string
-//     batch_id: string
-//     quantity: number
-//     price: number
-//     VAT_Rate: number
-//     CK_Rate: number
-//   }[]
-// }
-
-// /**
-//  * Props cho form component
-//  */
-// export interface PurchaseOrderFormProps {
-//   mode: "create" | "edit"
-//   defaultValue?: IPurchaseOrder
-//   onSuccess?: () => void
-//   onCancel?: () => void
-// }
-/**
- * Interface cho chi tiết thuốc trong phiếu nhập
- */
-export interface IMedicineDetail {
-  medicine_id: string // ID thuốc
-  batch_id: string // ID lô hàng
-  quantity: number // Số lượng
-  price: number // Đơn giá
-  VAT_Rate: number // VAT (%)
-  CK_Rate: number // Chiết khấu (%)
-  totalPrice: number // Thành tiền (tự động tính)
+export interface IPurchaseOrderItem {
+  _id?: string;
+  medicine_id: string;
+  medicineName?: string;
+  unit?: string;
+  quantity: number;
+  price: number;
+  VAT_Rate: number;
+  CK_Rate: number;
+  batch_id?: string;
+  notes?: string;
 }
 
-/**
- * Interface cho phiếu nhập hàng
- */
 export interface IPurchaseOrder {
-  _id?: string
-  date_in: Date // Ngày nhập kho
-  note: string // Ghi chú
-  medicines: IMedicineDetail[] // Danh sách thuốc
-  totalAmount: number // Tổng tiền (tự động tính)
-  createdAt?: Date
-  updatedAt?: Date
+  _id: string;
+  orderCode?: string;
+  supplierId?: string;
+  supplierName?: string;
+  supplierCode?: string;
+  medicines: IPurchaseOrderItem[];
+  date_in: string;
+  expectedDeliveryDate?: string;
+  totalAmount: number;
+  note?: "Đã thanh toán" | "Ghi nợ" | "Nháp";
+  createdBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  approvedBy?: string;
+  approvedAt?: string;
+  rejectedBy?: string;
+  rejectedAt?: string;
+  rejectionReason?: string;
 }
 
-/**
- * Payload gửi về server
- */
 export interface IPurchaseOrderPayload {
-  date_in: string // ISO string
-  note: string
+  supplierId?: string;
+  date_in: string;
+  expectedDeliveryDate?: string;
+  note?: "Đã thanh toán" | "Ghi nợ" | "Nháp";
   medicines: {
-    medicine_id: string
-    batch_id: string
-    quantity: number
-    price: number
-    VAT_Rate: number
-    CK_Rate: number
-  }[]
+    medicine_id: string;
+    quantity: number;
+    price: number;
+    VAT_Rate: number;
+    CK_Rate: number;
+    batch_id?: string;
+  }[];
 }
 
-/**
- * Props cho form component
- */
-export interface PurchaseOrderFormProps {
-  mode: "create" | "edit"
-  defaultValue?: IPurchaseOrder
-  onSuccess?: () => void
-  onCancel?: () => void
+export interface IPurchaseOrderFilters {
+  search?: string;
+  note?: string;
+  supplierId?: string;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  limit?: number;
 }
 
-/**
- * Interface cho mục nhập hàng
- */
-export interface IPurchaseItem {
-  _id: string
-  medicine: {
-    _id: string
-    name: string
-    code: string
-    unit: string
-  }
-  batch: {
-    _id: string
-    lotNumber: string
-    expiryDate: string
-    manufacturingDate: string
-  }
-  quantity: number
-  unitPrice: number
-  totalPrice: number
+export interface IPurchaseOrderResponse {
+  data: IPurchaseOrder[];
+  total: number;
+  page: number;
+  totalPages: number;
 }
 
-/**
- * Interface cho mục nhập hàng khi tạo mới
- */
-export interface ICreatePurchaseItem {
-  medicine: string
-  batch: string
-  quantity: number
-  unitPrice: number
+export interface ISupplier {
+  _id: string;
+  nameCo: string;
+  status: "active" | "inactive";
 }
 
-/**
- * Interface cho phiếu nhập hàng khi tạo mới
- */
-export interface ICreatePurchaseEntry {
-  supplier: string
-  items: ICreatePurchaseItem[]
-  notes?: string
-}
-
-/**
- * Interface cho phiếu nhập hàng
- */
-export interface IPurchaseEntry {
-  _id: string
-  code: string
-  supplier: {
-    _id: string
-    name: string
-    contact?: string
-  }
-  createdDate: string
-  status: "draft" | "pending" | "approved" | "rejected"
-  totalAmount: number
-  items: IPurchaseItem[]
-  notes?: string
-  createdBy: string
-  approvedBy?: string
-  approvedDate?: string
-  createdAt: string
-  updatedAt: string
-}
-
-/**
- * Interface cho bộ lọc phiếu nhập hàng
- */
-export interface IPurchaseFilter {
-  dateFrom?: string
-  dateTo?: string
-  supplier?: string
-  status?: string
-  search?: string
-}
-
-/**
- * Interface cho thống kê phiếu nhập hàng
- */
-export interface IPurchaseStats {
-  totalEntries: number
-  totalAmount: number
-  pendingEntries: number
-  thisMonthEntries: number
-  thisMonthAmount: number
-}
-
-/**
- * Interface cho thuốc
- */
 export interface IMedicine {
-  _id: string
-  name: string
-  code: string
-  unit: string
-  category: string
-  manufacturer: string
+  _id: string;
+  name: string;
+  code: string;
+  unit: string;
+  price: number;
+  batch_id: IBatch;
+  stockQuantity?: number;
+  category: string;
+  description?: string;
+  status: "active" | "inactive";
 }
-
-/**
- * Interface cho nhập lô hàng
- */
-export interface IImportBatch {
-  _id: string
-  lotNumber: string
-  expiryDate: string
-  manufacturingDate: string
-  medicine: string
-  quantity: number
+export interface IBatch {
+  _id: string;
+  batchCode: string;
+  importPrice: number;
 }
