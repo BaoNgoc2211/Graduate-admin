@@ -47,7 +47,7 @@ export const getAllDiseaseCategoryAPI = async (): Promise<{
   data: IDiseaseCategory[];
 }> => {
   const response = await APIConfig.get("/api/disCategory");
-  return response.data;
+  return response.data.data;
 };
 
 export const getByIdDiseaseCategoryAPI = async (

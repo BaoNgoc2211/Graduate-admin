@@ -9,7 +9,7 @@ export const getAllDistributorAPI = async (
   const response = await APIConfig.get(
     `/api/distributor?page=${page}&pageSize=${pageSize}`
   );
-  return response.data;
+  return response.data.data;
 };
 export const getByIdDistributorAPI = async (
   distributor_id: string

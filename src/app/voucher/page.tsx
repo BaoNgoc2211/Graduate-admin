@@ -17,7 +17,8 @@ import VoucherTable from "@/components/voucher/voucher-table";
 import PageHeader from "@/components/layout/page-header";
 
 export default function VoucherManagementPage() {
-  const { data, isLoading, error } = useVouchers();
+
+  const { data, isLoading, error } = useVouchers({});
   const [searchTerm, setSearchTerm] = useState("");
 
   // Extract vouchers from API response
@@ -105,7 +106,13 @@ export default function VoucherManagementPage() {
         </div>
 
         {/* Voucher Table */}
-        <VoucherTable vouchers={filteredVouchers} isLoading={isLoading} />
+        <VoucherTable
+          vouchers={filteredVouchers}
+          isLoading={isLoading}
+          currentPage={data?.currentPage || 1}
+          totalPages={data?.totalPages || 1}
+          onPageChange={(page) => setPage(page)}
+        />
       </div>
     </div>
   );

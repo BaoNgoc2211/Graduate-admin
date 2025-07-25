@@ -9,7 +9,7 @@ export const getAllManufactureAPI = async (
   const response = await APIConfig.get(
     `/api/manufacture?page=${page}&pageSize=${pageSize}`
   );
-  return response.data;
+  return response.data.data;
 };
 export const createManufactureAPI = async (payload: IManufacturer) => {
   const res = await APIConfig.post(`/api/manufacture/add-manufacture`, payload);

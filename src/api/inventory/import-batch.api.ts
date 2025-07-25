@@ -17,7 +17,7 @@ export const getAllImportBatchAPI = async (
   const response = await APIConfig.get(
     `/api/import-batch?page=${page}&pageSize=${pageSize}`
   );
-  return response.data;
+  return response.data.data;
 };
 
 export const createImportBatchAPI = async (payload: IImportBatchFormData) => {
