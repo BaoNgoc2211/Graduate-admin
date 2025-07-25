@@ -9,7 +9,7 @@ export const getAllMedicineCategoryAPI = async (): Promise<{
   data: IMedicineCategory[];
 }> => {
   const response = await APIConfig.get("/api/medicine/cate/");
-  return response.data;
+  return response.data.data;
 };
 
 export const getMedicineCategoryByIdAPI = async (

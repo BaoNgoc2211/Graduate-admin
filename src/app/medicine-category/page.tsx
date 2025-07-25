@@ -2,10 +2,10 @@
 
 import { useState } from "react"
 import type { IMedicineCategory } from "@/interface/medicine/category.interface"
-import { MedicineCategoryStats } from "@/components/medicine/category/new/MedicineCategoryStats"
-import { MedicineCategoryTable } from "@/components/medicine/category/new/MedicineCategoryTable"
-import { MedicineCategoryModal } from "@/components/medicine/category/new/MedicineCategoryModal"
-import { MedicineCategoryDeleteDialog } from "@/components/medicine/category/new/MedicineCategoryDeleteDialog"
+import { MedicineCategoryStats } from "@/components/medicine/category/medicine-category-status"
+import { MedicineCategoryTable } from "@/components/medicine/category/medicine-category-table"
+import { MedicineCategoryModal } from "@/components/medicine/category/medicine-category-modal"
+import { MedicineCategoryDeleteDialog } from "@/components/medicine/category/medicine-category-delete-dialog"
 
 export default function MedicineCategoryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)

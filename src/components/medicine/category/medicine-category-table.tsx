@@ -41,14 +41,13 @@ export function MedicineCategoryTable({
   onAdd,
 }: MedicineCategoryTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const { data: categories, isLoading, error } = useMedicineCategories();
+  const { data: paginatedData, isLoading, error } = useMedicineCategories();
 
-  // Filter categories based on search term
-  const filteredCategories =
-    categories?.data?.filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
+  const categoryList = paginatedData?.data ?? [];
 
+  const filteredCategories = categoryList.filter((category) =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   if (isLoading) {
     return (
       <Card className="border-0 shadow-sm">

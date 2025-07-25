@@ -22,11 +22,17 @@ import VoucherDeleteDialog from "./voucher-detail-dialog";
 interface VoucherTableProps {
   vouchers: IVoucher[];
   isLoading: boolean;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 export default function VoucherTable({
   vouchers,
   isLoading,
+  currentPage,
+  totalPages,
+  onPageChange,
 }: VoucherTableProps) {
   const router = useRouter();
 
@@ -325,6 +331,29 @@ export default function VoucherTable({
             </TableBody>
           </Table>
         </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6 space-x-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              ← Trang trước
+            </Button>
+            <div className="text-sm text-gray-600 flex items-center">
+              Trang {currentPage} / {totalPages}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Trang sau →
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -6,7 +6,7 @@ export const getAllStockAPI = async (): Promise<{
 }> => {
   const response = await APIConfig.get(`/api/stock`);
   // return response.data as Promise<{ data: IStock[] }>;
-  return response.data;
+  return response.data.data;
 };
 export const getLowStockAPI = async (): Promise<{
   data: IStock;

@@ -45,7 +45,7 @@ export const getAllDiseasesAPI = async (): Promise<{
   data: IDisease[]
 }> => {
   const response = await APIConfig.get("/api/disease")
-  return response.data
+  return response.data.data
 }
 
 export const getDiseaseByIdAPI = async (id: string): Promise<{ data: IDisease }> => {

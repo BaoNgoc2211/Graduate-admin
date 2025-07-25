@@ -1,3 +1,4 @@
+"use client";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useCreateDistributor } from "@/hooks/inventory/distributor.hooks";
@@ -40,7 +41,7 @@ export default function DistributorCreateForm({
 
   useEffect(() => {
     form.setFocus("nameCo");
-  }, []);
+  }, [form]);
 
   return (
     <DistributorFormUI

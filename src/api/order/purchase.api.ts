@@ -59,7 +59,7 @@ export const deletePurchaseOrderAPI = async (
 
 export const getSuppliersAPI = async (): Promise<{ data: ISupplier[] }> => {
   const response = await APIConfig.get(`/api/distributor`);
-  return response.data as { data: ISupplier[] };
+  return response.data.data;
 };
 
 export const getMedicinesAPI = async (
@@ -69,11 +69,11 @@ export const getMedicinesAPI = async (
   if (search) params.append("search", search);
 
   const response = await APIConfig.get(`/api/medicine?${params.toString()}`);
-  return response.data as { data: IMedicine[] };
+  return response.data.data;
 };
 export const getAllImportBatchAPI = async (): Promise<{
   data: IImportBatch[];
 }> => {
   const response = await APIConfig.get(`/api/import-batch`);
-  return response.data;
+  return response.data.data ;
 };

@@ -10,7 +10,6 @@ import {
 } from "@/api/medicine/category.api"
 import type { IMedicineCategoryPayload, IMedicineCategoryFilter } from "@/interface/medicine/category.interface"
 
-
 export const useMedicineCategories = (filter?: IMedicineCategoryFilter) => {
   return useQuery({
     queryKey: ["medicine-categories", filter],
@@ -53,6 +52,7 @@ export const useUpdateMedicineCategory = () => {
       queryClient.invalidateQueries({ queryKey: ["medicine-categories"] })
       queryClient.invalidateQueries({ queryKey: ["medicine-category", id] })
       queryClient.invalidateQueries({ queryKey: ["medicine-category-stats"] })
+
     },
     onError: (error) => {
       console.error("Lỗi cập nhật danh mục thuốc:", error)
