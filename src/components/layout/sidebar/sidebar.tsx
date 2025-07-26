@@ -66,7 +66,7 @@ const Sidebar = () => {
             { label: "Quản lý bệnh", href: "/disease", icon: BookOpen },
             {
               label: "Quản lý nhóm bệnh",
-              href: "/disease-group",
+              href: "/disease-usage",
               icon: UngroupIcon,
             },
             {

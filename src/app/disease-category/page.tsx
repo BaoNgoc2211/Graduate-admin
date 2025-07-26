@@ -1,12 +1,13 @@
 "use client";
 
-import { DiseaseUsageTable } from "@/components/disease/usage/disease-usage-table";
+import { useDiseaseCategories } from "@/hooks/disease/category.hooks";
 import { Card, CardContent } from "@/components/ui/card";
-import { useDiseaseUsageGroups } from "@/hooks/disease/usage.hook";
 import { AlertCircle } from "lucide-react";
+import { DiseaseCategoryTable } from "@/components/disease/category/disease-category-table";
 
 export default function DiseaseCategoryPage() {
-  const { data, isLoading, error } = useDiseaseUsageGroups();
+  const { data, isLoading, error } = useDiseaseCategories();
+
   if (error) {
     return (
       <div className="container mx-auto py-8">
@@ -42,7 +43,10 @@ export default function DiseaseCategoryPage() {
         </div>
 
         {/* Main Content */}
-        <DiseaseUsageTable usages={data?.data || []} isLoading={isLoading} />
+        <DiseaseCategoryTable
+          categories={data?.data || []}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );

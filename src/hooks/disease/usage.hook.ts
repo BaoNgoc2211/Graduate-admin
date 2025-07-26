@@ -1,11 +1,10 @@
 import {
-  createDiseaseCategoryAPI,
-  deleteDiseaseCategoryAPI,
-  updateDiseaseCategoryAPI,
-  getAllDiseaseCategoryAPI,
-  getByIdDiseaseCategoryAPI,
-} from "@/api/disease/category.api";
-
+  createDiseaseUsageAPI,
+  deleteDiseaseUsageAPI,
+  getAllDiseaseUsageAPI,
+  getByIdDiseaseUsageAPI,
+  updateDiseaseUsageAPI,
+} from "@/api/disease/usage.api";
 import { IDiseaseCategory } from "@/interface/disease/disease-category.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
@@ -24,77 +23,79 @@ interface UpdatePayload {
   };
 }
 
-export const useDiseaseCategories = (
+export const useDiseaseUsageGroups = (
   page: number = 1,
   pageSize: number = 5
 ) => {
   return useQuery<{ data: IDiseaseCategory[] }>({
-    queryKey: ["disease-categories"],
-    queryFn: () => getAllDiseaseCategoryAPI(page, pageSize),
+    queryKey: ["disease-usage-groups", page, pageSize],
+    queryFn: () => getAllDiseaseUsageAPI(page, pageSize),
     staleTime: 5 * 60 * 1000, // cache 5 phút
   });
 };
 
-export const useDiseaseCategoryById = () => {
+export const useDiseaseUsageGroupById = () => {
   const params = useParams<{ id: string }>();
-  const categoryId = params.id;
-  const isIdReady = !!categoryId;
+  const usageGroupId = params.id;
+  const isIdReady = !!usageGroupId;
 
   return useQuery({
-    queryKey: ["disease-category", categoryId],
-    queryFn: () => getByIdDiseaseCategoryAPI(categoryId),
+    queryKey: ["disease-usage", usageGroupId],
+    queryFn: () => getByIdDiseaseUsageAPI(usageGroupId),
     enabled: isIdReady,
   });
 };
 
-export const useCreateDiseaseCategory = () => {
+export const useCreateDiseaseUsageGroup = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: CreateCategoryPayload) =>
-      createDiseaseCategoryAPI(payload),
+      createDiseaseUsageAPI(payload),
     onSuccess: () => {
-      toast.success("Tạo danh mục thành công!");
+      toast.success("Tạo nhóm bệnh thành công!");
       queryClient.invalidateQueries({ queryKey: ["disease-categories"] });
-      router.push("/disease-category");
+      router.push("/disease-usage");
     },
     onError: () => {
-      toast.error("Tạo danh mục thất bại!");
+      toast.error("Tạo nhóm bệnh thất bại!");
     },
   });
 };
 
-export const useUpdateDiseaseCategory = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: UpdatePayload) =>
-      updateDiseaseCategoryAPI(id, data),
-    onSuccess: () => {
-      toast.success("Cập nhật danh mục thành công!");
-      queryClient.invalidateQueries({ queryKey: ["disease-categories"] });
-    },
-    onError: (error) => {
-      console.error("Lỗi cập nhật:", error);
-      toast.error("Cập nhật danh mục thất bại!");
-    },
-  });
-};
-
-export const useDeleteDiseaseCategory = () => {
+export const useUpdateDiseaseUsageGroup = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => deleteDiseaseCategoryAPI(id),
+    mutationFn: ({ id, data }: UpdatePayload) =>
+      updateDiseaseUsageAPI(id, data),
     onSuccess: () => {
-      toast.success("Xoá danh mục thành công!");
+      toast.success("Cập nhật nhóm bệnh thành công!");
       queryClient.invalidateQueries({ queryKey: ["disease-categories"] });
-      router.push("/disease-category");
+      router.push("/disease-usage");
+    },
+    onError: (error) => {
+      console.error("Lỗi cập nhật:", error);
+      toast.error("Cập nhật nhóm bệnh thất bại!");
+    },
+  });
+};
+
+export const useDeleteDiseaseUsageGroup = () => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteDiseaseUsageAPI(id),
+    onSuccess: () => {
+      toast.success("Xoá nhóm bệnh thành công!");
+      queryClient.invalidateQueries({ queryKey: ["disease-categories"] });
+      router.push("/disease-usage");
     },
     onError: () => {
-      toast.error("Xoá danh mục thất bại!");
+      toast.error("Xoá nhóm bệnh thất bại!");
     },
   });
 };
