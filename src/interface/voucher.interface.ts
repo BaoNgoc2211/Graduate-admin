@@ -1,21 +1,3 @@
-// export interface IVoucher {
-//   _id?: string;
-//   code: string;
-//   name: string;
-//   description: string;
-//   startDate: Date;
-//   endDate: Date;
-//   isActive: boolean;
-//   discountType: string;
-//   discountValue: number;
-//   minOrderValue: number;
-//   maxDiscountValue: number;
-//   usageLimit: number;
-//   usedCount: number;
-//   applyTo: string;
-//   applyToIds: string[];
-// }
-// 
 export interface IVoucher {
   _id: string
   code: string

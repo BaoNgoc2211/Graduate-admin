@@ -7,7 +7,7 @@ import {
   updateOrderStatusAPI,
   cancelOrderAPI,
   getRevenueStatsAPI,
-} from "@/api/order/order.api"
+} from "@/api/order/order-2.api"
 import type { IOrder, IOrderFilters } from "@/interface/order/order.interface"
 
 // Get all orders with filters

@@ -42,7 +42,7 @@ import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import Link from "next/link";
 import type { IPurchaseOrder } from "@/interface/order/purchase.interface";
-import { useDeletePurchaseOrder } from "@/hooks/order/purchase.hooks";
+import { useDeletePurchaseOrder } from "@/hooks/orders/purchase.hooks";
 
 interface PurchaseOrderTableProps {
   data: IPurchaseOrder[];
@@ -191,7 +191,7 @@ export function PurchaseOrderTable({
                       <TableCell className="font-medium text-green-600">
                         {formatCurrency(order.totalAmount)}
                       </TableCell>
-                    
+
                       <TableCell>
                         <Badge
                           className={`${
@@ -199,8 +199,7 @@ export function PurchaseOrderTable({
                             "bg-gray-100 text-gray-800"
                           } border-0`}
                         >
-                          {statusConfig[order.note || "Nháp"]?.label ??
-                            "Nháp"}
+                          {statusConfig[order.note || "Nháp"]?.label ?? "Nháp"}
                         </Badge>
                       </TableCell>
                       <TableCell>

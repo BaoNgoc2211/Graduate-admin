@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatRoomList } from "@/components/chat/chat-room- list";
+import { ChatRoomList } from "@/components/chat/chat-room-list";
 import { ChatWindow } from "@/components/chat/chat-window";
 import { IChatRoom } from "@/interface/chat.interface";
 import { useState } from "react";
@@ -17,10 +17,10 @@ export default function ChatPage() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-blue-900 mb-2">
-            Chat Management
+            Chat 
           </h1>
           <p className="text-gray-600">
-            Manage customer conversations and provide support
+            Quản lý các cuộc trò chuyện với khách hàng và cung cấp hỗ trợ
           </p>
         </div>
 

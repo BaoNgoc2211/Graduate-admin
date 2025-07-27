@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import type { IPurchaseOrderPayload } from "@/interface/order/purchase.interface"
-import { useCreatePurchaseOrder } from "@/hooks/order/purchase.hooks"
-import { PurchaseOrderForm } from "@/components/order/purchase/New/form"
+import type { IPurchaseOrderPayload } from "@/interface/order/purchase.interface";
+import { useCreatePurchaseOrder } from "@/hooks/orders/purchase.hooks";
+import { PurchaseOrderForm } from "@/components/order/purchase/New/form";
 
 export default function CreatePurchaseOrderPage() {
-  const createOrderMutation = useCreatePurchaseOrder()
+  const createOrderMutation = useCreatePurchaseOrder();
 
   const handleSubmit = async (data: IPurchaseOrderPayload) => {
     try {
-      await createOrderMutation.mutateAsync(data)
+      await createOrderMutation.mutateAsync(data);
     } catch (error) {
-      console.error("Error creating purchase order:", error)
+      console.error("Error creating purchase order:", error);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -25,5 +25,5 @@ export default function CreatePurchaseOrderPage() {
         />
       </div>
     </div>
-  )
+  );
 }

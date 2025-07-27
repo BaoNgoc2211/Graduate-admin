@@ -8,7 +8,7 @@ import type { IPurchaseOrderPayload } from "@/interface/order/purchase.interface
 import {
   usePurchaseOrderById,
   useUpdatePurchaseOrder,
-} from "@/hooks/order/purchase.hooks";
+} from "@/hooks/orders/purchase.hooks";
 import { PurchaseOrderForm } from "@/components/order/purchase/New/form";
 
 export default function EditPurchaseOrderPage() {
@@ -68,7 +68,7 @@ export default function EditPurchaseOrderPage() {
 
   // Check if order can be edited
   // if (order.status && order.status !== "Ghi nợ" && order.status !== "Đã thanh toán") {
-    if (order.note && order.note !== "Đã thanh toán") {
+  if (order.note && order.note !== "Đã thanh toán") {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,9 +84,7 @@ export default function EditPurchaseOrderPage() {
               Chỉ có thể chỉnh sửa đơn ở trạng thái nháp hoặc ghi nợ.
             </p>
             <Button asChild className="mt-4">
-              <Link href={`/purchase/${order._id}`}>
-                Xem chi tiết đơn hàng
-              </Link>
+              <Link href={`/purchase/${order._id}`}>Xem chi tiết đơn hàng</Link>
             </Button>
           </div>
         </div>

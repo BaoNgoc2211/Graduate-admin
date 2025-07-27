@@ -18,8 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import type { IMedicine } from "@/interface/order/purchase.interface";
-import { useImportBatch, useMedicines } from "@/hooks/order/purchase.hooks";
-
+import { useImportBatch, useMedicines } from "@/hooks/orders/purchase.hooks";
 
 interface PurchaseOrderItemRowProps {
   // control: Control<any>;
