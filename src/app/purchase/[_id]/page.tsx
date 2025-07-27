@@ -22,7 +22,7 @@ import {
   useDeletePurchaseOrder,
   useMedicines,
   usePurchaseOrderById,
-} from "@/hooks/order/purchase.hooks";
+} from "@/hooks/orders/purchase.hooks";
 import { IPurchaseOrder } from "@/interface/order/purchase.interface";
 
 export default function PurchaseOrderDetailPage() {
@@ -39,7 +39,6 @@ export default function PurchaseOrderDetailPage() {
       currency: "VND",
     }).format(amount);
   };
-
 
   const canEdit = (order: IPurchaseOrder) => {
     const note = order.note?.toLowerCase() || "";

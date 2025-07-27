@@ -1,70 +1,22 @@
-// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-// import {
-//   getUnassignedRooms,
-//   getMessages,
-//   startChat,
-//   sendMessage,
-// } from "@/api/chat.api";
-// import {
-//   IChatRoom,
-//   IMessage,
-//   IStartChatPayload,
-//   ISendMessagePayload,
-// } from "@/interface/chat.interface";
-
-// // Lấy danh sách phòng chưa gán staff
-// export const useUnassignedChatRooms = () => {
-//   return useQuery<{ data: IChatRoom[] }>({
-//     queryKey: ["chat-rooms-unassigned"],
-//     queryFn: getUnassignedRooms,
-//   });
-// };
-
-// // Lấy tin nhắn trong room
-// export const useChatMessages = (roomId: string) => {
-//   return useQuery<{ data: IMessage[] }>({
-//     queryKey: ["chat-messages", roomId],
-//     queryFn: () => getMessages(roomId),
-//     enabled: !!roomId,
-//     refetchInterval: 5000, // Optional: polling mỗi 5s
-//   });
-// };
-
-// // Bắt đầu cuộc trò chuyện (user)
-// export const useStartChat = () => {
-//   return useMutation({
-//     mutationFn: (payload: IStartChatPayload) => startChat(payload),
-//   });
-// };
-
-// // Gửi tin nhắn (admin hoặc staff)
-// export const useSendMessage = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: (payload: ISendMessagePayload) => sendMessage(payload),
-//     onSuccess: (_res, variables) => {
-//       // Refetch tin nhắn khi gửi thành công
-//       queryClient.invalidateQueries({
-//         queryKey: ["chat-messages", variables.roomId],
-//       });
-//     },
-//   });
-// };
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getUnassignedRooms,
+  getAllChatRooms,
+  getAssignedRooms,
+  assignStaffToRoom,
+  unassignStaffFromRoom,
+  closeChatRoom,
   getMessages,
-  startChat,
   sendMessage,
+  getUnreadMessages,
+  getUnreadCount,
 } from "@/api/chat.api";
 import type {
   IChatRoom,
   IMessage,
-  IStartChatPayload,
   ISendMessagePayload,
-  IStartChatResponse,
 } from "@/interface/chat.interface";
+import { toast } from "sonner";
 
 // Lấy danh sách phòng chưa gán staff
 export const useUnassignedChatRooms = () => {
@@ -75,33 +27,33 @@ export const useUnassignedChatRooms = () => {
   });
 };
 
+// Lấy tất cả phòng chat
+export const useAllChatRooms = () => {
+  return useQuery<{ data: IChatRoom[] }>({
+    queryKey: ["chat-rooms-all"],
+    queryFn: getAllChatRooms,
+    refetchInterval: 30000,
+  });
+};
+
+// Lấy phòng chat được gán cho staff hiện tại
+export const useAssignedChatRooms = () => {
+  return useQuery<{ data: IChatRoom[] }>({
+    queryKey: ["chat-rooms-assigned"],
+    queryFn: getAssignedRooms,
+    refetchInterval: 15000, // Refetch every 15 seconds
+    
+  });
+};
+
 // Lấy tin nhắn trong room
 export const useChatMessages = (roomId: string) => {
   return useQuery<{ data: IMessage[] }>({
     queryKey: ["chat-messages", roomId],
     queryFn: () => getMessages(roomId),
     enabled: !!roomId,
-    refetchInterval: 5000, // Optional: polling mỗi 5s
-  });
-};
-
-// Bắt đầu cuộc trò chuyện (user)
-export const useStartChat = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation<{ data: IStartChatResponse }, Error, IStartChatPayload>({
-    mutationFn: (payload: IStartChatPayload) => startChat(payload),
-    onSuccess: (response) => {
-      // Invalidate unassigned rooms to refresh the list
-      queryClient.invalidateQueries({
-        queryKey: ["chat-rooms-unassigned"],
-      });
-
-      // Set the new messages in cache
-      queryClient.setQueryData(["chat-messages", response.data.room._id], {
-        data: [response.data.newMessage],
-      });
-    },
+    refetchInterval: 5000, // Polling every 5s for real-time feel
+ 
   });
 };
 
@@ -117,10 +69,98 @@ export const useSendMessage = () => {
         queryKey: ["chat-messages", variables.roomId],
       });
 
-      // Also invalidate unassigned rooms to update lastMessage
+      // Also invalidate room lists to update lastMessage
       queryClient.invalidateQueries({
         queryKey: ["chat-rooms-unassigned"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["chat-rooms-assigned"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["chat-rooms-all"],
+      });
     },
+    onError: (error) => {
+      console.error("Error sending message:", error);
+    }
+  });
+};
+// Lấy số lượng tin nhắn chưa đọc theo room
+export const useUnreadCount = (roomId: string) => {
+  return useQuery<{ data: { count: number } }>({
+    queryKey: ["chat-unread-count", roomId],
+    queryFn: () => getUnreadCount(roomId),
+    enabled: !!roomId,
+    refetchInterval: 10000,
+  });
+};
+
+// Gán staff cho phòng chat
+export const useAssignStaff = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ data: IChatRoom }, Error, string>({
+    mutationFn: (roomId: string) => assignStaffToRoom(roomId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-unassigned"] });
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-assigned"] });
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-all"] });
+      
+      toast.success("Successfully assigned to chat room");
+    },
+    onError: (error) => {
+      console.error("Error assigning staff:", error);
+      toast.error("Failed to assign staff to chat room");
+    }
+  });
+};
+
+export const useUnassignStaff = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ data: IChatRoom }, Error, string>({
+    mutationFn: (roomId: string) => unassignStaffFromRoom(roomId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-unassigned"] });
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-assigned"] });
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-all"] });
+      
+      toast.success("Successfully unassigned from chat room");
+    },
+    onError: (error) => {
+      console.error("Error unassigning staff:", error);
+      toast.error("Failed to unassign staff from chat room");
+    }
+  });
+};
+
+
+// Lấy tin nhắn chưa đọc 
+export const useUnreadMessages = () => {
+  return useQuery<{ data: IMessage[] }>({
+    queryKey: ["chat-unread-messages"],
+    queryFn: getUnreadMessages,
+    refetchInterval: 10000, // Polling every 10s
+   
+  });
+};
+
+// Đóng phòng chat
+export const useCloseChatRoom = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ data: IChatRoom }, Error, string>({
+    mutationFn: (roomId: string) => closeChatRoom(roomId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-unassigned"] });
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-assigned"] });
+      queryClient.invalidateQueries({ queryKey: ["chat-rooms-all"] });
+      
+      toast.success("Chat room closed successfully");
+    },
+    onError: (error) => {
+      console.error("Error closing chat room:", error);
+      toast.error("Failed to close chat room");
+    }
   });
 };

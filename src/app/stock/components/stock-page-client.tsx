@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle, Package } from "lucide-react";
 
-import { useAllStock } from "@/hooks/order/stock.hooks";
+import { useAllStock } from "@/hooks/orders/stock.hooks";
 import type { IStockFilters } from "@/interface/order/stock.interface";
 import WarehouseLayout from "@/components/order/stock/warehouse-Layout";
 import StockTableSkeleton from "@/components/order/stock/stock-table-skeleton";
@@ -41,9 +41,7 @@ const StockPageClient: React.FC = () => {
     if (!data?.data) return [];
     return data.data.filter((s) => {
       const searchMatch =
-        s.medicine.name
-          .toLowerCase()
-          .includes(filters.search.toLowerCase()) ||
+        s.medicine.name.toLowerCase().includes(filters.search.toLowerCase()) ||
         s.medicine.code.toLowerCase().includes(filters.search.toLowerCase());
       const qtyMatch =
         s.quantity >= filters.minQty && s.quantity <= filters.maxQty;

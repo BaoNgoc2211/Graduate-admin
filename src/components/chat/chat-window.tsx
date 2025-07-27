@@ -8,13 +8,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-// import { useChatMessages, useSendMessage } from "@/hooks/chat/useChat"
-// import type { IChatRoom, IMessage } from "@/interface/chat/chat.interface"
-import { Send, MessageCircle, User, Bot, AlertCircle } from "lucide-react";
+import {
+  Send,
+  MessageCircle,
+  User,
+  Bot,
+  AlertCircle,
+  UserPlus,
+  UserMinus,
+  X,
+  CheckCircle,
+} from "lucide-react";
 import { format, isSameDay } from "date-fns";
 import { toast } from "sonner";
 import { IChatRoom, IMessage } from "@/interface/chat.interface";
-import { useChatMessages, useSendMessage } from "@/hooks/chat.hooks";
+import {
+  useChatMessages,
+  useSendMessage,
+  useAssignStaff,
+  useUnassignStaff,
+  useCloseChatRoom,
+} from "@/hooks/chat.hooks";
 
 interface ChatWindowProps {
   selectedRoom?: IChatRoom;
@@ -30,7 +44,13 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
     isLoading,
     error,
   } = useChatMessages(selectedRoom?._id || "");
+
   const sendMessageMutation = useSendMessage();
+
+  // Room management mutations
+  const assignStaffMutation = useAssignStaff();
+  const unassignStaffMutation = useUnassignStaff();
+  const closeChatRoomMutation = useCloseChatRoom();
 
   const messages = messagesResponse?.data || [];
 
@@ -48,7 +68,7 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
       await sendMessageMutation.mutateAsync({
         roomId: selectedRoom._id,
         content: message.trim(),
-        senderId: "current-staff-id", // Replace with actual staff ID
+        senderId: "current-staff-id",
       });
 
       setMessage("");
@@ -63,6 +83,25 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
+    }
+  };
+
+  // Room action handlers
+  const handleAssignStaff = () => {
+    if (selectedRoom) {
+      assignStaffMutation.mutate(selectedRoom._id);
+    }
+  };
+
+  const handleUnassignStaff = () => {
+    if (selectedRoom) {
+      unassignStaffMutation.mutate(selectedRoom._id);
+    }
+  };
+
+  const handleCloseRoom = () => {
+    if (selectedRoom) {
+      closeChatRoomMutation.mutate(selectedRoom._id);
     }
   };
 
@@ -155,10 +194,11 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
           <div className="text-center">
             <MessageCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-600 mb-2">
-              Select a Chat Room
+              Chọn một phòng chat
             </h3>
             <p className="text-gray-500">
-              Choose a conversation from the left panel to start chatting
+              Chọn một cuộc trò chuyện từ bảng điều khiển bên trái để bắt đầu
+              chat
             </p>
           </div>
         </CardContent>
@@ -204,9 +244,9 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
           <div className="text-center">
             <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-600 mb-2">
-              Failed to Load Messages
+              Không thể tải tin nhắn
             </h3>
-            <p className="text-gray-500">Please try selecting the room again</p>
+            <p className="text-gray-500">Vui lòng thử chọn lại phòng</p>
           </div>
         </CardContent>
       </Card>
@@ -221,22 +261,78 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold text-blue-900 flex items-center gap-2">
             <User className="w-5 h-5" />
-            {/* {selectedRoom.user} */}
             {typeof selectedRoom.user === "object"
               ? selectedRoom.user.email
               : selectedRoom.user}
           </CardTitle>
           <div className="flex items-center gap-2">
+            {/* Room status badges */}
             <Badge
               variant={selectedRoom.status === "open" ? "default" : "secondary"}
+              className={selectedRoom.status === "open" ? "bg-green-600" : ""}
             >
+              {selectedRoom.status === "open" ? (
+                <MessageCircle className="w-3 h-3 mr-1" />
+              ) : (
+                <CheckCircle className="w-3 h-3 mr-1" />
+              )}
               {selectedRoom.status}
             </Badge>
-            {selectedRoom.staff && (
+
+            {selectedRoom.isHandled ? (
               <Badge variant="outline" className="text-blue-600">
-                Staff: {selectedRoom.staff}
+                {selectedRoom.staff
+                  ? `Staff: ${selectedRoom.staff}`
+                  : "Assigned"}
+              </Badge>
+            ) : (
+              <Badge variant="destructive">
+                <AlertCircle className="w-3 h-3 mr-1" />
+                Chưa được gán
               </Badge>
             )}
+
+            {/* Room action buttons */}
+            <div className="flex items-center gap-1">
+
+              {!selectedRoom.isHandled && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleAssignStaff}
+                  disabled={assignStaffMutation.isPending}
+                  className="h-8 px-2"
+                >
+                  <UserPlus className="w-4 h-4 mr-1" />
+                  Gán cho tôi
+                </Button>
+              )}
+
+              {selectedRoom.isHandled && selectedRoom.status === "open" && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleUnassignStaff}
+                    disabled={unassignStaffMutation.isPending}
+                    className="h-8 px-2"
+                  >
+                    <UserMinus className="w-4 h-4 mr-1" />
+                    Bỏ gán
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleCloseRoom}
+                    disabled={closeChatRoomMutation.isPending}
+                    className="h-8 px-2 text-red-600 hover:text-red-700"
+                  >
+                    <X className="w-4 h-4 mr-1" />
+                    Đóng
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </CardHeader>
@@ -246,9 +342,9 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
           {messages.length === 0 ? (
             <div className="text-center py-8">
               <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No messages yet</p>
+              <p className="text-gray-600">Chưa có tin nhắn nào</p>
               <p className="text-sm text-gray-500 mt-1">
-                Start the conversation by sending a message
+                Bắt đầu cuộc trò chuyện bằng cách gửi tin nhắn
               </p>
             </div>
           ) : (
@@ -268,32 +364,51 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
           )}
         </ScrollArea>
 
-        <div className="border-t p-4">
-          <div className="flex gap-2">
-            <Textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
-              className="flex-1 min-h-[60px] max-h-[120px] resize-none"
-              disabled={sendMessageMutation.isPending}
-            />
-            <Button
-              onClick={handleSendMessage}
-              disabled={!message.trim() || sendMessageMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700 px-4"
-            >
-              {sendMessageMutation.isPending ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
-            </Button>
+        {/* Message input - only show if room is open and assigned */}
+        {selectedRoom.status === "open" && selectedRoom.isHandled && (
+          <div className="border-t p-4">
+            <div className="flex gap-2">
+              <Textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
+                className="flex-1 min-h-[60px] max-h-[120px] resize-none"
+                disabled={sendMessageMutation.isPending}
+              />
+              <Button
+                onClick={handleSendMessage}
+                disabled={!message.trim() || sendMessageMutation.isPending}
+                className="bg-blue-600 hover:bg-blue-700 px-4"
+              >
+                {sendMessageMutation.isPending ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Nhấn Enter để gửi, Shift + Enter để xuống dòng mới
+            </p>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Press Enter to send, Shift + Enter for new line
-          </p>
-        </div>
+        )}
+
+        {/* Info message when room is closed or unassigned */}
+        {(selectedRoom.status === "closed" || !selectedRoom.isHandled) && (
+          <div className="border-t p-4 bg-gray-50">
+            <div className="text-center text-gray-600">
+              {selectedRoom.status === "closed" ? (
+                <p className="text-sm">Phòng chat này đã được đóng.</p>
+              ) : (
+                <p className="text-sm">
+                  Phòng này chưa được gán cho bất kỳ nhân viên nào. Hãy gán bản
+                  thân để bắt đầu trả lời tin nhắn.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

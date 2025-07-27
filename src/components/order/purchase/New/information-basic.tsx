@@ -36,7 +36,7 @@ import {
   PurchaseOrderFormData,
   purchaseOrderSchema,
 } from "@/schema/order/purchase.schema";
-import { useSuppliers } from "@/hooks/order/purchase.hooks";
+import { useSuppliers } from "@/hooks/orders/purchase.hooks";
 interface PurchaseOrderFormProps {
   defaultValues?: IPurchaseOrder;
   onSubmit: (data: IPurchaseOrderPayload) => Promise<void>;

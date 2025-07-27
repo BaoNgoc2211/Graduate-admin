@@ -23,7 +23,7 @@ import { vi } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import type { IPurchaseOrderFilters } from "@/interface/order/purchase.interface";
-import { usePurchaseOrders, useSuppliers } from "@/hooks/order/purchase.hooks";
+import { usePurchaseOrders, useSuppliers } from "@/hooks/orders/purchase.hooks";
 import { PurchaseOrderTable } from "@/components/order/purchase/New/table";
 import { PurchaseStatusOptions } from "@/constants/purchase-status";
 export default function PurchaseOrderListPage() {

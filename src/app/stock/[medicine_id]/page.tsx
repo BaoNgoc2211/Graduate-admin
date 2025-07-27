@@ -11,7 +11,7 @@ import {
   Edit,
   History,
 } from "lucide-react";
-import { useByMedicineStock } from "@/hooks/order/stock.hooks";
+import { useByMedicineStock } from "@/hooks/orders/stock.hooks";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
