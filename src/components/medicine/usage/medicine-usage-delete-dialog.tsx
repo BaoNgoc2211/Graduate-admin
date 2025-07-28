@@ -13,24 +13,24 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, AlertTriangle, Trash2 } from "lucide-react"
-import type { IMedicineCategory } from "@/interface/medicine/category.interface"
 import Image from "next/image"
-import { useDeleteMedicineCategory } from "@/hooks/medicine/category.hooks"
+import { useDeleteMedicineUsage } from "@/hooks/medicine/usage.hooks"
+import { IMedicineUsage } from "@/interface/medicine/usage.interface"
 
-interface MedicineCategoryDeleteDialogProps {
+interface MedicineUsageDeleteDialogProps {
   isOpen: boolean
   onClose: () => void
-  category: IMedicineCategory | null
+  usage: IMedicineUsage | null
 }
 
-export function MedicineCategoryDeleteDialog({ isOpen, onClose, category }: MedicineCategoryDeleteDialogProps) {
-  const deleteMutation = useDeleteMedicineCategory()
+export function MedicineUsageDeleteDialog({ isOpen, onClose, usage }: MedicineUsageDeleteDialogProps) {
+  const deleteMutation = useDeleteMedicineUsage()
 
   const handleDelete = async () => {
-    if (!category?._id) return
+    if (!usage?._id) return
 
     try {
-      await deleteMutation.mutateAsync(category._id)
+      await deleteMutation.mutateAsync(usage._id)
       onClose()
     } catch (error) {
       // Error handling is done in the mutation hook
@@ -44,9 +44,9 @@ export function MedicineCategoryDeleteDialog({ isOpen, onClose, category }: Medi
     }
   }
 
-  if (!category) return null
+  if (!usage) return null
 
-  const medicineCount = category.medicineCount || category.medicine?.length || 0
+  const medicineCount = usage.medicineCount || usage.medicine?.length || 0
   const hasRelatedMedicines = medicineCount > 0
 
   return (
@@ -67,14 +67,14 @@ export function MedicineCategoryDeleteDialog({ isOpen, onClose, category }: Medi
         </AlertDialogHeader>
 
         <div className="space-y-4">
-          {/* Category Info */}
+          {/* Usage Info */}
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-start space-x-3">
-              {category.icon && (
+              {usage.icon && (
                 <div className="flex-shrink-0 w-12 h-12 bg-white rounded-lg border overflow-hidden">
                   <Image
-                    src={category.icon || "/placeholder.svg"}
-                    alt={category.name}
+                    src={usage.icon || "/placeholder.svg"}
+                    alt={usage.name}
                     className="w-full h-full object-cover"
                     width={48}
                     height={48}
@@ -86,21 +86,17 @@ export function MedicineCategoryDeleteDialog({ isOpen, onClose, category }: Medi
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                {/* <h4 className="font-medium text-gray-900 truncate">{category.name}</h4>
-                {category.description && (
-                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">{category.description}</p>
-                )} */}
                 <div className="flex items-center space-x-2 mt-2">
                   <Badge variant="secondary" className="bg-blue-50 text-blue-700">
                     {medicineCount} thuốc
                   </Badge>
                   <Badge
-                    variant={category.isActive !== false ? "default" : "secondary"}
+                    variant={usage.isActive !== false ? "default" : "secondary"}
                     className={
-                      category.isActive !== false ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"
+                      usage.isActive !== false ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"
                     }
                   >
-                    {category.isActive !== false ? "Hoạt động" : "Tạm dừng"}
+                    {usage.isActive !== false ? "Hoạt động" : "Tạm dừng"}
                   </Badge>
                 </div>
               </div>

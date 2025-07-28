@@ -131,11 +131,9 @@ export function DiseaseForm({ disease, onCancel }: DiseaseFormProps) {
         toast.success("Tạo bệnh mới thành công!");
       }
       onCancel();
-    } catch (error: any) {
-      console.error("Form submission error:", error);
+    } catch {
+      console.error("Form submission error:");
       toast.error(
-        error?.response?.data?.message ||
-          error?.message ||
           "Có lỗi xảy ra. Vui lòng thử lại."
       );
     }

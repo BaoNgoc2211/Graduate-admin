@@ -1,104 +1,3 @@
-// export interface IMedicinePayload {
-//   code: string // Mã thuốc
-//   name: string // Tên thuốc
-//   thumbnail: string // Ảnh đại diện
-//   image?: string[] // Danh sách ảnh
-//   packaging: string // Đóng gói
-//   dosageForm: string // Dạng bào chế
-//   use: string // Cách dùng
-//   dosage?: string // Liều dùng
-//   indication?: string // Công dụng
-//   adverse?: string // Tác dụng phụ
-//   contraindication?: string // Chống chỉ định
-//   precaution?: string // Thận trọng khi sử dụng
-//   ability?: string // Khả năng lái xe và vận hành máy móc
-//   pregnancy?: string // Thời kỳ mang thai và cho con bú
-//   drugInteractions?: string // Tương tác thuốc
-//   storage?: string // Bảo quản
-//   note: string // Ghi chú
-//   age_group: string // Nhóm tuổi
-//   medCategory_id: string[] // Danh mục thuốc
-//   medUsage_id: string[] // Cách sử dụng
-//   manufacturer_id: {
-//     _id: string // ID của nhà sản xuất
-//     nameCo: string // Tên công ty sản xuất
-//   }
-// }
-
-// export interface IMedicine {
-//   _id?: string
-//   code: string // Mã thuốc
-//   name: string // Tên thuốc
-//   thumbnail: string // Ảnh đại diện
-//   image?: string[] // Danh sách ảnh
-//   packaging: string // Đóng gói
-//   dosageForm: string // Dạng bào chế
-//   use: string // Cách dùng
-//   dosage?: string // Liều dùng
-//   indication?: string // Công dụng
-//   adverse?: string // Tác dụng phụ
-//   contraindication?: string // Chống chỉ định
-//   precaution?: string // Thận trọng khi sử dụng
-//   ability?: string // Khả năng lái xe và vận hành máy móc
-//   pregnancy?: string // Thời kỳ mang thai và cho con bú
-//   drugInteractions?: string // Tương tác thuốc
-//   storage?: string // Bảo quản
-//   note: string // Ghi chú
-//   age_group: string // Nhóm tuổi
-//   medCategory_id: string[] // Danh mục thuốc
-//   medUsage_id: string[] // Cách sử dụng
-//   manufacturer_id: {
-//     _id: string // ID của nhà sản xuất
-//     nameCo: string // Tên công ty sản xuất
-//   }
-// }
-
-// /**
-//  * Interface cho form data (khi tạo/cập nhật chỉ cần gửi ID)
-//  */
-// export interface IMedicineFormData {
-//   _id?: string
-//   code: string // Mã thuốc
-//   name: string // Tên thuốc
-//   thumbnail: string // Ảnh đại diện
-//   image?: string[] // Danh sách ảnh
-//   packaging: string // Đóng gói
-//   dosageForm: string // Dạng bào chế
-//   use: string // Cách dùng
-//   dosage?: string // Liều dùng
-//   indication?: string // Công dụng
-//   adverse?: string // Tác dụng phụ
-//   contraindication?: string // Chống chỉ định
-//   precaution?: string // Thận trọng khi sử dụng
-//   ability?: string // Khả năng lái xe và vận hành máy móc
-//   pregnancy?: string // Thời kỳ mang thai và cho con bú
-//   drugInteractions?: string // Tương tác thuốc
-//   storage?: string // Bảo quản
-//   note: string // Ghi chú
-//   age_group: string // Nhóm tuổi
-//   medCategory_id: string[] // Danh mục thuốc
-//   medUsage_id: string[] // Cách sử dụng
-//   manufacturer_id: {
-//     _id: string // ID của nhà sản xuất
-//     nameCo: string // Tên công ty sản xuất
-//   }
-// }
-
-// /**
-//  * Props cho component MedicineForm
-//  */
-// export interface MedicineFormProps {
-//   defaultValue?: IMedicine // nếu có thì là update, không thì là create
-//   onSuccess?: () => void // gọi lại sau khi submit thành công
-//   onCancel?: () => void // gọi khi hủy form
-// }
-
-// export interface IReview {
-//   user: string
-//   rating: number
-//   comment: string
-//   medicine_id: string
-// }
 export interface IMedicine {
   _id?: string;
   code: string; // Mã thuốc
@@ -187,6 +86,7 @@ export interface IMedicineFormData {
   };
   active: "active" | "inactive"; // Trạng thái thuốc
 }
+
 
 export interface MedicineFormProps {
   defaultValue?: IMedicine;
