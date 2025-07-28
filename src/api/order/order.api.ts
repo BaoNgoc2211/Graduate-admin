@@ -104,7 +104,7 @@
 import { IOrder, BACKEND_STATUS_MAPPING } from "@/interface/order/order.interface";
 import APIConfig from "../api.config";
 
-// ✅ Helper functions để mapping status theo backend thực tế
+// Helper functions để mapping status theo backend thực tế
 const mapBackendToFrontend = (backendStatus: string): IOrder["status"] => {
   return BACKEND_STATUS_MAPPING[backendStatus as keyof typeof BACKEND_STATUS_MAPPING] as IOrder["status"] || backendStatus as IOrder["status"];
 };
@@ -113,23 +113,23 @@ const mapFrontendToBackend = (frontendStatus: IOrder["status"]): string => {
   return BACKEND_STATUS_MAPPING[frontendStatus] || frontendStatus;
 };
 
-// ✅ Function để transform order object từ backend (handle response structure khác nhau)
+// Function để transform order object từ backend (handle response structure khác nhau)
 const transformOrderFromBackend = (order: any): IOrder => {
   return {
-    _id: order._id || order.orderId, // ✅ Backend có thể dùng orderId
+    _id: order._id || order.orderId, // Backend có thể dùng orderId
     user_id: order.user_id || {
       _id: "",
       name: "Unknown User",
       email: "",
       phone: "",
       address: ""
-    }, // ✅ Handle missing user_id
+    }, 
     orderItems: order.orderDetails || order.orderItems || [],
     totalAmount: order.totalAmount || 0,
     shippingFee: order.shippingFee || 0,
     discount: order.discount || 0,
     finalAmount: order.finalAmount || 0,
-    status: mapBackendToFrontend(order.status), // ✅ Convert backend status
+    status: mapBackendToFrontend(order.status), // Convert backend status
     paymentMethod: order.paymentMethod || "COD",
     shippingMethod: order.shippingMethod || "Standard",
     shippingAddress: order.shippingAddress || {
@@ -157,10 +157,10 @@ const transformOrderFromBackend = (order: any): IOrder => {
 export const fetchAllOrders = async (): Promise<IOrder[]> => {
   try {
     console.log("Fetching all orders...");
-    const res = await APIConfig.get("/api/order/admin"); // ✅ Sửa endpoint theo backend
+    const res = await APIConfig.get("/api/order/admin"); // Sửa endpoint theo backend
     console.log("API Response:", res.data);
     
-    // ✅ Handle response structure {message, data}
+    // Handle response structure {message, data}
     const responseData = res.data.data || res.data; // Backend có thể wrap trong data
     console.log("Response data:", responseData);
     
@@ -185,7 +185,7 @@ export const fetchOrdersByStatus = async (
   try {
     console.log("Fetching orders by status:", status);
     
-    // ✅ Chuyển đổi frontend status sang backend value theo mapping
+    // Chuyển đổi frontend status sang backend value theo mapping
     const backendStatus = mapFrontendToBackend(status as IOrder["status"]);
     console.log("Mapped status:", status, "->", backendStatus);
     
@@ -212,10 +212,10 @@ export const fetchOrdersByStatus = async (
 export const fetchOrderById = async (id: string): Promise<IOrder> => {
   try {
     console.log("Fetching order by ID:", id);
-    const res = await APIConfig.get(`/api/order/admin/orderdetail/${id}`); // ✅ Sửa endpoint
+    const res = await APIConfig.get(`/api/order/admin/${id}`); // ✅ Sửa endpoint
     console.log("Order detail response:", res.data);
     
-    // ✅ Handle response structure
+    // Handle response structure
     const orderData = res.data.data || res.data;
     
     return transformOrderFromBackend(orderData);
@@ -231,11 +231,10 @@ export const updateOrderDetailStatus = async (
   status: IOrder["status"]
 ): Promise<void> => {
   try {
-    // ✅ Chuyển đổi frontend status sang backend value
     const backendStatus = mapFrontendToBackend(status);
     console.log("Updating order detail status:", status, "->", backendStatus);
     
-    await APIConfig.put(`/api/order/admin/orderdetail/${id}`, { status: backendStatus }); // ✅ Sửa endpoint
+    await APIConfig.put(`/api/order/admin/updatestatus/${id}`, { status: backendStatus }); // ✅ Sửa endpoint
   } catch (error) {
     console.error("Error in updateOrderDetailStatus:", error);
     throw error;

@@ -13,7 +13,7 @@ import StockTableSkeleton from "@/components/order/stock/stock-table-skeleton";
 import SearchBar from "@/components/order/stock/searchbar";
 import StockTable from "@/components/order/stock/stock-table";
 import Pagination from "@/components/order/stock/pagination";
-import LowStockCard from "@/components/order/stock/low-stock-card";
+import LowStockCard from "./stock-low-card";
 
 const StockPageClient: React.FC = () => {
   /* ------------------------- local state & hooks ------------------------ */

@@ -1,103 +1,13 @@
-// "use client"
-
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-// import { Skeleton } from "@/components/ui/skeleton"
-// import { useMedicineCategoryStats } from "@/hooks/medicine/category.hooks"
-// // import { useMedicineCategoryStats } from "@/hooks/useMedicineCategory"
-// import { Package, Pill, CheckCircle, AlertCircle } from "lucide-react"
-
-// export function MedicineCategoryStats() {
-//   const { data: stats, isLoading, error } = useMedicineCategoryStats()
-
-//   if (isLoading) {
-//     return (
-//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-//         {Array.from({ length: 4 }).map((_, index) => (
-//           <Card key={index}>
-//             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//               <Skeleton className="h-4 w-24" />
-//               <Skeleton className="h-4 w-4" />
-//             </CardHeader>
-//             <CardContent>
-//               <Skeleton className="h-8 w-16 mb-1" />
-//               <Skeleton className="h-3 w-32" />
-//             </CardContent>
-//           </Card>
-//         ))}
-//       </div>
-//     )
-//   }
-
-//   if (error || !stats?.data) {
-//     return null
-//   }
-
-//   const statsData = [
-//     {
-//       title: "Tổng danh mục",
-//       value: stats.data.totalCategories,
-//       icon: Package,
-//       color: "text-blue-600",
-//       bgColor: "bg-blue-50",
-//     },
-//     {
-//       title: "Tổng thuốc",
-//       value: stats.data.totalMedicines,
-//       icon: Pill,
-//       color: "text-green-600",
-//       bgColor: "bg-green-50",
-//     },
-//     {
-//       title: "Danh mục có thuốc",
-//       value: stats.data.categoriesWithMedicines,
-//       icon: CheckCircle,
-//       color: "text-emerald-600",
-//       bgColor: "bg-emerald-50",
-//     },
-//     {
-//       title: "Danh mục trống",
-//       value: stats.data.emptyCategories,
-//       icon: AlertCircle,
-//       color: "text-amber-600",
-//       bgColor: "bg-amber-50",
-//     },
-//   ]
-
-//   return (
-//     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-//       {statsData.map((stat, index) => (
-//         <Card key={index} className="hover:shadow-md transition-shadow">
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium text-gray-600">{stat.title}</CardTitle>
-//             <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-//               <stat.icon className={`h-4 w-4 ${stat.color}`} />
-//             </div>
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-//             <p className="text-xs text-gray-500 mt-1">
-//               {index === 0 && "Tổng số danh mục thuốc"}
-//               {index === 1 && "Tổng số thuốc trong hệ thống"}
-//               {index === 2 && "Danh mục đã có thuốc"}
-//               {index === 3 && "Danh mục chưa có thuốc"}
-//             </p>
-//           </CardContent>
-//         </Card>
-//       ))}
-//     </div>
-//   )
-// }
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { FolderOpen, Pill, CheckCircle, AlertCircle, TrendingUp, Database } from "lucide-react"
-import { useMedicineCategoryStats } from "@/hooks/medicine/category.hooks"
-// import { useMedicineCategoryStats } from "@/hooks/useMedicineCategory"
+import { useMedicineUsageStatus } from "@/hooks/medicine/usage.hooks"
 
-export function MedicineCategoryStats() {
-  const { data: stats, isLoading, error } = useMedicineCategoryStats()
+export function MedicineUsageStatus() {
+  const { data: stats, isLoading, error } = useMedicineUsageStatus()
 
   if (isLoading) {
     return (

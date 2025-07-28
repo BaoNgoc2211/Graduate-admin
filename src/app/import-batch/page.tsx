@@ -66,17 +66,14 @@ export default function ImportBatchPage() {
   >();
   const itemsPerPage = 5;
 
-  // Lấy danh sách import batches từ API
   const { data: batchesData, isLoading, refetch } = useImportBatch();
-  const batches = batchesData?.data || [];
+  const batches = useMemo(() => {
+    return batchesData?.data || [];
+  }, [batchesData]);
 
-  // Hook để cập nhật trạng thái
   const updateStatusMutation = useUpdateImportBatchStatus();
-
-  // Hook để xóa import batch
   const deleteMutation = useDeleteImportBatch();
 
-  // Lọc batches theo từ khóa tìm kiếm (theo mã lô hàng và tên nhà phân phối)
   const filteredBatches = useMemo(() => {
     return batches.filter((batch) => {
       const searchLower = searchTerm.toLowerCase();
@@ -100,7 +97,6 @@ export default function ImportBatchPage() {
   const endIndex = startIndex + itemsPerPage;
   const currentBatches = filteredBatches.slice(startIndex, endIndex);
 
-  // Lấy thông tin hiển thị của trạng thái
   const getStatusInfo = (status: string) => {
     return (
       IMPORT_BATCH_STATUS.find((s) => s.value === status) ||
@@ -365,11 +361,6 @@ export default function ImportBatchPage() {
                           <div className="space-y-1">
                             <p className="text-sm">
                               <span className="font-medium">Ngày nhập:</span>{" "}
-                              {/* {format(
-                                new Date(batch.importDate),
-                                "dd/MM/yyyy",
-                                { locale: vi }
-                              )} */}
                               {batch.importDate &&
                               !isNaN(new Date(batch.importDate).getTime())
                                 ? format(
@@ -381,11 +372,6 @@ export default function ImportBatchPage() {
                             </p>
                             <p className="text-sm">
                               <span className="font-medium">Hạn sử dụng:</span>{" "}
-                              {/* {format(
-                                new Date(batch.expiryDate),
-                                "dd/MM/yyyy",
-                                { locale: vi }
-                              )} */}
                               {batch.importDate &&
                               !isNaN(new Date(batch.importDate).getTime())
                                 ? format(

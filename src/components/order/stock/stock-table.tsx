@@ -9,11 +9,14 @@ import { AlertTriangle } from "lucide-react";
 import { Eye, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-const StockTable: React.FC<{
+
+interface StockTableProps {
   stocks: IStock[];
   currentPage: number;
   itemsPerPage: number;
-}> = ({ stocks, currentPage, itemsPerPage }) => {
+}
+
+const StockTable: React.FC<StockTableProps> = ({ stocks, currentPage, itemsPerPage }) => {
   const router = useRouter();
   const start = (currentPage - 1) * itemsPerPage;
   const visible = stocks.slice(start, start + itemsPerPage);
@@ -32,6 +35,21 @@ const StockTable: React.FC<{
     return diff > 0 && diff < 60;
   };
   const isLow = (q: number) => q < 10;
+
+  const handleViewDetails = (e: React.MouseEvent, medicineId: string) => {
+    e.stopPropagation();
+    router.push(`/stock/${medicineId}`);
+    toast.info("Xem chi tiết");
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toast.info("Chỉnh sửa");
+  };
+
+  const handleRowClick = (medicineId: string) => {
+    router.push(`/stock/${medicineId}`);
+  };
 
   return (
     <div className="space-y-4">
@@ -57,19 +75,12 @@ const StockTable: React.FC<{
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {visible.map((s) => (
-                // <tr
-                //   key={s._id}
-                //   className={`group cursor-pointer hover:bg-gray-50 ${
-                //     isLow(s.quantity) ? "bg-red-50" : ""
-                //   }`}
-                //   onClick={() => toast.info(`Xem chi tiết ${s.medicine.name}`)}
-                // >
                 <tr
                   key={s._id}
                   className={`group cursor-pointer hover:bg-gray-50 ${
                     isLow(s.quantity) ? "bg-red-50" : ""
                   }`}
-                  onClick={() => router.push(`/stock/${s.medicine._id}`)}
+                  onClick={() => handleRowClick(s.medicine._id)}
                 >
                   {/* Thuốc + meta */}
                   <td className="px-6 py-4">
@@ -127,21 +138,14 @@ const StockTable: React.FC<{
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/stock/${s.medicine._id}`);
-                          toast.info("Xem chi tiết");
-                        }}
+                        onClick={(e) => handleViewDetails(e, s.medicine._id)}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toast.info("Chỉnh sửa");
-                        }}
+                        onClick={handleEdit}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -162,7 +166,7 @@ const StockTable: React.FC<{
             className={`cursor-pointer hover:shadow-md ${
               isLow(s.quantity) ? "border-red-200 bg-red-50" : ""
             }`}
-            onClick={() => toast.info(`Xem chi tiết ${s.medicine.name}`)}
+            onClick={() => handleRowClick(s.medicine._id)}
           >
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
@@ -217,20 +221,14 @@ const StockTable: React.FC<{
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toast.info("Xem chi tiết");
-                      }}
+                      onClick={(e) => handleViewDetails(e, s.medicine._id)}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toast.info("Chỉnh sửa");
-                      }}
+                      onClick={handleEdit}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -244,4 +242,5 @@ const StockTable: React.FC<{
     </div>
   );
 };
+
 export default StockTable;

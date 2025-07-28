@@ -1,8 +1,3 @@
-/**
- * Component thông tin an toàn của thuốc
- * Tách từ MedicineForm.tsx - phần safety information section
- */
-
 "use client"
 
 import type { UseFormRegister, FieldErrors } from "react-hook-form"
@@ -11,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import type { MedicineFormData } from "@/schemas/medicine.schema"
+import { MedicineFormData } from "@/schema/medicine/medicine.schema"
 
 interface MedicineSafetyInfoProps {
   register: UseFormRegister<MedicineFormData>
@@ -21,7 +16,7 @@ interface MedicineSafetyInfoProps {
   onToggle: () => void
 }
 
-export default function MedicineSafetyInfo({ register, errors, isLoading, isOpen, onToggle }: MedicineSafetyInfoProps) {
+export default function MedicineSafetyInfo({ register, isLoading, isOpen, onToggle }: MedicineSafetyInfoProps) {
   return (
     <Card className="border-gray-200">
       <Collapsible open={isOpen} onOpenChange={onToggle}>

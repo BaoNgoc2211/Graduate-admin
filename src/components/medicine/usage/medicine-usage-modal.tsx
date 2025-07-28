@@ -16,25 +16,23 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Loader2 } from "lucide-react"
-
-import type { IMedicineCategory } from "@/interface/medicine/category.interface"
-import { useCreateMedicineCategory, useUpdateMedicineCategory } from "@/hooks/medicine/category.hooks"
-import { CategoryImageUpload } from "./medicine-category-image-upload"
-import { MedicineCategoryFormData, MedicineCategorySchema } from "@/schema/medicine/category.schema"
-
-interface MedicineCategoryModalProps {
+import { IMedicineUsage } from "@/interface/medicine/usage.interface"
+import { useCreateMedicineUsage, useUpdateMedicineUsage } from "@/hooks/medicine/usage.hooks"
+import { MedicineUsageFormData, MedicineUsageSchema } from "@/schema/medicine/usage.schema"
+import { UsageImageUpload } from "./medicine-usage-image-upload"
+interface MedicineUsageModalProps {
   isOpen: boolean
   onClose: () => void
-  category?: IMedicineCategory | null
+  usage?: IMedicineUsage | null
   mode: "create" | "edit"
 }
 
-export function MedicineCategoryModal({ isOpen, onClose, category, mode }: MedicineCategoryModalProps) {
-  const createMutation = useCreateMedicineCategory()
-  const updateMutation = useUpdateMedicineCategory()
+export function MedicineUsageModal({ isOpen, onClose, usage, mode }: MedicineUsageModalProps) {
+  const createMutation = useCreateMedicineUsage()
+  const updateMutation = useUpdateMedicineUsage()
 
-  const form = useForm<MedicineCategoryFormData>({
-    resolver: zodResolver(MedicineCategorySchema),
+  const form = useForm<MedicineUsageFormData>({
+    resolver: zodResolver(MedicineUsageSchema),
     defaultValues: {
       name: "",
       icon: "",
@@ -44,11 +42,11 @@ export function MedicineCategoryModal({ isOpen, onClose, category, mode }: Medic
 
   useEffect(() => {
     if (isOpen) {
-      if (mode === "edit" && category) {
+      if (mode === "edit" && usage) {
         form.reset({
-          name: category.name || "",
-          icon: category.icon || "",
-          isActive: category.isActive !== false,
+          name: usage.name || "",
+          icon: usage.icon || "",
+          isActive: usage.isActive !== false,
         })
       } else {
         form.reset({
@@ -58,16 +56,16 @@ export function MedicineCategoryModal({ isOpen, onClose, category, mode }: Medic
         })
       }
     }
-  }, [isOpen, mode, category, form])
+  }, [isOpen, mode, usage, form])
 
   const isLoading = createMutation.isPending || updateMutation.isPending
 
-  const onSubmit = async (data: MedicineCategoryFormData) => {
+  const onSubmit = async (data: MedicineUsageFormData) => {
     try {
       if (mode === "create") {
         await createMutation.mutateAsync(data)
-      } else if (mode === "edit" && category?._id) {
-        await updateMutation.mutateAsync({ id: category._id, data })
+      } else if (mode === "edit" && usage?._id) {
+        await updateMutation.mutateAsync({ id: usage._id, data })
       }
       handleClose()
     } catch (error) {
@@ -106,7 +104,7 @@ export function MedicineCategoryModal({ isOpen, onClose, category, mode }: Medic
                 <FormItem>
                   <FormLabel>Ảnh danh mục *</FormLabel>
                   <FormControl>
-                    <CategoryImageUpload value={field.value} onChange={field.onChange} disabled={isLoading} />
+                    <UsageImageUpload value={field.value} onChange={field.onChange} disabled={isLoading} />
                   </FormControl>
                   <FormDescription>
                     Tải ảnh đại diện cho danh mục. Nên chọn ảnh vuông.

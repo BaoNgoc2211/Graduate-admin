@@ -6,18 +6,22 @@ import {
   getValidVoucherAPI,
   updateVoucherAPI,
 } from "@/api/voucher.api";
-import { ICreateVoucherPayload, IVoucher } from "@/interface/voucher.interface";
+import {
+  ICreateVoucherPayload,
+  IVoucher,
+  IVoucherResponse,
+} from "@/interface/voucher.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
 export const useVouchers = (page: number = 1, pageSize: number = 10) => {
-  return useQuery<{ data: IVoucher[] }>({
-    queryKey: ["voucher"],
+  return useQuery<IVoucherResponse>({
+    queryKey: ["voucher", page, pageSize],
     queryFn: () => getAllVoucherAPI(page, pageSize),
+    refetchOnWindowFocus: false,
   });
 };
-
 export const useVouchersValidate = () => {
   return useQuery<{ data: IVoucher[] }>({
     queryKey: ["voucher-validate"],

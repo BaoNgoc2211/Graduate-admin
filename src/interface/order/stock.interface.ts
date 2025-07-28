@@ -1,34 +1,3 @@
-// export interface IStock {
-//   _id?: string;
-//   medicine_id: string;
-//   purchaseOrder_id: string;
-//   quantity: number;
-//   packaging: string;
-//   sellingPrice: number;
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
-// export interface IStock {
-//   _id?: string
-//   medicine_id: {
-//     _id: string
-//     name: string
-//     code: string
-//     thumbnail?: string
-//     dosageForm: string
-//     manufacturer?: {
-//       name: string
-//     }
-//   }
-//   purchaseOrder_id: string
-//   quantity: number
-//   packaging: string
-//   sellingPrice: number
-//   expiryDate?: Date
-//   batchNumber?: string
-//   createdAt: Date
-//   updatedAt: Date
-// }
 export interface IStock {
   _id: string;
   medicine: {
@@ -37,6 +6,7 @@ export interface IStock {
     name: string;
     thumbnail?: string;
     dosageForm: string;
+    packaging: string
     manufacturer?: {
       _id?: string;
       nameCo?: string;

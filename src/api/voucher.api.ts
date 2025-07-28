@@ -1,15 +1,18 @@
-import { ICreateVoucherPayload, IVoucher } from "@/interface/voucher.interface";
+import {
+  ICreateVoucherPayload,
+  IVoucher,
+  IVoucherResponse,
+} from "@/interface/voucher.interface";
 import APIConfig from "./api.config";
 
 export const getAllVoucherAPI = async (
-  page: number = 1,
-  pageSize: number = 10
-): Promise<{
-  data: IVoucher[];
-}> => {
-  const response = await APIConfig.get(
-    `/api/voucher/getallvoucher?page=${page}&pageSize=${pageSize}`
+  page: number,
+  pageSize: number
+): Promise<IVoucherResponse> => {
+  const response = await APIConfig.get<{ message: string; data: IVoucherResponse }>(
+    `/api/voucher/getallvoucher?page=${page}&limit=${pageSize}`
   );
+
   return response.data.data;
 };
 

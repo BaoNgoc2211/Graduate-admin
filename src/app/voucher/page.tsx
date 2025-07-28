@@ -15,22 +15,24 @@ import VoucherOverview from "@/components/voucher/voucher-overview";
 import VoucherChart from "@/components/voucher/voucher-chart";
 import VoucherTable from "@/components/voucher/voucher-table";
 import PageHeader from "@/components/layout/page-header";
+import { IVoucher } from "@/interface/voucher.interface";
 
 export default function VoucherManagementPage() {
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const { data, isLoading, error } = useVouchers(page, pageSize);
 
-  const { data, isLoading, error } = useVouchers({});
   const [searchTerm, setSearchTerm] = useState("");
+  const vouchers: IVoucher[] = data?.data || [];
 
-  // Extract vouchers from API response
-  const vouchers = data?.data || [];
-
-  // Filter vouchers based on search term
-  const filteredVouchers = vouchers.filter(
-    (voucher) =>
-      voucher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      voucher.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredVouchers = vouchers.filter((voucher) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      voucher.name.toLowerCase().includes(searchLower) ||
+      voucher.code.toLowerCase().includes(searchLower) ||
+      voucher.description.toLowerCase().includes(searchLower)
+    );
+  })
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,13 +68,8 @@ export default function VoucherManagementPage() {
           </Alert>
         )}
 
-        {/* Overview Cards */}
         <VoucherOverview vouchers={filteredVouchers} isLoading={isLoading} />
-
-        {/* Chart Section */}
         <VoucherChart vouchers={filteredVouchers} isLoading={isLoading} />
-
-        {/* Search and Filters */}
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
