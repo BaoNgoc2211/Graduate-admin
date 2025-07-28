@@ -541,7 +541,7 @@
 // }
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Package,
   User,
@@ -580,9 +580,9 @@ import { vi } from "date-fns/locale";
 import Image from "next/image";
 import OrderStatusBadge from "./order-status-badge";
 import {
-  useOrderDetail, // ✅ Sửa: Đổi từ useOrderById thành useOrderDetail
+  useOrderDetail,
   useUpdateOrderStatus,
-} from "@/hooks/orders/order.hooks"; // ✅ Sửa: Đổi từ order.-2hooks thành order.hook
+} from "@/hooks/orders/order.hooks";
 
 interface OrderDetailDrawerProps {
   orderId: string | null;
@@ -599,13 +599,37 @@ export default function OrderDetailDrawer({
   const [newStatus, setNewStatus] = useState<IOrder["status"]>();
   const [notes, setNotes] = useState("");
 
-  const { data: order, isLoading, error } = useOrderDetail(orderId || ""); // ✅ Sửa: Đổi từ useOrderById thành useOrderDetail
+  const { data: order, isLoading, error } = useOrderDetail(orderId || "");
   const updateStatusMutation = useUpdateOrderStatus();
+
+  // 🔥 DEBUG: Log order data khi có thay đổi
+  useEffect(() => {
+    if (order) {
+      console.log("=== ORDER DETAIL DEBUG ===");
+      console.log("Full order object:", order);
+      console.log("Order user_id:", order.user_id);
+      console.log("Order user_id type:", typeof order.user_id);
+      console.log("Order orderItems:", order.orderItems);
+      console.log("Order orderItems length:", order.orderItems?.length || 0);
+      
+      if (order.user_id) {
+        console.log("User name:", order.user_id.name);
+        console.log("User email:", order.user_id.email);
+        console.log("User phone:", order.user_id.phone);
+      }
+      
+      if (order.orderItems && order.orderItems.length > 0) {
+        console.log("First order item:", order.orderItems[0]);
+        console.log("Medicine data:", order.orderItems[0]?.medicine_id);
+      }
+      console.log("=== END DEBUG ===");
+    }
+  }, [order]);
 
   const handleUpdateStatus = () => {
     if (orderId && newStatus) {
       updateStatusMutation.mutate(
-        { id: orderId, status: newStatus }, // ✅ Sửa: Đổi từ orderId thành id để match với hook
+        { id: orderId, status: newStatus },
         {
           onSuccess: () => {
             setIsEditing(false);
@@ -619,16 +643,16 @@ export default function OrderDetailDrawer({
 
   const getAvailableStatuses = (currentStatus: IOrder["status"]) => {
     const statusOrder = [
-      "Chờ xác nhận", // PENDING
-      "Chờ giao hàng", // CONFIRMED
-      "Đang giao", // DELIVERING
-      "Hoàn thành", // COMPLETED
+      "Chờ xác nhận",
+      "Chờ giao hàng",
+      "Đang giao",
+      "Hoàn thành",
     ];
     const currentIndex = statusOrder.indexOf(currentStatus);
 
     if (currentIndex === -1) return [];
 
-    return statusOrder.slice(currentIndex + 1).concat(["Đã hủy"]); // CANCELLED
+    return statusOrder.slice(currentIndex + 1).concat(["Đã hủy"]);
   };
 
   if (!isOpen || !orderId) return null;
@@ -649,6 +673,9 @@ export default function OrderDetailDrawer({
   }
 
   if (error || !order) {
+    console.error("Order loading error:", error);
+    console.log("Order data when error:", order);
+    
     return (
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent className="w-full sm:max-w-2xl">
@@ -660,12 +687,44 @@ export default function OrderDetailDrawer({
             <p className="text-gray-500 mb-4">
               {error?.message || "Có lỗi xảy ra"}
             </p>
+            <p className="text-xs text-gray-400 mb-4">
+              Order ID: {orderId}
+            </p>
             <Button onClick={onClose}>Đóng</Button>
           </div>
         </SheetContent>
       </Sheet>
     );
   }
+
+  // ✅ SAFE: Fallback values với comprehensive checking
+  const safeOrder = {
+    _id: order._id || orderId || "Unknown",
+    orderDate: order.orderDate || order.createdAt || new Date().toISOString(),
+    status: order.status || "Chờ xác nhận",
+    createdAt: order.createdAt || new Date().toISOString(),
+    updatedAt: order.updatedAt || new Date().toISOString(),
+    user_id: {
+      name: order.user_id?.name || "Chưa có thông tin",
+      email: order.user_id?.email || "",
+      phone: order.user_id?.phone || "",
+      address: order.user_id?.address || ""
+    },
+    orderItems: Array.isArray(order.orderItems) ? order.orderItems : [],
+    totalAmount: order.totalAmount || 0,
+    shippingFee: order.shippingFee || 0,
+    discount: order.discount || 0,
+    finalAmount: order.finalAmount || 0,
+    paymentMethod: order.paymentMethod || "COD",
+    shippingMethod: order.shippingMethod || "Standard",
+    shippingAddress: order.shippingAddress || {},
+    trackingNumber: order.trackingNumber,
+    estimatedDelivery: order.estimatedDelivery,
+    deliveredDate: order.deliveredDate,
+    cancelledDate: order.cancelledDate,
+    cancelReason: order.cancelReason,
+    notes: order.notes
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -674,20 +733,20 @@ export default function OrderDetailDrawer({
           <div className="flex items-center justify-between">
             <div>
               <SheetTitle className="text-xl font-bold text-blue-900">
-                Chi tiết đơn hàng #{order._id}
+                Chi tiết đơn hàng #{safeOrder._id.slice(-8)}
               </SheetTitle>
               <SheetDescription className="mt-1">
                 Đặt hàng lúc{" "}
-                {format(new Date(order.orderDate), "HH:mm dd/MM/yyyy", {
+                {format(new Date(safeOrder.orderDate), "HH:mm dd/MM/yyyy", {
                   locale: vi,
                 })}
               </SheetDescription>
             </div>
             <div className="flex items-center space-x-2">
-              <OrderStatusBadge status={order.status} />
+              <OrderStatusBadge status={safeOrder.status} />
               {!isEditing &&
-                order.status !== "Hoàn thành" && // ✅ Sửa: Đổi từ "Completed" thành "Hoàn thành"
-                order.status !== "Đã hủy" && ( // ✅ Sửa: Đổi từ "Cancelled" thành "Đã hủy"
+                safeOrder.status !== "Hoàn thành" &&
+                safeOrder.status !== "Đã hủy" && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -724,7 +783,7 @@ export default function OrderDetailDrawer({
                       <SelectValue placeholder="Chọn trạng thái mới" />
                     </SelectTrigger>
                     <SelectContent>
-                      {getAvailableStatuses(order.status).map((status) => {
+                      {getAvailableStatuses(safeOrder.status).map((status) => {
                         const statusOption = ORDER_STATUS_OPTIONS.find(
                           (opt) => opt.value === status
                         );
@@ -786,151 +845,180 @@ export default function OrderDetailDrawer({
               <div className="flex items-start space-x-4">
                 <Avatar className="h-12 w-12">
                   <AvatarFallback className="bg-blue-100 text-blue-900">
-                    {order.user_id.name.charAt(0).toUpperCase()}
+                    {safeOrder.user_id.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-2">
                   <div>
                     <p className="font-semibold text-gray-900">
-                      {order.user_id.name}
+                      {safeOrder.user_id.name}
                     </p>
-                    <p className="text-sm text-gray-600">
-                      {order.user_id.email}
-                    </p>
+                    {safeOrder.user_id.email && (
+                      <p className="text-sm text-gray-600">
+                        {safeOrder.user_id.email}
+                      </p>
+                    )}
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">Số điện thoại:</span>
-                      <p className="font-medium">{order.user_id.phone}</p>
+                  {(safeOrder.user_id.phone || safeOrder.user_id.address) && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                      {safeOrder.user_id.phone && (
+                        <div>
+                          <span className="text-gray-500">Số điện thoại:</span>
+                          <p className="font-medium">{safeOrder.user_id.phone}</p>
+                        </div>
+                      )}
+                      {safeOrder.user_id.address && (
+                        <div>
+                          <span className="text-gray-500">Địa chỉ:</span>
+                          <p className="font-medium">{safeOrder.user_id.address}</p>
+                        </div>
+                      )}
                     </div>
-                    <div>
-                      <span className="text-gray-500">Địa chỉ:</span>
-                      <p className="font-medium">{order.user_id.address}</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Shipping Information */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center text-lg">
-                <MapPin className="h-5 w-5 mr-2 text-blue-900" />
-                Thông tin giao hàng
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <span className="text-sm text-gray-500">Người nhận:</span>
-                  <p className="font-medium">{order.shippingAddress.name}</p>
+          {safeOrder.shippingAddress && Object.keys(safeOrder.shippingAddress).length > 0 && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center text-lg">
+                  <MapPin className="h-5 w-5 mr-2 text-blue-900" />
+                  Thông tin giao hàng
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {safeOrder.shippingAddress.name && (
+                    <div>
+                      <span className="text-sm text-gray-500">Người nhận:</span>
+                      <p className="font-medium">{safeOrder.shippingAddress.name}</p>
+                    </div>
+                  )}
+                  {safeOrder.shippingAddress.phone && (
+                    <div>
+                      <span className="text-sm text-gray-500">Số điện thoại:</span>
+                      <p className="font-medium">{safeOrder.shippingAddress.phone}</p>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <span className="text-sm text-gray-500">Số điện thoại:</span>
-                  <p className="font-medium">{order.shippingAddress.phone}</p>
-                </div>
-              </div>
-              <div>
-                <span className="text-sm text-gray-500">
-                  Địa chỉ giao hàng:
-                </span>
-                <p className="font-medium">
-                  {order.shippingAddress.address}, {order.shippingAddress.ward},{" "}
-                  {order.shippingAddress.district}, {order.shippingAddress.city}
-                </p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <span className="text-sm text-gray-500">
-                    Phương thức vận chuyển:
-                  </span>
-                  <p className="font-medium">{order.shippingMethod}</p>
-                </div>
-                {order.trackingNumber && (
+                {safeOrder.shippingAddress.address && (
                   <div>
-                    <span className="text-sm text-gray-500">Mã vận đơn:</span>
-                    <p className="font-medium text-blue-900">
-                      {order.trackingNumber}
+                    <span className="text-sm text-gray-500">
+                      Địa chỉ giao hàng:
+                    </span>
+                    <p className="font-medium">
+                      {safeOrder.shippingAddress.address}
+                      {safeOrder.shippingAddress.ward && `, ${safeOrder.shippingAddress.ward}`}
+                      {safeOrder.shippingAddress.district && `, ${safeOrder.shippingAddress.district}`}
+                      {safeOrder.shippingAddress.city && `, ${safeOrder.shippingAddress.city}`}
                     </p>
                   </div>
                 )}
-              </div>
-              {order.estimatedDelivery && (
-                <div>
-                  <span className="text-sm text-gray-500">
-                    Dự kiến giao hàng:
-                  </span>
-                  <p className="font-medium">
-                    {format(
-                      new Date(order.estimatedDelivery),
-                      "HH:mm dd/MM/yyyy",
-                      { locale: vi }
-                    )}
-                  </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-sm text-gray-500">
+                      Phương thức vận chuyển:
+                    </span>
+                    <p className="font-medium">{safeOrder.shippingMethod}</p>
+                  </div>
+                  {safeOrder.trackingNumber && (
+                    <div>
+                      <span className="text-sm text-gray-500">Mã vận đơn:</span>
+                      <p className="font-medium text-blue-900">
+                        {safeOrder.trackingNumber}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                {safeOrder.estimatedDelivery && (
+                  <div>
+                    <span className="text-sm text-gray-500">
+                      Dự kiến giao hàng:
+                    </span>
+                    <p className="font-medium">
+                      {format(
+                        new Date(safeOrder.estimatedDelivery),
+                        "HH:mm dd/MM/yyyy",
+                        { locale: vi }
+                      )}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Order Items */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center text-lg">
                 <Package className="h-5 w-5 mr-2 text-blue-900" />
-                Sản phẩm đã đặt ({order.orderItems.length} sản phẩm)
+                Sản phẩm đã đặt ({safeOrder.orderItems.length} sản phẩm)
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {order.orderItems.map((item, index) => (
-                  <div key={item._id}>
-                    <div className="flex items-start space-x-4">
-                      <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                        <Image
-                          src={item.medicine_id.thumbnail || "/placeholder.svg"}
-                          alt={item.medicine_id.name}
-                          className="w-full h-full object-cover"
-                          width={20}
-                          height={20}
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-semibold text-gray-900">
-                              {item.medicine_id.name}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              Mã: {item.medicine_id.code} •{" "}
-                              {item.medicine_id.dosageForm}
-                            </p>
-                            {item.note && (
-                              <p className="text-sm text-blue-600 mt-1">
-                                <FileText className="h-3 w-3 inline mr-1" />
-                                {item.note}
+              {safeOrder.orderItems.length > 0 ? (
+                <div className="space-y-4">
+                  {safeOrder.orderItems.map((item, index) => (
+                    <div key={item._id || `item-${index}`}>
+                      <div className="flex items-start space-x-4">
+                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                          {item.medicine_id?.thumbnail ? (
+                            <Image
+                              src={item.medicine_id.thumbnail}
+                              alt={item.medicine_id?.name || "Product"}
+                              className="w-full h-full object-cover"
+                              width={64}
+                              height={64}
+                            />
+                          ) : (
+                            <Package className="h-8 w-8 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h4 className="font-semibold text-gray-900">
+                                {item.medicine_id?.name || "Sản phẩm"}
+                              </h4>
+                              <p className="text-sm text-gray-600">
+                                Mã: {item.medicine_id?.code || item.medicine_id?._id || "N/A"} •{" "}
+                                {item.medicine_id?.dosageForm || "Không xác định"}
                               </p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <p className="font-semibold text-gray-900">
-                              {item.totalAmount.toLocaleString("vi-VN")}đ
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {item.price.toLocaleString("vi-VN")}đ ×{" "}
-                              {item.quantity}
-                            </p>
+                              {item.note && (
+                                <p className="text-sm text-blue-600 mt-1">
+                                  <FileText className="h-3 w-3 inline mr-1" />
+                                  {item.note}
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <p className="font-semibold text-gray-900">
+                                {(item.totalAmount || 0).toLocaleString("vi-VN")}đ
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {(item.price || 0).toLocaleString("vi-VN")}đ ×{" "}
+                                {item.quantity || 0}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
+                      {index < safeOrder.orderItems.length - 1 && (
+                        <Separator className="mt-4" />
+                      )}
                     </div>
-                    {index < order.orderItems.length - 1 && (
-                      <Separator className="mt-4" />
-                    )}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">Chưa có thông tin sản phẩm</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -947,20 +1035,22 @@ export default function OrderDetailDrawer({
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tạm tính:</span>
                   <span className="font-medium">
-                    {order.totalAmount.toLocaleString("vi-VN")}đ
+                    {safeOrder.totalAmount.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Phí vận chuyển:</span>
-                  <span className="font-medium">
-                    {order.shippingFee.toLocaleString("vi-VN")}đ
-                  </span>
-                </div>
-                {order.discount > 0 && (
+                {safeOrder.shippingFee > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Phí vận chuyển:</span>
+                    <span className="font-medium">
+                      {safeOrder.shippingFee.toLocaleString("vi-VN")}đ
+                    </span>
+                  </div>
+                )}
+                {safeOrder.discount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Giảm giá:</span>
                     <span className="font-medium">
-                      -{order.discount.toLocaleString("vi-VN")}đ
+                      -{safeOrder.discount.toLocaleString("vi-VN")}đ
                     </span>
                   </div>
                 )}
@@ -968,14 +1058,14 @@ export default function OrderDetailDrawer({
                 <div className="flex justify-between text-lg font-bold">
                   <span>Tổng cộng:</span>
                   <span className="text-blue-900">
-                    {order.finalAmount.toLocaleString("vi-VN")}đ
+                    {safeOrder.finalAmount.toLocaleString("vi-VN")}đ
                   </span>
                 </div>
                 <div className="mt-4">
                   <span className="text-sm text-gray-500">
                     Phương thức thanh toán:
                   </span>
-                  <p className="font-medium">{order.paymentMethod}</p>
+                  <p className="font-medium">{safeOrder.paymentMethod}</p>
                 </div>
               </div>
             </CardContent>
@@ -996,20 +1086,20 @@ export default function OrderDetailDrawer({
                   <div>
                     <p className="font-medium">Đơn hàng được tạo</p>
                     <p className="text-sm text-gray-600">
-                      {format(new Date(order.createdAt), "HH:mm dd/MM/yyyy", {
+                      {format(new Date(safeOrder.createdAt), "HH:mm dd/MM/yyyy", {
                         locale: vi,
                       })}
                     </p>
                   </div>
                 </div>
 
-                {order.status !== "Chờ xác nhận" && ( // ✅ Sửa: Đổi từ "Pending Confirmation" thành "Chờ xác nhận"
+                {safeOrder.status !== "Chờ xác nhận" && (
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-blue-900 rounded-full mt-2"></div>
                     <div>
                       <p className="font-medium">Đơn hàng được cập nhật</p>
                       <p className="text-sm text-gray-600">
-                        {format(new Date(order.updatedAt), "HH:mm dd/MM/yyyy", {
+                        {format(new Date(safeOrder.updatedAt), "HH:mm dd/MM/yyyy", {
                           locale: vi,
                         })}
                       </p>
@@ -1017,7 +1107,7 @@ export default function OrderDetailDrawer({
                   </div>
                 )}
 
-                {order.deliveredDate && (
+                {safeOrder.deliveredDate && (
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
                     <div>
@@ -1026,7 +1116,7 @@ export default function OrderDetailDrawer({
                       </p>
                       <p className="text-sm text-gray-600">
                         {format(
-                          new Date(order.deliveredDate),
+                          new Date(safeOrder.deliveredDate),
                           "HH:mm dd/MM/yyyy",
                           { locale: vi }
                         )}
@@ -1035,7 +1125,7 @@ export default function OrderDetailDrawer({
                   </div>
                 )}
 
-                {order.cancelledDate && (
+                {safeOrder.cancelledDate && (
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-red-600 rounded-full mt-2"></div>
                     <div>
@@ -1044,14 +1134,14 @@ export default function OrderDetailDrawer({
                       </p>
                       <p className="text-sm text-gray-600">
                         {format(
-                          new Date(order.cancelledDate),
+                          new Date(safeOrder.cancelledDate),
                           "HH:mm dd/MM/yyyy",
                           { locale: vi }
                         )}
                       </p>
-                      {order.cancelReason && (
+                      {safeOrder.cancelReason && (
                         <p className="text-sm text-red-600 mt-1">
-                          Lý do: {order.cancelReason}
+                          Lý do: {safeOrder.cancelReason}
                         </p>
                       )}
                     </div>
@@ -1062,7 +1152,7 @@ export default function OrderDetailDrawer({
           </Card>
 
           {/* Notes */}
-          {order.notes && (
+          {safeOrder.notes && (
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center text-lg">
@@ -1071,7 +1161,28 @@ export default function OrderDetailDrawer({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700">{order.notes}</p>
+                <p className="text-gray-700">{safeOrder.notes}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Debug Info (remove in production) */}
+          {process.env.NODE_ENV === 'development' && (
+            <Card className="border-red-200 bg-red-50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-red-900">
+                  Debug Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xs text-red-800 space-y-1">
+                  <p><strong>Order ID:</strong> {orderId}</p>
+                  <p><strong>Has Order:</strong> {order ? 'Yes' : 'No'}</p>
+                  <p><strong>Order Items Count:</strong> {safeOrder.orderItems.length}</p>
+                  <p><strong>User Name:</strong> {safeOrder.user_id.name}</p>
+                  <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
+                  <p><strong>Error:</strong> {error ? error.message : 'None'}</p>
+                </div>
               </CardContent>
             </Card>
           )}

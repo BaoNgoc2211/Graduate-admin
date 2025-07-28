@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useMedicines } from "@/hooks/medicine/medicine.hooks";
 import MedicineForm from "@/components/medicine/medicine/medicine-form/MedicineForm";
 import { useEffect, useState } from "react";
+import { IMedicine } from "@/interface/medicine/medicine.interface";
 
 export default function EditMedicinePage() {
   const router = useRouter();
@@ -17,15 +18,12 @@ export default function EditMedicinePage() {
   const { data: medicineData, isLoading, error } = useMedicine(id);
   const [processedData, setProcessedData] = useState<IMedicine | null>(null);
 
-  // Process data to fix format issues
   useEffect(() => {
     if (medicineData?.data) {
       const medicine = medicineData.data;
       
-      // Process the data to ensure correct format
       const processed: IMedicine = {
         ...medicine,
-        // Fix age_group - convert array to string if needed
         age_group: Array.isArray(medicine.age_group) 
           ? medicine.age_group[0] || "Tất cả" 
           : medicine.age_group || "Tất cả",
@@ -261,87 +259,5 @@ function EditMedicinePageSkeleton() {
   );
 }
 
-// ========================================
-// Alternative: Update schema to handle both string and array
-// ========================================
 
-// schema/medicine/medicine.schema.ts - Updated version
-import { z } from "zod";
-import { IMedicine } from "@/interface/medicine/medicine.interface";
-
-export const medicineSchema = z.object({
-  code: z
-    .string()
-    .min(1, "Mã thuốc không được để trống")
-    .max(50, "Mã thuốc không được quá 50 ký tự")
-    .trim(),
-  name: z
-    .string()
-    .min(1, "Tên thuốc không được để trống")
-    .min(2, "Tên thuốc phải có ít nhất 2 ký tự")
-    .max(100, "Tên thuốc không được quá 100 ký tự")
-    .trim(),
-  thumbnail: z.string().url("Đường dẫn ảnh không hợp lệ").optional().or(z.literal("")),
-  image: z.array(z.string().url()).optional(),
-  packaging: z.string().min(1, "Đóng gói không được để trống").trim(),
-  dosageForm: z.string().min(1, "Dạng bào chế không được để trống").trim(),
-  use: z.string().min(1, "Cách dùng không được để trống").trim(),
-  dosage: z.string().optional(),
-  indication: z.string().optional(),
-  adverse: z.string().default("Chưa có thông tin về tác dụng phụ").optional(),
-  contraindication: z
-    .string()
-    .default("Chưa có thông tin về chống chỉ định")
-    .optional(),
-  precaution: z.string().optional(),
-  ability: z
-    .string()
-    .default("Chưa có thông tin về khả năng lái xe và vận hành máy móc")
-    .optional(),
-  pregnancy: z
-    .string()
-    .default("Chưa có thông tin về thời kỳ mang thai và cho con bú")
-    .optional(),
-  drugInteractions: z
-    .string()
-    .default("Chưa có thông tin về tương tác thuốc")
-    .optional(),
-  storage: z.string().max(500, "Bảo quản không được quá 500 ký tự").optional(),
-  note: z.string().max(500, "Ghi chú không được quá 500 ký tự").optional(),
-  
-  // Handle age_group as both string and array, convert to string
-  age_group: z
-    .union([
-      z.string(),
-      z.array(z.string()).transform(arr => arr[0] || "Tất cả")
-    ])
-    .default("Tất cả"),
-    
-  medCategory_id: z
-    .array(
-      z.string()
-        .min(1, "ID danh mục thuốc không hợp lệ")
-        .refine((val) => val.trim().length > 0, "ID danh mục thuốc không được để trống")
-    )
-    .min(1, "Phải chọn ít nhất một danh mục thuốc"),
-    
-  medUsage_id: z
-    .array(
-      z.string()
-        .min(1, "ID cách sử dụng thuốc không hợp lệ")
-        .refine((val) => val.trim().length > 0, "ID cách sử dụng thuốc không được để trống")
-    )
-    .min(1, "Phải chọn ít nhất một cách sử dụng thuốc"),
-    
-  manufacturer_id: z.object({
-    _id: z.string().min(1, "ID nhà sản xuất không được để trống"),
-    nameCo: z
-      .string()
-      .min(1, "Tên công ty sản xuất không được để trống")
-      .max(100, "Tên công ty sản xuất không được quá 100 ký tự")
-      .trim(),
-  }),
-});
-
-export type MedicineFormData = z.infer<typeof medicineSchema>;
 

@@ -1,110 +1,63 @@
-//#region version 1
-// import { IOrder } from "@/interface/order/order.interface";
-// import APIConfig from "../api.config";
-
-// // Lấy tất cả đơn hàng (có thể truyền filter nếu muốn sau này)
-// export const fetchAllOrders = async (): Promise<IOrder[]> => {
-//   const res = await APIConfig.get("/api/order");
-//   return res.data;
-// };
-
-// // Lọc đơn hàng theo trạng thái
-// export const fetchOrdersByStatus = async (
-//   status: string
-// ): Promise<IOrder[]> => {
-//   const res = await APIConfig.get(`/api/order/status/${status}`);
-//   return res.data;
-// };
-
-// // Xem chi tiết đơn hàng
-// export const fetchOrderById = async (id: string): Promise<IOrder> => {
-//   const res = await APIConfig.get(`/api/order/orderdetail/${id}`);
-//   return res.data;
-// };
-
-// // Cập nhật trạng thái đơn hàng (order chi tiết)
-// export const updateOrderDetailStatus = async (
-//   id: string,
-//   status: IOrder["status"]
-// ): Promise<void> => {
-//   await APIConfig.put(`/api/order/orderdetail/${id}`, { status });
-// };
-
-// // Cập nhật trạng thái đơn hàng tổng
-// export const updateOrderStatus = async (
-//   id: string,
-//   status: IOrder["status"]
-// ): Promise<void> => {
-//   await APIConfig.put(`/api/order/updatestatus/${id}`, { status });
-// };
-//#endregion
-//#region version 3
-// import { IOrder } from "@/interface/order/order.interface";
-// import APIConfig from "../api.config";
-
-// // Lấy tất cả đơn hàng (có thể truyền filter nếu muốn sau này)
-// export const fetchAllOrders = async (): Promise<IOrder[]> => {
-//   const res = await APIConfig.get("/api/order");
-//   return res.data;
-// };
-
-// // Lọc đơn hàng theo trạng thái
-// export const fetchOrdersByStatus = async (
-//   status: string
-// ): Promise<IOrder[]> => {
-//   const res = await APIConfig.get(`/api/order/status/${status}`);
-//   return res.data;
-// };
-
-// // Xem chi tiết đơn hàng
-// export const fetchOrderById = async (id: string): Promise<IOrder> => {
-//   const res = await APIConfig.get(`/api/order/orderdetail/${id}`);
-//   return res.data;
-// };
-
-// // Cập nhật trạng thái đơn hàng (order chi tiết)
-// export const updateOrderDetailStatus = async (
-//   id: string,
-//   status: IOrder["status"]
-// ): Promise<void> => {
-//   await APIConfig.put(`/api/order/orderdetail/${id}`, { status });
-// };
-
-// // Cập nhật trạng thái đơn hàng tổng
-// export const updateOrderStatus = async (
-//   id: string,
-//   status: IOrder["status"]
-// ): Promise<void> => {
-//   await APIConfig.put(`/api/order/updatestatus/${id}`, { status });
-// };
-
-// // Hủy đơn hàng với lý do
-// export const cancelOrder = async (
-//   id: string,
-//   reason: string
-// ): Promise<void> => {
-//   await APIConfig.put(`/api/order/cancel/${id}`, {
-//     status: "Cancelled",
-//     cancelReason: reason
-//   });
-// };
-
-// // Lấy thống kê đơn hàng (nếu backend hỗ trợ)
-// export const fetchOrderStats = async () => {
-//   try {
-//     const res = await APIConfig.get("/api/order/stats");
-//     return res.data;
-//   } catch ( error ) {
-//     console.error("Lỗi khi lấy thống kê đơn hàng:", error);
-//     // Nếu API không hỗ trợ, trả về null để tính toán ở client
-//     return null;
-//   }
-// };
-//#endregion
-import { IOrder, BACKEND_STATUS_MAPPING } from "@/interface/order/order.interface";
+import { IOrder, IOrderItem, BACKEND_STATUS_MAPPING } from "@/interface/order/order.interface";
 import APIConfig from "../api.config";
 
-// Helper functions để mapping status theo backend thực tế
+interface BackendOrderData {
+  _id: string;
+  orderId?: string;
+  user_id: string;
+  totalAmount?: number;
+  shippingFee?: number;
+  discount?: number;
+  finalAmount?: number;
+  status: string;
+  paymentMethod?: string;
+  shippingMethod?: string;
+  shippingAddress?: {
+    name?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    district?: string;
+    ward?: string;
+  };
+  orderDate?: string;
+  estimatedDelivery?: string;
+  deliveredDate?: string;
+  cancelledDate?: string;
+  cancelReason?: string;
+  trackingNumber?: string;
+  isReviewed?: boolean;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  orderDetail?: string;
+}
+
+interface BackendOrderItem {
+  medicine_id: string;
+  stock_id: string;
+  quantity: number;
+  price: number;
+  totalAmount: number;
+  name?: string;
+  thumbnail?: string;
+  note?: string;
+}
+
+interface BackendOrderDetail {
+  _id: string;
+  order_items: BackendOrderItem[];
+  totalOrder: number;
+}
+
+interface BackendUser {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+}
+
 const mapBackendToFrontend = (backendStatus: string): IOrder["status"] => {
   return BACKEND_STATUS_MAPPING[backendStatus as keyof typeof BACKEND_STATUS_MAPPING] as IOrder["status"] || backendStatus as IOrder["status"];
 };
@@ -113,32 +66,31 @@ const mapFrontendToBackend = (frontendStatus: IOrder["status"]): string => {
   return BACKEND_STATUS_MAPPING[frontendStatus] || frontendStatus;
 };
 
-// Function để transform order object từ backend (handle response structure khác nhau)
-const transformOrderFromBackend = (order: any): IOrder => {
+const transformOrderFromBackend = (order: BackendOrderData): IOrder => {
   return {
-    _id: order._id || order.orderId, // Backend có thể dùng orderId
-    user_id: order.user_id || {
+    _id: order._id || order.orderId || "",
+    user_id: {
       _id: "",
-      name: "Unknown User",
+      name: "Chưa có thông tin",
       email: "",
       phone: "",
       address: ""
     }, 
-    orderItems: order.orderDetails || order.orderItems || [],
+    orderItems: [], 
     totalAmount: order.totalAmount || 0,
     shippingFee: order.shippingFee || 0,
     discount: order.discount || 0,
     finalAmount: order.finalAmount || 0,
-    status: mapBackendToFrontend(order.status), // Convert backend status
+    status: mapBackendToFrontend(order.status),
     paymentMethod: order.paymentMethod || "COD",
     shippingMethod: order.shippingMethod || "Standard",
-    shippingAddress: order.shippingAddress || {
-      name: "",
-      phone: "",
-      address: "",
-      city: "",
-      district: "",
-      ward: ""
+    shippingAddress: {
+      name: order.shippingAddress?.name || "",
+      phone: order.shippingAddress?.phone || "",
+      address: order.shippingAddress?.address || "",
+      city: order.shippingAddress?.city || "",
+      district: order.shippingAddress?.district || "",
+      ward: order.shippingAddress?.ward || ""
     },
     orderDate: order.orderDate || order.createdAt || new Date().toISOString(),
     estimatedDelivery: order.estimatedDelivery,
@@ -153,21 +105,49 @@ const transformOrderFromBackend = (order: any): IOrder => {
   };
 };
 
-// Lấy tất cả đơn hàng (có thể truyền filter nếu muốn sau này)
+const fetchUserInfo = async (userId: string): Promise<BackendUser> => {
+  try {
+    const userRes = await APIConfig.get(`/api/user/${userId}`);
+    return userRes.data.data || {
+      _id: userId,
+      name: "Chưa có thông tin",
+      email: "",
+      phone: "",
+      address: ""
+    };
+  } catch (error) {
+    console.error("Error fetching user info for user:", userId, error);
+    return {
+      _id: userId,
+      name: "Chưa có thông tin",
+      email: "",
+      phone: "",
+      address: ""
+    };
+  }
+};
+
 export const fetchAllOrders = async (): Promise<IOrder[]> => {
   try {
     console.log("Fetching all orders...");
-    const res = await APIConfig.get("/api/order/admin"); // Sửa endpoint theo backend
+    const res = await APIConfig.get("/api/order/admin");
     console.log("API Response:", res.data);
     
-    // Handle response structure {message, data}
-    const responseData = res.data.data || res.data; // Backend có thể wrap trong data
+    const responseData = res.data.data || res.data;
     console.log("Response data:", responseData);
     
     if (Array.isArray(responseData)) {
-      const transformedData = responseData.map(transformOrderFromBackend);
-      console.log("Transformed data sample:", transformedData[0]);
-      return transformedData;
+      const ordersWithUserInfo = await Promise.all(
+        responseData.map(async (order: BackendOrderData) => {
+          const userInfo = await fetchUserInfo(order.user_id);
+          const transformedOrder = transformOrderFromBackend(order);
+          transformedOrder.user_id = userInfo;
+          return transformedOrder;
+        })
+      );
+      
+      console.log("Transformed orders with user info:", ordersWithUserInfo[0]);
+      return ordersWithUserInfo;
     }
     
     console.warn("API response data is not an array:", responseData);
@@ -179,27 +159,29 @@ export const fetchAllOrders = async (): Promise<IOrder[]> => {
 };
 
 // Lọc đơn hàng theo trạng thái
-export const fetchOrdersByStatus = async (
-  status: string
-): Promise<IOrder[]> => {
+export const fetchOrdersByStatus = async (status: string): Promise<IOrder[]> => {
   try {
     console.log("Fetching orders by status:", status);
     
-    // Chuyển đổi frontend status sang backend value theo mapping
     const backendStatus = mapFrontendToBackend(status as IOrder["status"]);
     console.log("Mapped status:", status, "->", backendStatus);
     
-    // ✅ Sử dụng đúng endpoint admin và backend status
     const res = await APIConfig.get(`/api/order/admin/status/${backendStatus}`);
     console.log("API Response for status", status, ":", res.data);
     
-    // ✅ Handle response structure {message, data}
     const responseData = res.data.data || res.data;
     
     if (Array.isArray(responseData)) {
-      const transformedData = responseData.map(transformOrderFromBackend);
-      console.log("Transformed orders by status:", transformedData);
-      return transformedData;
+      const ordersWithUserInfo = await Promise.all(
+        responseData.map(async (order: BackendOrderData) => {
+          const userInfo = await fetchUserInfo(order.user_id);
+          const transformedOrder = transformOrderFromBackend(order);
+          transformedOrder.user_id = userInfo;
+          return transformedOrder;
+        })
+      );
+      
+      return ordersWithUserInfo;
     }
     return [];
   } catch (error) {
@@ -208,54 +190,134 @@ export const fetchOrdersByStatus = async (
   }
 };
 
-// Xem chi tiết đơn hàng
+// Transform backend order item to frontend format
+const transformOrderItem = (item: BackendOrderItem, index: number): IOrderItem => {
+  return {
+    _id: `${item.medicine_id}_${item.stock_id}_${index}`, // Generate unique ID
+    medicine_id: {
+      _id: item.medicine_id,
+      name: item.name || "Sản phẩm",
+      code: item.medicine_id, 
+      thumbnail: item.thumbnail || "",
+      dosageForm: "Viên" 
+    },
+    stock_id: {
+      _id: item.stock_id,
+      sellingPrice: item.price || 0
+    },
+    quantity: item.quantity || 0,
+    price: item.price || 0,
+    totalAmount: item.totalAmount || 0,
+    note: item.note || ""
+  };
+};
+
+// Xem chi tiết đơn hàng với order details
 export const fetchOrderById = async (id: string): Promise<IOrder> => {
   try {
+    console.log("=== FETCH ORDER BY ID ===");
     console.log("Fetching order by ID:", id);
-    const res = await APIConfig.get(`/api/order/admin/${id}`); // ✅ Sửa endpoint
-    console.log("Order detail response:", res.data);
     
-    // Handle response structure
-    const orderData = res.data.data || res.data;
+    // Step 1: Fetch basic order info
+    const orderRes = await APIConfig.get(`/api/order/admin`);
+    console.log("All orders response:", orderRes.data);
     
-    return transformOrderFromBackend(orderData);
+    const allOrders = orderRes.data.data || orderRes.data;
+    const orderData = Array.isArray(allOrders) 
+      ? allOrders.find((order: BackendOrderData) => order._id === id)
+      : null;
+    
+    if (!orderData) {
+      throw new Error(`Order with ID ${id} not found`);
+    }
+    
+    console.log("Found order data:", orderData);
+    const transformedOrder = transformOrderFromBackend(orderData);
+    
+    // Step 2: Fetch user info
+    try {
+      console.log("Fetching user info for user_id:", orderData.user_id);
+      const userInfo = await fetchUserInfo(orderData.user_id);
+      console.log("User info response:", userInfo);
+      
+      transformedOrder.user_id = userInfo;
+    } catch (userError) {
+      console.error("Error fetching user info:", userError);
+      transformedOrder.user_id = {
+        _id: orderData.user_id,
+        name: "Chưa có thông tin",
+        email: "",
+        phone: "",
+        address: ""
+      };
+    }
+    
+    // Step 3: Fetch order details using orderDetail field
+    try {
+      const orderDetailId = orderData.orderDetail || id;
+      console.log("Fetching order detail for ID:", orderDetailId);
+      
+      const detailRes = await APIConfig.get(`/api/order/orderdetail/${orderDetailId}`);
+      console.log("Order detail response:", detailRes.data);
+      
+      const detailData: BackendOrderDetail = detailRes.data.data;
+      if (detailData && detailData.order_items && Array.isArray(detailData.order_items)) {
+        console.log("Processing order items:", detailData.order_items);
+        
+        // Transform order items to match interface
+        transformedOrder.orderItems = detailData.order_items.map((item: BackendOrderItem, index: number) => {
+          console.log(`Processing item ${index}:`, item);
+          return transformOrderItem(item, index);
+        });
+        
+        // Update total amounts from detail
+        transformedOrder.totalAmount = detailData.totalOrder || transformedOrder.totalAmount;
+        transformedOrder.finalAmount = detailData.totalOrder || transformedOrder.finalAmount;
+        
+        console.log("Transformed order items:", transformedOrder.orderItems);
+      } else {
+        console.warn("No order items found in detail response");
+        transformedOrder.orderItems = [];
+      }
+    } catch (detailError) {
+      console.error("Error fetching order detail:", detailError);
+      transformedOrder.orderItems = [];
+    }
+    
+    console.log("Final transformed order:", transformedOrder);
+    console.log("=== END FETCH ORDER BY ID ===");
+    
+    return transformedOrder;
   } catch (error) {
     console.error("Error in fetchOrderById:", error);
     throw error;
   }
 };
 
-// Cập nhật trạng thái đơn hàng (order chi tiết)
-export const updateOrderDetailStatus = async (
-  id: string,
-  status: IOrder["status"]
-): Promise<void> => {
-  try {
-    const backendStatus = mapFrontendToBackend(status);
-    console.log("Updating order detail status:", status, "->", backendStatus);
-    
-    await APIConfig.put(`/api/order/admin/updatestatus/${id}`, { status: backendStatus }); // ✅ Sửa endpoint
-  } catch (error) {
-    console.error("Error in updateOrderDetailStatus:", error);
-    throw error;
-  }
-};
-
-// Cập nhật trạng thái đơn hàng tổng
+// Cập nhật trạng thái đơn hàng
 export const updateOrderStatus = async (
   id: string,
   status: IOrder["status"]
 ): Promise<void> => {
   try {
-    // ✅ Chuyển đổi frontend status sang backend value
     const backendStatus = mapFrontendToBackend(status);
     console.log("Updating order status:", status, "->", backendStatus);
     
-    await APIConfig.put(`/api/order/admin/updatestatus/${id}`, { status: backendStatus }); // ✅ Sửa endpoint
+    await APIConfig.put(`/api/order/admin/updatestatus/${id}`, { 
+      status: backendStatus 
+    });
   } catch (error) {
     console.error("Error in updateOrderStatus:", error);
     throw error;
   }
+};
+
+// Cập nhật trạng thái đơn hàng chi tiết (alias)
+export const updateOrderDetailStatus = async (
+  id: string,
+  status: IOrder["status"]
+): Promise<void> => {
+  return updateOrderStatus(id, status);
 };
 
 // Hủy đơn hàng với lý do
@@ -266,8 +328,8 @@ export const cancelOrder = async (
   try {
     console.log("Cancelling order:", id, "with reason:", reason);
     
-    await APIConfig.put(`/api/order/admin/cancel/${id}`, { // ✅ Sửa endpoint
-      status: "huỷ", // ✅ Sử dụng backend value thực tế
+    await APIConfig.put(`/api/order/admin/cancel/${id}`, {
+      status: "huỷ",
       cancelReason: reason 
     });
   } catch (error) {
@@ -276,13 +338,8 @@ export const cancelOrder = async (
   }
 };
 
-// Lấy thống kê đơn hàng (nếu backend hỗ trợ)
+// Lấy thống kê đơn hàng
 export const fetchOrderStats = async () => {
-  try {
-    const res = await APIConfig.get("/api/order/stats");
-    return res.data;
-  } catch (error) {
-    // Nếu API không hỗ trợ, trả về null để tính toán ở client
-    return null;
-  }
+  const res = await APIConfig.get("/api/order/stats");
+  return res.data;
 };

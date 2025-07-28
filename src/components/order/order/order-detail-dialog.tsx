@@ -24,8 +24,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useOrderById } from "@/hooks/orders/order.-2hooks";
 import { ORDER_STATUSES } from "@/interface/order/order-management.interface";
 import Image from "next/image";
-// import { useOrderById } from "@/hooks/useOrderManagement"
-// import { ORDER_STATUSES } from "@/interface/order/order-management.interface"
 
 interface OrderDetailsDialogProps {
   orderId: string | null;

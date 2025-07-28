@@ -5,8 +5,6 @@ import { ArrowLeft, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MedicineForm from "@/components/medicine/medicine/medicine-form/MedicineForm";
-// import MedicineForm from "@/components/medicine/medicine/medicine-form";
-// import MedicineForm from "@/components/medicine/MedicineForm"
 
 export default function CreateMedicinePage() {
   const router = useRouter();

@@ -21,13 +21,6 @@ export interface IInfo {
   point?: number;
   birthday?: Date;
   address?: string;
-  // address?: {
-  //   provinceId: string;
-  //   provinceName: string;
-  //   wardId: string;
-  //   wardName: string;
-  //   street?: string;
-  // };
 }
 export interface ICheckAuth {
   message: string;
