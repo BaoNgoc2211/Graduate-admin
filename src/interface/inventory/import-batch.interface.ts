@@ -18,9 +18,6 @@ export interface IImportBatch {
   status: "expired" | "out_of_stock" | "discontinued" | "in_stock" // Trạng thái
 }
 
-/**
- * Interface cho form data (khi tạo/cập nhật chỉ cần gửi ID)
- */
 export interface IImportBatchFormData {
   _id?: string
   batchNumber: string
@@ -31,18 +28,12 @@ export interface IImportBatchFormData {
   status: "expired" | "out_of_stock" | "discontinued" | "in_stock"
 }
 
-/**
- * Props cho component ImportBatchForm
- */
 export interface ImportBatchFormProps {
   defaultValue?: IImportBatch // nếu có thì là update, không thì là create
   onSuccess?: () => void // gọi lại sau khi submit thành công
   onCancel?: () => void // gọi khi hủy form
 }
 
-/**
- * Status options cho dropdown
- */
 export const IMPORT_BATCH_STATUS = [
   { value: "in_stock", label: "Còn hàng", color: "bg-green-100 text-green-800" },
   { value: "out_of_stock", label: "Hết hàng", color: "bg-red-100 text-red-800" },

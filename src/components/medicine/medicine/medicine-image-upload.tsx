@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { useDropzone } from "react-dropzone"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -28,7 +28,10 @@ export default function MedicineImageUpload({
   const [uploading, setUploading] = useState(false)
 
   // Convert value to array for consistent handling
-  const images = Array.isArray(value) ? value : value ? [value] : []
+  const images = useMemo(() => {
+    return Array.isArray(value) ? value : value ? [value] : []
+  }, [value])
+  // const images = Array.isArray(value) ? value : value ? [value] : []
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {

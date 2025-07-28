@@ -7,15 +7,10 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-// import { MedicineDetailModal } from "./MedicineDetailModal"
-// import { MedicineDeleteDialog } from "./MedicineDeleteDialog"
-// import type { IMedicine } from "@/interfaces/medicine.interface"
 import Link from "next/link";
 import { IMedicine } from "@/interface/medicine/medicine.interface";
 import { MedicineDetailModal } from "./medicine-detail-modal";
 import { MedicineDeleteDialog } from "./medicine-delete-dialog";
-// import MedicineDetailModal from "./MedicineDetailModal";
-// import MedicineDeleteDialog from "./MedicineDeleteDialog";
 
 interface MedicineCardProps {
   medicine: IMedicine;

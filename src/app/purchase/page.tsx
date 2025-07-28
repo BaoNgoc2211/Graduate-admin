@@ -25,7 +25,7 @@ import Link from "next/link";
 import type { IPurchaseOrderFilters } from "@/interface/order/purchase.interface";
 import { usePurchaseOrders, useSuppliers } from "@/hooks/orders/purchase.hooks";
 import { PurchaseOrderTable } from "@/components/order/purchase/New/table";
-import { PurchaseStatusOptions } from "@/constants/purchase-status";
+import { PurchaseStatusOptions } from "@/lib/constants/purchase-status";
 export default function PurchaseOrderListPage() {
   const [filters, setFilters] = useState<IPurchaseOrderFilters>({
     page: 1,

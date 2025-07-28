@@ -1,12 +1,8 @@
-/**
- * Component xử lý upload ảnh cho thuốc
- * Tách từ MedicineForm.tsx - phần upload thumbnail và multiple images
- */
-
 "use client"
 import { Upload, X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import Image from "next/image"
 
 interface MedicineImageUploadProps {
   thumbnail: string
@@ -41,10 +37,12 @@ export default function MedicineImageUpload({
         <div className="flex items-center gap-4">
           {thumbnail && (
             <div className="relative">
-              <img
+              <Image
                 src={thumbnail || "/placeholder.svg"}
                 alt="Thumbnail"
                 className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200"
+                width={80}
+                height={80}
               />
               <Button
                 type="button"
@@ -87,10 +85,12 @@ export default function MedicineImageUpload({
         <div className="flex flex-wrap gap-3">
           {images.map((image, index) => (
             <div key={index} className="relative">
-              <img
+              <Image
                 src={image || "/placeholder.svg"}
                 alt={`Image ${index + 1}`}
                 className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200"
+                width={80}
+                height={80}
               />
               <Button
                 type="button"

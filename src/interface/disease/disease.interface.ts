@@ -14,10 +14,8 @@ export interface IDisease {
   notes?: string;
   status: "active" | "inactive";
   symptomIds?: string[];
-  // ✅ Match backend field names
   diseaseCategoryIds: string[]; // Backend uses this name
   diseaseUsageGroupIds: string[]; // Backend uses this name
-  // Keep frontend field names for compatibility
   diseaseCategory_id?: string[];
   diseaseUsageGroup_id?: string[];
   createdAt?: string;

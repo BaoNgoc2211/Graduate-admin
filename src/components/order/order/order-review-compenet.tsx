@@ -239,7 +239,7 @@ export default function OrderReviewComponent({
                 <p className="text-sm text-yellow-800">
                   <span className="font-medium">Lưu ý:</span> Sau khi đặt hàng
                   thành công, bạn sẽ nhận được email xác nhận và có thể theo dõi
-                  đơn hàng trong mục "Đơn hàng của tôi".
+                  đơn hàng trong mục &quot;Đơn hàng của tôi&quot;.
                 </p>
               </div>
             </div>

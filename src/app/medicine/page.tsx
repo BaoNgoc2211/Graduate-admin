@@ -1,5 +1,4 @@
 "use client";
-// import MedicineCard from "@/components/medicine/medicine/MedicineCard";
 import MedicinePagination from "@/components/medicine/medicine/medicine-pagination";
 import MedicineTable from "@/components/medicine/medicine/medicine-table";
 import MedicineToolbar from "@/components/medicine/medicine/medicine-toolbar";

@@ -12,6 +12,7 @@
 //   MedicineFormData,
 //   medicineSchema,
 // } from "@/schema/medicine/medicine.schema";
+// import { toast } from "sonner";
 
 // // Import các component con
 // import MedicineDetailsInfo from "./MedicineDetailsInfo";
@@ -44,6 +45,7 @@
 //     handleUploadImage,
 //     isUploading,
 //   } = useMedicines();
+
 //   const { data: categoriesData } = useMedicineCategories();
 //   const { data: usagesData } = useMedicineUsages();
 //   const { data: manufacturersData } = useManufactures();
@@ -57,11 +59,12 @@
 //   const {
 //     register,
 //     handleSubmit,
-//     formState: { errors },
+//     formState: { errors, isSubmitting },
 //     control,
 //     setValue,
 //     watch,
-//     // reset,
+//     setError,
+//     clearErrors,
 //   } = useForm<MedicineFormData>({
 //     resolver: zodResolver(medicineSchema),
 //     defaultValues: {
@@ -120,8 +123,10 @@
 //         const currentImages = watchedImages;
 //         setValue("image", [...currentImages, result.url]);
 //       }
-//     } catch (error) {
-//       console.error("Upload failed:", error);
+
+//       toast.success("Tải ảnh thành công!");
+//     } catch {
+//       toast.error( "Tải ảnh thất bại. Vui lòng thử lại.");
 //     } finally {
 //       setUploadingImages((prev) => prev.filter((id) => id !== uploadId));
 //     }
@@ -149,6 +154,8 @@
 //         currentCategories.filter((id) => id !== categoryId)
 //       );
 //     }
+//     // Clear errors when user makes changes
+//     clearErrors("medCategory_id");
 //   };
 
 //   const handleUsageChange = (usageId: string, checked: boolean) => {
@@ -161,92 +168,239 @@
 //         currentUsages.filter((id) => id !== usageId)
 //       );
 //     }
+//     // Clear errors when user makes changes
+//     clearErrors("medUsage_id");
 //   };
-//   console.log("Errors:", errors);
+
+//   console.log("Form Errors:", errors);
+//   console.log("Watched Categories:", watchedCategories);
+//   console.log("Watched Usages:", watchedUsages);
+
 //   const onSubmit = async (data: MedicineFormData) => {
 //     try {
+//       console.log("Form data before submit:", data);
+
+//       // Validate required fields
+//       if (!data.name?.trim()) {
+//         toast.error("Tên thuốc không được để trống");
+//         setError("name", {
+//           type: "manual",
+//           message: "Tên thuốc không được để trống",
+//         });
+//         setOpenSections((prev) => ({ ...prev, basic: true }));
+//         return;
+//       }
+
+//       if (!data.code?.trim()) {
+//         toast.error("Mã thuốc không được để trống");
+//         setError("code", {
+//           type: "manual",
+//           message: "Mã thuốc không được để trống",
+//         });
+//         setOpenSections((prev) => ({ ...prev, basic: true }));
+//         return;
+//       }
+
+//       if (!data.manufacturer_id?._id) {
+//         toast.error("Vui lòng chọn nhà sản xuất");
+//         setError("manufacturer_id._id", {
+//           type: "manual",
+//           message: "Vui lòng chọn nhà sản xuất",
+//         });
+//         setOpenSections((prev) => ({ ...prev, categories: true }));
+//         return;
+//       }
+
+//       if (!data.medCategory_id || data.medCategory_id.length === 0) {
+//         toast.error("Vui lòng chọn ít nhất một danh mục thuốc");
+//         setError("medCategory_id", {
+//           type: "manual",
+//           message: "Vui lòng chọn ít nhất một danh mục thuốc",
+//         });
+//         setOpenSections((prev) => ({ ...prev, categories: true }));
+//         return;
+//       }
+
+//       if (!data.medUsage_id || data.medUsage_id.length === 0) {
+//         toast.error("Vui lòng chọn ít nhất một cách sử dụng thuốc");
+//         setError("medUsage_id", {
+//           type: "manual",
+//           message: "Vui lòng chọn ít nhất một cách sử dụng thuốc",
+//         });
+//         setOpenSections((prev) => ({ ...prev, categories: true }));
+//         return;
+//       }
+
+//       // Prepare payload
 //       const payload = {
-//         ...data,
+//         code: data.code.trim(),
+//         name: data.name.trim(),
+//         thumbnail: data.thumbnail || "",
+//         image: data.image || [],
+//         packaging: data.packaging?.trim() || "",
+//         dosageForm: data.dosageForm?.trim() || "",
+//         use: data.use?.trim() || "",
+//         dosage: data.dosage?.trim() || "",
+//         indication: data.indication?.trim() || "",
+//         adverse: data.adverse?.trim() || "Chưa có thông tin về tác dụng phụ",
+//         contraindication:
+//           data.contraindication?.trim() ||
+//           "Chưa có thông tin về chống chỉ định",
+//         precaution: data.precaution?.trim() || "",
+//         ability:
+//           data.ability?.trim() ||
+//           "Chưa có thông tin về khả năng lái xe và vận hành máy móc",
+//         pregnancy:
+//           data.pregnancy?.trim() ||
+//           "Chưa có thông tin về thời kỳ mang thai và cho con bú",
+//         drugInteractions:
+//           data.drugInteractions?.trim() ||
+//           "Chưa có thông tin về tương tác thuốc",
+//         storage: data.storage?.trim() || "",
+//         note: data.note?.trim() || "",
+//         age_group: data.age_group || "Tất cả",
+//         medCategory_id: data.medCategory_id,
+//         medUsage_id: data.medUsage_id,
+//         manufacturer_id: data.manufacturer_id,
+//         active: "active" as const,
 //       };
 
+//       console.log("Payload to send:", payload);
+
+//       let result;
 //       if (isEditMode && defaultValue?._id) {
-//         await handleUpdate(defaultValue._id, payload);
+//         result = await handleUpdate(defaultValue._id, payload);
+//         toast.success("Cập nhật thuốc thành công!");
 //       } else {
-//         await handleCreate(payload)
+//         result = await handleCreate(payload);
+//         toast.success("Tạo thuốc mới thành công!");
 //       }
+
 //       onSuccess?.();
-//       console.log("Form submitted successfully:", payload);
-//     } catch (error) {
+//       console.log("Form submitted successfully:", result);
+//     } catch (error: any) {
 //       console.error("Form submission error:", error);
+
+//       // Handle specific errors
+//       if (error?.response?.data?.message) {
+//         toast.error(error.response.data.message);
+//       } else if (error?.message) {
+//         toast.error(error.message);
+//       } else {
+//         toast.error(
+//           isEditMode
+//             ? "Cập nhật thuốc thất bại. Vui lòng thử lại."
+//             : "Tạo thuốc thất bại. Vui lòng thử lại."
+//         );
+//       }
+//     }
+//   };
+
+//   // Handle validation errors
+//   const onInvalid = (errors: any) => {
+//     console.log("Validation errors:", errors);
+
+//     // Find first error and show toast
+//     const errorEntries = Object.entries(errors);
+//     if (errorEntries.length > 0) {
+//       const [fieldName, fieldError] = errorEntries[0];
+//       const errorMessage =
+//         (fieldError as any)?.message || `Lỗi ở trường ${fieldName}`;
+
+//       toast.error(errorMessage);
+
+//       // Auto-expand section with error
+//       if (
+//         ["code", "name", "thumbnail", "image", "packaging"].includes(fieldName)
+//       ) {
+//         setOpenSections((prev) => ({ ...prev, basic: true }));
+//       } else if (
+//         ["dosageForm", "use", "dosage", "indication"].includes(fieldName)
+//       ) {
+//         setOpenSections((prev) => ({ ...prev, details: true }));
+//       } else if (
+//         ["adverse", "contraindication", "precaution"].includes(fieldName)
+//       ) {
+//         setOpenSections((prev) => ({ ...prev, safety: true }));
+//       } else if (
+//         ["medCategory_id", "medUsage_id", "manufacturer_id"].includes(fieldName)
+//       ) {
+//         setOpenSections((prev) => ({ ...prev, categories: true }));
+//       }
 //     }
 //   };
 
 //   return (
-//     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-//       {/* Basic Information */}
-//       <MedicineBasicInfo
-//         register={register}
-//         errors={errors}
-//         isLoading={isLoading}
-//         isOpen={openSections.basic}
-//         onToggle={() => toggleSection("basic")}
-//         thumbnail={watchedThumbnail || ""}
-//         images={watchedImages}
-//         onThumbnailUpload={(file) => handleImageUpload(file, true)}
-//         onImageUpload={(file) => handleImageUpload(file, false)}
-//         onThumbnailRemove={removeThumbnail}
-//         onImageRemove={removeImage}
-//         isUploading={isUploading}
-//       />
+//     <div className="max-w-4xl mx-auto">
+//       <form
+//         onSubmit={handleSubmit(onSubmit, onInvalid)}
+//         className="space-y-8"
+//         noValidate
+//       >
+//         {/* Basic Information */}
+//         <MedicineBasicInfo
+//           register={register}
+//           errors={errors}
+//           isLoading={isLoading}
+//           isOpen={openSections.basic}
+//           onToggle={() => toggleSection("basic")}
+//           thumbnail={watchedThumbnail || ""}
+//           images={watchedImages}
+//           onThumbnailUpload={(file) => handleImageUpload(file, true)}
+//           onImageUpload={(file) => handleImageUpload(file, false)}
+//           onThumbnailRemove={removeThumbnail}
+//           onImageRemove={removeImage}
+//           isUploading={isUploading}
+//         />
 
-//       {/* Medicine Details */}
-//       <MedicineDetailsInfo
-//         register={register}
-//         errors={errors}
-//         isLoading={isLoading}
-//         isOpen={openSections.details}
-//         onToggle={() => toggleSection("details")}
-//       />
+//         {/* Medicine Details */}
+//         <MedicineDetailsInfo
+//           register={register}
+//           errors={errors}
+//           isLoading={isLoading}
+//           isOpen={openSections.details}
+//           onToggle={() => toggleSection("details")}
+//         />
 
-//       {/* Safety Information */}
-//       <MedicineSafetyInfo
-//         register={register}
-//         errors={errors}
-//         isLoading={isLoading}
-//         isOpen={openSections.safety}
-//         onToggle={() => toggleSection("safety")}
-//       />
+//         {/* Safety Information */}
+//         <MedicineSafetyInfo
+//           register={register}
+//           errors={errors}
+//           isLoading={isLoading}
+//           isOpen={openSections.safety}
+//           onToggle={() => toggleSection("safety")}
+//         />
 
-//       {/* Categories and Manufacturer */}
-//       <MedicineCategorySelector
-//         control={control}
-//         setValue={setValue}
-//         errors={errors}
-//         isLoading={isLoading}
-//         isOpen={openSections.categories}
-//         onToggle={() => toggleSection("categories")}
-//         categories={categories}
-//         usages={usages}
-//         manufacturers={manufacturers}
-//         watchedCategories={watchedCategories}
-//         watchedUsages={watchedUsages}
-//         onCategoryChange={handleCategoryChange}
-//         onUsageChange={handleUsageChange}
-//       />
+//         {/* Categories and Manufacturer */}
+//         <MedicineCategorySelector
+//           control={control}
+//           setValue={setValue}
+//           errors={errors}
+//           isLoading={isLoading}
+//           isOpen={openSections.categories}
+//           onToggle={() => toggleSection("categories")}
+//           medCategory_id={categories} 
+//           medUsage_id={usages} 
+//           manufacturer_id={manufacturers}
+//           watchedCategories={watchedCategories}
+//           watchedUsages={watchedUsages}
+//           onCategoryChange={handleCategoryChange}
+//           onUsageChange={handleUsageChange}
+//         />
 
-//       {/* Action Buttons */}
-//       <MedicineFormActions
-//         isLoading={isLoading}
-//         isEditMode={isEditMode}
-//         onCancel={onCancel}
-//         // onSubmit={handleSubmit(onSubmit)}
-//       />
-//     </form>
+//         {/* Action Buttons */}
+//         <MedicineFormActions
+//           isLoading={isLoading || isSubmitting}
+//           isEditMode={isEditMode}
+//           onCancel={onCancel}
+//         />
+//       </form>
+//     </div>
 //   );
 // }
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { MedicineFormProps } from "@/interface/medicine/medicine.interface";
@@ -267,13 +421,27 @@ import MedicineFormActions from "./MedicineFormActions";
 import MedicineCategorySelector from "./MedicineCategorySelector";
 import MedicineBasicInfo from "./MedicineBasicInfo";
 
+// Types for error handling
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
+}
+
+interface UploadResult {
+  url: string;
+}
+
 export default function MedicineForm({
   defaultValue,
   onSuccess,
   onCancel,
 }: MedicineFormProps) {
-  // State quản lý UI
-  const [uploadingImages, setUploadingImages] = useState<string[]>([]);
+  //uploadingImages
+  const [, setUploadingImages] = useState<string[]>([]);
   const [openSections, setOpenSections] = useState({
     basic: true,
     details: false,
@@ -291,7 +459,7 @@ export default function MedicineForm({
     handleUploadImage,
     isUploading,
   } = useMedicines();
-  
+
   const { data: categoriesData } = useMedicineCategories();
   const { data: usagesData } = useMedicineUsages();
   const { data: manufacturersData } = useManufactures();
@@ -361,7 +529,7 @@ export default function MedicineForm({
     try {
       setUploadingImages((prev) => [...prev, uploadId]);
 
-      const result = await handleUploadImage(file);
+      const result = await handleUploadImage(file) as UploadResult;
 
       if (isThumb) {
         setValue("thumbnail", result.url);
@@ -369,11 +537,14 @@ export default function MedicineForm({
         const currentImages = watchedImages;
         setValue("image", [...currentImages, result.url]);
       }
-      
+
       toast.success("Tải ảnh thành công!");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Upload failed:", error);
-      toast.error(error?.message || "Tải ảnh thất bại. Vui lòng thử lại.");
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Tải ảnh thất bại. Vui lòng thử lại.";
+      toast.error(errorMessage);
     } finally {
       setUploadingImages((prev) => prev.filter((id) => id !== uploadId));
     }
@@ -401,7 +572,6 @@ export default function MedicineForm({
         currentCategories.filter((id) => id !== categoryId)
       );
     }
-    // Clear errors when user makes changes
     clearErrors("medCategory_id");
   };
 
@@ -415,73 +585,68 @@ export default function MedicineForm({
         currentUsages.filter((id) => id !== usageId)
       );
     }
-    // Clear errors when user makes changes
     clearErrors("medUsage_id");
   };
 
-  console.log("Form Errors:", errors);
-  console.log("Watched Categories:", watchedCategories);
-  console.log("Watched Usages:", watchedUsages);
+  // Validation helpers
+  const validateRequiredField = (
+    value: string | undefined,
+    fieldName: keyof MedicineFormData,
+    errorMessage: string,
+    sectionToOpen: keyof typeof openSections
+  ): boolean => {
+    if (!value?.trim()) {
+      toast.error(errorMessage);
+      setError(fieldName, {
+        type: "manual",
+        message: errorMessage,
+      });
+      setOpenSections((prev) => ({ ...prev, [sectionToOpen]: true }));
+      return false;
+    }
+    return true;
+  };
+
+  const validateArrayField = (
+    value: string[] | undefined,
+    fieldName: keyof MedicineFormData,
+    errorMessage: string,
+    sectionToOpen: keyof typeof openSections
+  ): boolean => {
+    if (!value || value.length === 0) {
+      toast.error(errorMessage);
+      setError(fieldName, {
+        type: "manual",
+        message: errorMessage,
+      });
+      setOpenSections((prev) => ({ ...prev, [sectionToOpen]: true }));
+      return false;
+    }
+    return true;
+  };
 
   const onSubmit = async (data: MedicineFormData) => {
     try {
       console.log("Form data before submit:", data);
 
       // Validate required fields
-      if (!data.name?.trim()) {
-        toast.error("Tên thuốc không được để trống");
-        setError("name", { 
-          type: "manual", 
-          message: "Tên thuốc không được để trống" 
-        });
-        setOpenSections(prev => ({ ...prev, basic: true }));
-        return;
-      }
+      const validations = [
+        validateRequiredField(data.name, "name", "Tên thuốc không được để trống", "basic"),
+        validateRequiredField(data.code, "code", "Mã thuốc không được để trống", "basic"),
+        validateRequiredField(data.manufacturer_id?._id, "manufacturer_id._id" as keyof MedicineFormData, "Vui lòng chọn nhà sản xuất", "categories"),
+        validateArrayField(data.medCategory_id, "medCategory_id", "Vui lòng chọn ít nhất một danh mục thuốc", "categories"),
+        validateArrayField(data.medUsage_id, "medUsage_id", "Vui lòng chọn ít nhất một cách sử dụng thuốc", "categories"),
+      ];
 
-      if (!data.code?.trim()) {
-        toast.error("Mã thuốc không được để trống");
-        setError("code", { 
-          type: "manual", 
-          message: "Mã thuốc không được để trống" 
-        });
-        setOpenSections(prev => ({ ...prev, basic: true }));
-        return;
-      }
-
-      if (!data.manufacturer_id?._id) {
-        toast.error("Vui lòng chọn nhà sản xuất");
-        setError("manufacturer_id._id", { 
-          type: "manual", 
-          message: "Vui lòng chọn nhà sản xuất" 
-        });
-        setOpenSections(prev => ({ ...prev, categories: true }));
-        return;
-      }
-
-      if (!data.medCategory_id || data.medCategory_id.length === 0) {
-        toast.error("Vui lòng chọn ít nhất một danh mục thuốc");
-        setError("medCategory_id", { 
-          type: "manual", 
-          message: "Vui lòng chọn ít nhất một danh mục thuốc" 
-        });
-        setOpenSections(prev => ({ ...prev, categories: true }));
-        return;
-      }
-
-      if (!data.medUsage_id || data.medUsage_id.length === 0) {
-        toast.error("Vui lòng chọn ít nhất một cách sử dụng thuốc");
-        setError("medUsage_id", { 
-          type: "manual", 
-          message: "Vui lòng chọn ít nhất một cách sử dụng thuốc" 
-        });
-        setOpenSections(prev => ({ ...prev, categories: true }));
+      // If any validation fails, stop execution
+      if (!validations.every(Boolean)) {
         return;
       }
 
       // Prepare payload
       const payload = {
-        code: data.code.trim(),
-        name: data.name.trim(),
+        code: data.code!.trim(),
+        name: data.name!.trim(),
         thumbnail: data.thumbnail || "",
         image: data.image || [],
         packaging: data.packaging?.trim() || "",
@@ -490,17 +655,25 @@ export default function MedicineForm({
         dosage: data.dosage?.trim() || "",
         indication: data.indication?.trim() || "",
         adverse: data.adverse?.trim() || "Chưa có thông tin về tác dụng phụ",
-        contraindication: data.contraindication?.trim() || "Chưa có thông tin về chống chỉ định",
+        contraindication:
+          data.contraindication?.trim() ||
+          "Chưa có thông tin về chống chỉ định",
         precaution: data.precaution?.trim() || "",
-        ability: data.ability?.trim() || "Chưa có thông tin về khả năng lái xe và vận hành máy móc",
-        pregnancy: data.pregnancy?.trim() || "Chưa có thông tin về thời kỳ mang thai và cho con bú",
-        drugInteractions: data.drugInteractions?.trim() || "Chưa có thông tin về tương tác thuốc",
+        ability:
+          data.ability?.trim() ||
+          "Chưa có thông tin về khả năng lái xe và vận hành máy móc",
+        pregnancy:
+          data.pregnancy?.trim() ||
+          "Chưa có thông tin về thời kỳ mang thai và cho con bú",
+        drugInteractions:
+          data.drugInteractions?.trim() ||
+          "Chưa có thông tin về tương tác thuốc",
         storage: data.storage?.trim() || "",
         note: data.note?.trim() || "",
         age_group: data.age_group || "Tất cả",
-        medCategory_id: data.medCategory_id,
-        medUsage_id: data.medUsage_id,
-        manufacturer_id: data.manufacturer_id,
+        medCategory_id: data.medCategory_id!,
+        medUsage_id: data.medUsage_id!,
+        manufacturer_id: data.manufacturer_id!,
         active: "active" as const,
       };
 
@@ -517,53 +690,75 @@ export default function MedicineForm({
 
       onSuccess?.();
       console.log("Form submitted successfully:", result);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Form submission error:", error);
       
-      // Handle specific errors
-      if (error?.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else if (error?.message) {
-        toast.error(error.message);
+      const apiError = error as ApiError;
+      
+      // Handle specific errors with proper type checking
+      let errorMessage: string;
+      
+      if (apiError?.response?.data?.message) {
+        errorMessage = apiError.response.data.message;
+      } else if (apiError?.message) {
+        errorMessage = apiError.message;
       } else {
-        toast.error(
-          isEditMode 
-            ? "Cập nhật thuốc thất bại. Vui lòng thử lại." 
-            : "Tạo thuốc thất bại. Vui lòng thử lại."
-        );
+        errorMessage = isEditMode
+          ? "Cập nhật thuốc thất bại. Vui lòng thử lại."
+          : "Tạo thuốc thất bại. Vui lòng thử lại.";
       }
+      
+      toast.error(errorMessage);
     }
   };
 
-  // Handle validation errors
-  const onInvalid = (errors: any) => {
-    console.log("Validation errors:", errors);
-    
+  // Handle validation errors with proper typing
+  const onInvalid = (validationErrors: FieldErrors<MedicineFormData>) => {
+    console.log("Validation errors:", validationErrors);
+
     // Find first error and show toast
-    const errorEntries = Object.entries(errors);
+    const errorEntries = Object.entries(validationErrors);
     if (errorEntries.length > 0) {
       const [fieldName, fieldError] = errorEntries[0];
-      const errorMessage = (fieldError as any)?.message || `Lỗi ở trường ${fieldName}`;
-      
+      const errorMessage = fieldError?.message || `Lỗi ở trường ${fieldName}`;
+
       toast.error(errorMessage);
-      
-      // Auto-expand section with error
-      if (['code', 'name', 'thumbnail', 'image', 'packaging'].includes(fieldName)) {
-        setOpenSections(prev => ({ ...prev, basic: true }));
-      } else if (['dosageForm', 'use', 'dosage', 'indication'].includes(fieldName)) {
-        setOpenSections(prev => ({ ...prev, details: true }));
-      } else if (['adverse', 'contraindication', 'precaution'].includes(fieldName)) {
-        setOpenSections(prev => ({ ...prev, safety: true }));
-      } else if (['medCategory_id', 'medUsage_id', 'manufacturer_id'].includes(fieldName)) {
-        setOpenSections(prev => ({ ...prev, categories: true }));
+
+      // Auto-expand section with error - type-safe field checking
+      const fieldMappings: Record<string, keyof typeof openSections> = {
+        code: "basic",
+        name: "basic",
+        thumbnail: "basic",
+        image: "basic",
+        packaging: "basic",
+        dosageForm: "details",
+        use: "details",
+        dosage: "details",
+        indication: "details",
+        adverse: "safety",
+        contraindication: "safety",
+        precaution: "safety",
+        ability: "safety",
+        pregnancy: "safety",
+        drugInteractions: "safety",
+        storage: "safety",
+        medCategory_id: "categories",
+        medUsage_id: "categories",
+        manufacturer_id: "categories",
+        note: "categories",
+      };
+
+      const sectionToOpen = fieldMappings[fieldName];
+      if (sectionToOpen) {
+        setOpenSections((prev) => ({ ...prev, [sectionToOpen]: true }));
       }
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto">
-      <form 
-        onSubmit={handleSubmit(onSubmit, onInvalid)} 
+      <form
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
         className="space-y-8"
         noValidate
       >
@@ -609,9 +804,9 @@ export default function MedicineForm({
           isLoading={isLoading}
           isOpen={openSections.categories}
           onToggle={() => toggleSection("categories")}
-          categories={categories}
-          usages={usages}
-          manufacturers={manufacturers}
+          medCategory_id={categories}
+          medUsage_id={usages}
+          manufacturer_id={manufacturers}
           watchedCategories={watchedCategories}
           watchedUsages={watchedUsages}
           onCategoryChange={handleCategoryChange}
