@@ -173,7 +173,7 @@
 //   };
 // };
 //#endregion
-import { IOrder } from "@/interface/order/order.interface";
+import { IOrder, IRevenueStats } from "@/interface/order/order.interface";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchAllOrders,
@@ -183,6 +183,7 @@ import {
   updateOrderStatus,
 } from "@/api/order/order.api";
 import { toast } from "sonner";
+import { fetchRevenueStats } from "@/api/order/revenue.api";
 
 // Lấy tất cả đơn hàng
 // export const useOrders = () => {
@@ -298,3 +299,26 @@ export const useRefreshOrderData = () => {
 export const useOrderById = (id: string) => {
   return useOrderDetail(id);
 };
+// để lấy thống kê doanh thu từ API thật
+export const useRevenueStats = (period: "day" | "week" | "month" = "day") => {
+  return useQuery<IRevenueStats, Error>({
+    queryKey: ["revenue-stats", period],
+    queryFn: () => fetchRevenueStats(period),
+    staleTime: 5 * 60 * 1000, // Cache 5 phút
+    refetchOnWindowFocus: false,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  })
+}
+
+// refresh revenue stats
+export const useRefreshRevenueStats = () => {
+  const queryClient = useQueryClient()
+
+  return () => {
+    queryClient.invalidateQueries({
+      queryKey: ["revenue-stats"],
+      exact: false,
+    })
+  }
+}

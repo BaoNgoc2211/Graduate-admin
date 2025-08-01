@@ -2,42 +2,63 @@
 
 import React, { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { useAdmins } from "@/hooks/admin.hooks";
+import { useUsers } from "@/hooks/admin.hooks";
+// import { IUser } from "@/interface/admin.interface";
 import UserManagementHeader from "@/components/admin/user-management-header";
 import UserStatsCards from "@/components/admin/user-stats-cards";
 import UserManagementTable from "@/components/admin/user-management-table";
 import Pagination from "@/components/admin/pagination";
-import { IAdmin } from "@/interface/auth/admin.interface";
+import { IUser } from "@/interface/auth/admin.interface";
 
-const AdminManagementPage: React.FC = () => {
+const UserManagementPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch admins data
-  const { data: adminsData, isLoading, refetch } = useAdmins(currentPage, pageSize);
-  // const admins = adminsData?.data || [];
-  const admins = useMemo(() => adminsData?.data || [], [adminsData]);
+  // Fetch users data
+  const { data: usersData, isLoading, refetch } = useUsers(currentPage, pageSize);
+  
+  // Handle different response structures
+  const users = useMemo(() => {
+    if (!usersData) return [];
+    
+    // If usersData has nested data structure
+    if (usersData.data && Array.isArray(usersData.data.data)) {
+      return usersData.data.data;
+    }
+    
+    // If usersData.data is directly an array
+    if (Array.isArray(usersData.data)) {
+      return usersData.data;
+    }
+    
+    // If usersData is directly an array
+    if (Array.isArray(usersData)) {
+      return usersData;
+    }
+    
+    return [];
+  }, [usersData]);
 
-  // Filter admins based on search term
-  const filteredAdmins = useMemo(() => {
-    if (!searchTerm.trim()) return admins;
+  // Filter users based on search term
+  const filteredUsers = useMemo(() => {
+    if (!searchTerm.trim()) return users;
     
     const searchLower = searchTerm.toLowerCase();
-    return admins.filter((admin) =>
-      admin.name.toLowerCase().includes(searchLower) ||
-      admin.email.toLowerCase().includes(searchLower) ||
-      admin._id.toLowerCase().includes(searchLower)
+    return users.filter((user: IUser) =>
+      user.name.toLowerCase().includes(searchLower) ||
+      user.email.toLowerCase().includes(searchLower) ||
+      user._id.toLowerCase().includes(searchLower)
     );
-  }, [admins, searchTerm]);
+  }, [users, searchTerm]);
 
   // Calculate stats
   const stats = useMemo(() => {
-    const total = filteredAdmins.length;
+    const total = filteredUsers.length;
     // Mock data for demonstration - in real app, these would come from API
-    const active = Math.floor(total * 0.85);
+    const active = Math.floor(total * 0.9);
     const inactive = total - active;
-    const newThisMonth = Math.floor(total * 0.1);
+    const newThisMonth = Math.floor(total * 0.15);
 
     return {
       total,
@@ -45,11 +66,11 @@ const AdminManagementPage: React.FC = () => {
       inactive,
       newThisMonth,
     };
-  }, [filteredAdmins]);
+  }, [filteredUsers]);
 
   // Calculate pagination
-  const totalPages = Math.ceil(filteredAdmins.length / pageSize);
-  const paginatedAdmins = filteredAdmins.slice(
+  const totalPages = Math.ceil(filteredUsers.length / pageSize);
+  const paginatedUsers = filteredUsers.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -73,44 +94,44 @@ const AdminManagementPage: React.FC = () => {
     try {
       await refetch();
       toast.success("Dữ liệu đã được làm mới!");
-    } catch {
+    } catch{
       toast.error("Có lỗi xảy ra khi làm mới dữ liệu");
     }
   };
 
   const handleAddNew = () => {
-    toast.info("Chức năng thêm quản trị viên mới đang được phát triển");
-    // TODO: Implement add new admin functionality
+    toast.info("Chức năng thêm khách hàng mới đang được phát triển");
+    // TODO: Implement add new user functionality
   };
 
-  const handleEdit = (admin: IAdmin) => {
-    toast.info(`Chỉnh sửa quản trị viên: ${admin.name}`);
-    // TODO: Implement edit admin functionality
+  const handleEdit = (user: IUser) => {
+    toast.info(`Chỉnh sửa khách hàng: ${user.name}`);
+    // TODO: Implement edit user functionality
   };
 
-  const handleDelete = (adminId: string) => {
-    toast.info(`Xóa quản trị viên với ID: ${adminId}`);
-    // TODO: Implement delete admin functionality
+  const handleDelete = (userId: string) => {
+    toast.info(`Xóa khách hàng với ID: ${userId}`);
+    // TODO: Implement delete user functionality
   };
 
-  const handleView = (admin: IAdmin) => {
-    toast.info(`Xem chi tiết quản trị viên: ${admin.name}`);
-    // TODO: Implement view admin details functionality
+  const handleView = (user: IUser) => {
+    toast.info(`Xem chi tiết khách hàng: ${user.name}`);
+    // TODO: Implement view user details functionality
   };
 
-  const handleToggleStatus = (adminId: string, currentStatus: boolean) => {
+  const handleToggleStatus = (userId: string, currentStatus: boolean) => {
     const action = currentStatus ? "vô hiệu hóa" : "kích hoạt";
-    toast.info(`${action} quản trị viên với ID: ${adminId}`);
-    // TODO: Implement toggle admin status functionality
+    toast.info(`${action} khách hàng với ID: ${userId}`);
+    // TODO: Implement toggle user status functionality
   };
 
   const handleExport = () => {
-    toast.info("Xuất danh sách quản trị viên ra file Excel");
+    toast.info("Xuất danh sách khách hàng ra file Excel");
     // TODO: Implement export functionality
   };
 
   const handleImport = () => {
-    toast.info("Nhập danh sách quản trị viên từ file");
+    toast.info("Nhập danh sách khách hàng từ file");
     // TODO: Implement import functionality
   };
 
@@ -120,20 +141,20 @@ const AdminManagementPage: React.FC = () => {
         <div className="space-y-8">
           {/* Header Section */}
           <UserManagementHeader
-            userType="admin"
+            userType="user"
             searchTerm={searchTerm}
             onSearchChange={handleSearchChange}
             onAddNew={handleAddNew}
             onRefresh={handleRefresh}
             onExport={handleExport}
             onImport={handleImport}
-            totalCount={filteredAdmins.length}
+            totalCount={filteredUsers.length}
             isLoading={isLoading}
           />
 
           {/* Stats Cards */}
           <UserStatsCards
-            userType="admin"
+            userType="user"
             totalCount={stats.total}
             activeCount={stats.active}
             inactiveCount={stats.inactive}
@@ -143,8 +164,8 @@ const AdminManagementPage: React.FC = () => {
 
           {/* Main Table */}
           <UserManagementTable
-            users={paginatedAdmins}
-            userType="admin"
+            users={paginatedUsers}
+            userType="user"
             isLoading={isLoading}
             onEdit={handleEdit}
             onDelete={handleDelete}
@@ -158,7 +179,7 @@ const AdminManagementPage: React.FC = () => {
               currentPage={currentPage}
               totalPages={totalPages}
               pageSize={pageSize}
-              totalItems={filteredAdmins.length}
+              totalItems={filteredUsers.length}
               onPageChange={handlePageChange}
               onPageSizeChange={handlePageSizeChange}
               isLoading={isLoading}
@@ -170,4 +191,4 @@ const AdminManagementPage: React.FC = () => {
   );
 };
 
-export default AdminManagementPage;
+export default UserManagementPage;

@@ -115,14 +115,14 @@ export function DiseaseUsageTable({
           {/* <div className="flex items-center justify-between"> */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="text-2xl font-bold text-blue-900">
-              Quản lý Danh mục Bệnh
+              Quản lý Nhóm Bệnh
             </CardTitle>
             <Button
               onClick={handleAddNew}
               className="bg-blue-900 hover:bg-blue-800"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Thêm danh mục
+              Thêm nhóm
             </Button>
           </div>
         </CardHeader>
@@ -133,14 +133,14 @@ export function DiseaseUsageTable({
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Tìm kiếm danh mục..."
+                placeholder="Tìm kiếm nhóm bệnh..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
             <Badge variant="secondary" className="text-sm">
-              Tổng: {filteredUsages.length} danh mục
+              Tổng: {filteredUsages.length} nhóm bệnh
             </Badge>
           </div>
 
@@ -151,7 +151,7 @@ export function DiseaseUsageTable({
                 <TableRow className="bg-gray-50">
                   <TableHead className="w-16">STT</TableHead>
                   <TableHead className="w-20">Icon</TableHead>
-                  <TableHead>Tên danh mục</TableHead>
+                  <TableHead>Tên nhóm bệnh</TableHead>
                   <TableHead className="w-32 text-center">
                     Số bệnh liên quan
                   </TableHead>
@@ -244,7 +244,7 @@ export function DiseaseUsageTable({
               <div className="text-sm text-gray-500">
                 Hiển thị {startIndex + 1} -{" "}
                 {Math.min(startIndex + itemsPerPage, filteredUsages.length)}{" "}
-                trong tổng số {filteredUsages.length} danh mục
+                trong tổng số {filteredUsages.length} nhóm
               </div>
               <div className="flex items-center space-x-2">
                 <Button

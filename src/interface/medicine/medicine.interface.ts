@@ -25,6 +25,19 @@ export interface IMedicine {
     nameCo: string; // Tên công ty sản xuất
     country?: string; // Quốc gia
   };
+  importBatch_id?: [
+    {
+      _id: string; // ID của lô nhập
+      importDate: string; // Ngày nhập
+      quantity: number; // Số lượng nhập
+      price: number; // Giá nhập
+      expiryDate: string; // Ngày hết hạn
+      manufacturer_id: {
+        _id: string; // ID của nhà sản xuất
+        nameCo: string; // Tên công ty sản xuất
+      };
+    }
+  ];
   active: "active" | "inactive"; // Trạng thái thuốc
   createdAt?: string;
   updatedAt?: string;
@@ -55,6 +68,19 @@ export interface IMedicinePayload {
     _id: string;
     nameCo: string;
   };
+  importBatch_id?: [
+    {
+      _id: string; // ID của lô nhập
+      importDate: string; // Ngày nhập
+      quantity: number; // Số lượng nhập
+      price: number; // Giá nhập
+      expiryDate: string; // Ngày hết hạn
+      manufacturer_id: {
+        _id: string; // ID của nhà sản xuất
+        nameCo: string; // Tên công ty sản xuất
+      };
+    }
+  ];
   active: "active" | "inactive"; // Trạng thái thuốc
 }
 
@@ -86,7 +112,6 @@ export interface IMedicineFormData {
   };
   active: "active" | "inactive"; // Trạng thái thuốc
 }
-
 
 export interface MedicineFormProps {
   defaultValue?: IMedicine;

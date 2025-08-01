@@ -35,9 +35,9 @@ export default function DiseaseCategoryPage() {
       <div className="space-y-6">
         {/* Page Header */}
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-blue-900">Danh mục Bệnh</h1>
+          <h1 className="text-3xl font-bold text-blue-900">Nhóm Bệnh</h1>
           <p className="text-gray-600">
-            Quản lý các danh mục bệnh trong hệ thống
+            Quản lý các nhóm bệnh trong hệ thống
           </p>
         </div>
 

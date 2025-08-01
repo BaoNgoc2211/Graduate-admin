@@ -245,7 +245,7 @@ export default function ImportBatchPage() {
                       Nhà phân phối
                     </TableHead>
                     <TableHead className="font-semibold text-blue-900">
-                      Ngày nhập
+                      Ngày sản xuất
                     </TableHead>
                     <TableHead className="font-semibold text-blue-900">
                       Hạn sử dụng
