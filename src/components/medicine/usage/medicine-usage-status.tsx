@@ -8,6 +8,7 @@ import { useMedicineUsageStatus } from "@/hooks/medicine/usage.hooks"
 
 export function MedicineUsageStatus() {
   const { data: stats, isLoading, error } = useMedicineUsageStatus()
+  console.log("MedicineUsageStatus stats:", stats)
 
   if (isLoading) {
     return (
@@ -34,7 +35,7 @@ export function MedicineUsageStatus() {
         <CardContent className="pt-6">
           <div className="flex items-center space-x-2 text-red-600">
             <AlertCircle className="h-4 w-4" />
-            <span className="text-sm">Không thể tải thống kê danh mục</span>
+            <span className="text-sm">Không thể tải thống kê nhóm</span>
           </div>
         </CardContent>
       </Card>
@@ -45,9 +46,9 @@ export function MedicineUsageStatus() {
 
   const statsCards = [
     {
-      title: "Tổng danh mục",
+      title: "Tổng nhóm",
       value: totalCategories,
-      description: "Danh mục thuốc",
+      description: "Nhóm thuốc",
       icon: FolderOpen,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
@@ -63,7 +64,7 @@ export function MedicineUsageStatus() {
       borderColor: "border-green-200",
     },
     {
-      title: "Danh mục có thuốc",
+      title: "Nhóm có thuốc",
       value: categoriesWithMedicines,
       description: "Đang sử dụng",
       icon: CheckCircle,
@@ -72,7 +73,7 @@ export function MedicineUsageStatus() {
       borderColor: "border-emerald-200",
     },
     {
-      title: "Danh mục trống",
+      title: "Nhóm trống",
       value: emptyCategories,
       description: "Chưa có thuốc",
       icon: Database,
@@ -101,7 +102,7 @@ export function MedicineUsageStatus() {
                 {index === 1 && totalCategories > 0 && (
                   <Badge variant="secondary" className="text-xs">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    {Math.round((totalMedicines / totalCategories) * 10) / 10}/danh mục
+                    {Math.round((totalMedicines / totalCategories) * 10) / 10}/nhóm
                   </Badge>
                 )}
               </div>

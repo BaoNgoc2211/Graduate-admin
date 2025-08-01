@@ -167,13 +167,13 @@ export function DiseaseUsageForm({
         <DialogHeader>
           <DialogTitle className="text-blue-900">
             {mode === "create"
-              ? "Thêm danh mục bệnh"
-              : "Chỉnh sửa danh mục bệnh"}
+              ? "Thêm nhóm bệnh"
+              : "Chỉnh sửa nhóm bệnh"}
           </DialogTitle>
           <DialogDescription>
             {mode === "create"
-              ? "Tạo danh mục bệnh mới cho hệ thống"
-              : "Cập nhật thông tin danh mục bệnh"}
+              ? "Tạo nhóm bệnh mới cho hệ thống"
+              : "Cập nhật thông tin nhóm bệnh"}
           </DialogDescription>
         </DialogHeader>
 
@@ -181,13 +181,13 @@ export function DiseaseUsageForm({
           {/* Name Input */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium">
-              Tên danh mục <span className="text-red-500">*</span>
+              Tên nhóm <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nhập tên danh mục bệnh..."
+              placeholder="Nhập tên nhóm bệnh..."
               disabled={isLoading}
             />
           </div>
@@ -195,7 +195,7 @@ export function DiseaseUsageForm({
           {/* Icon Upload */}
           <div className="space-y-3">
             <Label className="text-sm font-medium">
-              Icon danh mục <span className="text-red-500">*</span>
+              Icon nhóm <span className="text-red-500">*</span>
             </Label>
 
             {/* Upload Area */}
@@ -291,7 +291,7 @@ export function DiseaseUsageForm({
               className="bg-blue-900 hover:bg-blue-800"
             >
               {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              {mode === "create" ? "Tạo danh mục" : "Cập nhật"}
+              {mode === "create" ? "Tạo nhóm" : "Cập nhật"}
             </Button>
           </DialogFooter>
         </form>

@@ -85,12 +85,12 @@ export function MedicineUsageModal({ isOpen, onClose, usage, mode }: MedicineUsa
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-900">
-            {mode === "create" ? "Thêm danh mục thuốc mới" : "Chỉnh sửa danh mục thuốc"}
+            {mode === "create" ? "Thêm nhóm thuốc mới" : "Chỉnh sửa nhóm thuốc"}
           </DialogTitle>
           <DialogDescription className="text-gray-600">
             {mode === "create"
-              ? "Tạo danh mục thuốc mới để phân loại các sản phẩm thuốc."
-              : "Cập nhật thông tin danh mục thuốc đã chọn."}
+              ? "Tạo nhóm thuốc mới để phân loại các sản phẩm thuốc."
+              : "Cập nhật thông tin nhóm thuốc đã chọn."}
           </DialogDescription>
         </DialogHeader>
 
@@ -102,12 +102,12 @@ export function MedicineUsageModal({ isOpen, onClose, usage, mode }: MedicineUsa
               name="icon"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ảnh danh mục *</FormLabel>
+                  <FormLabel>Ảnh nhóm *</FormLabel>
                   <FormControl>
                     <UsageImageUpload value={field.value} onChange={field.onChange} disabled={isLoading} />
                   </FormControl>
                   <FormDescription>
-                    Tải ảnh đại diện cho danh mục. Nên chọn ảnh vuông.
+                    Tải ảnh đại diện cho nhóm. Nên chọn ảnh vuông.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -120,9 +120,9 @@ export function MedicineUsageModal({ isOpen, onClose, usage, mode }: MedicineUsa
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên danh mục *</FormLabel>
+                  <FormLabel>Tên nhóm *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nhập tên danh mục thuốc..." disabled={isLoading} {...field} />
+                    <Input placeholder="Nhập tên nhóm thuốc..." disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,7 +137,7 @@ export function MedicineUsageModal({ isOpen, onClose, usage, mode }: MedicineUsa
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-gray-50">
                   <div>
                     <FormLabel>Trạng thái hoạt động</FormLabel>
-                    <FormDescription>Danh mục hoạt động sẽ được hiển thị.</FormDescription>
+                    <FormDescription>nhóm hoạt động sẽ được hiển thị.</FormDescription>
                   </div>
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} disabled={isLoading} />
@@ -157,7 +157,7 @@ export function MedicineUsageModal({ isOpen, onClose, usage, mode }: MedicineUsa
                     {mode === "create" ? "Đang tạo..." : "Đang cập nhật..."}
                   </>
                 ) : (
-                  <>{mode === "create" ? "Tạo danh mục" : "Cập nhật danh mục"}</>
+                  <>{mode === "create" ? "Tạo nhóm" : "Cập nhật nhóm"}</>
                 )}
               </Button>
             </DialogFooter>

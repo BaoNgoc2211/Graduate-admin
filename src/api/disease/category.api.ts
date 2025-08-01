@@ -24,7 +24,7 @@ export const createDiseaseCategoryAPI = async (payload: {
   name: string;
   icon: string;
 }) => {
-  const response = await APIConfig.post("/api/disCategory", payload);
+  const response = await APIConfig.post("/api/disCategory/create", payload);
   return response.data;
 };
 
@@ -35,11 +35,11 @@ export const updateDiseaseCategoryAPI = async (
     icon?: string;
   }
 ): Promise<IDiseaseCategory> => {
-  const response = await APIConfig.put(`/api/disCategory/${id}`, payload);
+  const response = await APIConfig.put(`/api/disCategory/update/${id}`, payload);
   return response.data;
 };
 
 export const deleteDiseaseCategoryAPI = async (id: string) => {
-  const response = await APIConfig.delete(`/api/disCategory/${id}`);
+  const response = await APIConfig.delete(`/api/disCategory/delete/${id}`);
   return response.data;
 };

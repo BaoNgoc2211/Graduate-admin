@@ -35,11 +35,11 @@ export const updateDiseaseUsageAPI = async (
     icon?: string;
   }
 ): Promise<IDiseaseCategory> => {
-  const response = await APIConfig.put(`/api/disUsage/${id}`, payload);
+  const response = await APIConfig.put(`/api/disUsage/update/${id}`, payload);
   return response.data;
 };
 
 export const deleteDiseaseUsageAPI = async (id: string) => {
-  const response = await APIConfig.delete(`/api/disUsage/${id}`);
+  const response = await APIConfig.delete(`/api/disUsage/delete/${id}`);
   return response.data;
 };

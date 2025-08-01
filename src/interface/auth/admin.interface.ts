@@ -48,3 +48,15 @@ export interface Ward {
   code: number;
   name: string;
 }
+export interface IAdmin{
+  _id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+export interface IUser{
+  _id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}

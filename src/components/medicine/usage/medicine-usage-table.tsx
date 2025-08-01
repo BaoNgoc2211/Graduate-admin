@@ -42,6 +42,7 @@ export function MedicineUSageTable({
 }: MedicineUsageTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: paginatedData, isLoading, error } = useMedicineUsages();
+  console.log("MedicineUsageTable paginatedData:", paginatedData);
 
   const usageList = paginatedData?.data ?? [];
 
@@ -54,7 +55,7 @@ export function MedicineUSageTable({
         <CardHeader>
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <CardTitle className="text-xl font-semibold text-gray-900">
-              Danh mục thuốc
+              Nhóm thuốc
             </CardTitle>
             <Skeleton className="h-10 w-32" />
           </div>
@@ -92,7 +93,7 @@ export function MedicineUSageTable({
         <CardContent className="pt-6">
           <div className="flex items-center justify-center space-x-2 text-red-600">
             <AlertCircle className="h-5 w-5" />
-            <span>Không thể tải danh sách danh mục thuốc</span>
+            <span>Không thể tải danh sách nhóm thuốc</span>
           </div>
         </CardContent>
       </Card>
@@ -104,9 +105,9 @@ export function MedicineUSageTable({
       <CardHeader>
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <CardTitle className="text-xl font-semibold text-gray-900">
-            Danh mục thuốc
+            nhóm thuốc
             <span className="ml-2 text-sm font-normal text-gray-500">
-              ({filteredCategories.length} danh mục)
+              ({filteredCategories.length} nhóm)
             </span>
           </CardTitle>
 
@@ -115,7 +116,7 @@ export function MedicineUSageTable({
             className="bg-blue-900 hover:bg-blue-800 text-white"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Thêm danh mục
+            Thêm nhóm
           </Button>
         </div>
 
@@ -123,7 +124,7 @@ export function MedicineUSageTable({
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Tìm kiếm danh mục..."
+            placeholder="Tìm kiếm nhóm.."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -136,12 +137,12 @@ export function MedicineUSageTable({
           <div className="text-center py-12">
             <ImageIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchTerm ? "Không tìm thấy danh mục" : "Chưa có danh mục nào"}
+              {searchTerm ? "Không tìm thấy nhóm" : "Chưa có nhóm nào"}
             </h3>
             <p className="text-gray-500 mb-6">
               {searchTerm
                 ? "Thử tìm kiếm với từ khóa khác"
-                : "Bắt đầu bằng cách tạo danh mục thuốc đầu tiên"}
+                : "Bắt đầu bằng cách tạo dnhóm thuốc đầu tiên"}
             </p>
             {!searchTerm && (
               <Button
@@ -149,7 +150,7 @@ export function MedicineUSageTable({
                 className="bg-blue-900 hover:bg-blue-800 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Thêm danh mục đầu tiên
+                Thêm nhóm đầu tiên
               </Button>
             )}
           </div>
@@ -161,7 +162,7 @@ export function MedicineUSageTable({
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-16">Ảnh</TableHead>
-                    <TableHead>Tên danh mục</TableHead>
+                    <TableHead>Tên nhóm</TableHead>
                     <TableHead className="w-24">Số thuốc</TableHead>
                     <TableHead className="w-20">Trạng thái</TableHead>
                     <TableHead className="w-32 text-right">Thao tác</TableHead>

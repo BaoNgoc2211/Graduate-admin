@@ -135,30 +135,31 @@ export function PurchaseOrderTable({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          <div className="rounded-lg border border-gray-200 overflow-hidden text-left">
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50">
-                  <TableHead className="font-semibold text-gray-900">
+                  <TableHead className="font-semibold text-gray-900 text-left">
                     Mã đơn
                   </TableHead>
-                  <TableHead className="font-semibold text-gray-900">
-                    Nhà cung cấp
-                  </TableHead>
-                  <TableHead className="font-semibold text-gray-900">
+                  {/* <TableHead className="font-semibold text-gray-900 text-left">
+      Nhà cung cấp
+    </TableHead> */}
+                  <TableHead className="font-semibold text-gray-900 text-left">
                     Ngày tạo
                   </TableHead>
-                  <TableHead className="font-semibold text-gray-900">
+                  <TableHead className="font-semibold text-gray-900 text-left">
                     Tổng tiền
                   </TableHead>
-                  <TableHead className="font-semibold text-gray-900">
+                  <TableHead className="font-semibold text-gray-900 text-left">
                     Trạng thái
                   </TableHead>
-                  <TableHead className="font-semibold text-gray-900 w-[100px]">
+                  <TableHead className="font-semibold text-gray-900 text-left w-[100px]">
                     Thao tác
                   </TableHead>
                 </TableRow>
               </TableHeader>
+
               <TableBody>
                 {data.length === 0 ? (
                   <TableRow>
@@ -180,16 +181,19 @@ export function PurchaseOrderTable({
                           {order.orderCode || order._id.slice(-8)}
                         </Link>
                       </TableCell>
-                      <TableCell className="font-medium">
+                      {/* <TableCell className="font-medium">
                         {order.supplierName || "Chưa xác định"}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>
                         {format(new Date(order.date_in), "dd/MM/yyyy", {
                           locale: vi,
                         })}
                       </TableCell>
                       <TableCell className="font-medium text-green-600">
-                        {formatCurrency(order.totalAmount)}
+                        {/* {formatCurrency(order.totalAmount)} */}
+                        {order.totalPrice
+                          ? formatCurrency(order.totalPrice)
+                          : "Chưa xác định"}
                       </TableCell>
 
                       <TableCell>

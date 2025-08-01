@@ -35,3 +35,11 @@ export const resetPasswordAPI = async (data: IReset) => {
   const response = await APIConfig.post("/api/auth/reset-password", data);
   return response.data;
 };
+export const getAllAdminsAPI = async (page: number = 1, pageSize: number = 5) => {
+  const response = await APIConfig.get(`/api/admin/getalladmin?page=${page}&pageSize=${pageSize}`);
+  return response.data.data;
+}
+export const getAllUserAPi = async (page: number = 1, pageSize: number = 5) => {
+  const response = await APIConfig.get(`/api/auth/getalluser?page=${page}&pageSize=${pageSize}`);
+  return response.data;
+}

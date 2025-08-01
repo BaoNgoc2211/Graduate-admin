@@ -51,7 +51,7 @@ export function DiseaseUsageDeleteDialog({
             </div>
             <div>
               <AlertDialogTitle className="text-lg font-semibold text-gray-900">
-                Xác nhận xoá danh mục
+                Xác nhận xoá nhóm
               </AlertDialogTitle>
             </div>
           </div>
@@ -59,7 +59,7 @@ export function DiseaseUsageDeleteDialog({
 
         <AlertDialogDescription className="text-gray-600 space-y-3">
           <p>
-            Bạn có chắc chắn muốn xoá danh mục{" "}
+            Bạn có chắc chắn muốn xoá nhóm{" "}
             <span className="font-semibold text-gray-900">
               &ldquo{usage.name}&rdquo
             </span>{" "}
@@ -69,8 +69,8 @@ export function DiseaseUsageDeleteDialog({
           {hasRelatedDiseases && (
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-amber-800 text-sm">
-                <strong>Cảnh báo:</strong> Danh mục này có{" "}
-                {usage.disease.length} bệnh liên quan. Việc xoá danh mục có thể
+                <strong>Cảnh báo:</strong> nhóm này có{" "}
+                {usage.disease.length} bệnh liên quan. Việc xoá nhóm có thể
                 ảnh hưởng đến dữ liệu bệnh tương ứng.
               </p>
             </div>
@@ -94,7 +94,7 @@ export function DiseaseUsageDeleteDialog({
             {deleteMutation.isPending && (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             )}
-            Xoá danh mục
+            Xoá nhóm
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

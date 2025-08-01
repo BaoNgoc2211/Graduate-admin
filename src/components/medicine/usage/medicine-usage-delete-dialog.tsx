@@ -58,9 +58,9 @@ export function MedicineUsageDeleteDialog({ isOpen, onClose, usage }: MedicineUs
               <Trash2 className="h-5 w-5 text-red-600" />
             </div>
             <div>
-              <AlertDialogTitle className="text-lg font-semibold text-gray-900">Xóa danh mục thuốc</AlertDialogTitle>
+              <AlertDialogTitle className="text-lg font-semibold text-gray-900">Xóa nhóm thuốc</AlertDialogTitle>
               <AlertDialogDescription className="text-sm text-gray-600 mt-1">
-                Bạn có chắc chắn muốn xóa danh mục này không?
+                Bạn có chắc chắn muốn xóa nhóm này không?
               </AlertDialogDescription>
             </div>
           </div>
@@ -108,7 +108,7 @@ export function MedicineUsageDeleteDialog({ isOpen, onClose, usage }: MedicineUs
             <Alert className="border-amber-200 bg-amber-50">
               <AlertTriangle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-800">
-                <strong>Cảnh báo:</strong> Danh mục này hiện có {medicineCount} sản phẩm thuốc. Việc xóa danh mục có thể
+                <strong>Cảnh báo:</strong> nhóm này hiện có {medicineCount} sản phẩm thuốc. Việc xóa nhóm có thể
                 ảnh hưởng đến việc phân loại các sản phẩm này.
               </AlertDescription>
             </Alert>
@@ -116,10 +116,10 @@ export function MedicineUsageDeleteDialog({ isOpen, onClose, usage }: MedicineUs
 
           {/* Confirmation text */}
           <div className="text-sm text-gray-600">
-            <p>Hành động này không thể hoàn tác. Danh mục sẽ bị xóa vĩnh viễn khỏi hệ thống.</p>
+            <p>Hành động này không thể hoàn tác. nhóm sẽ bị xóa vĩnh viễn khỏi hệ thống.</p>
             {hasRelatedMedicines && (
               <p className="mt-2 font-medium text-amber-700">
-                Các sản phẩm thuốc trong danh mục này sẽ không còn được phân loại.
+                Các sản phẩm thuốc trong nhóm này sẽ không còn được phân loại.
               </p>
             )}
           </div>
@@ -142,7 +142,7 @@ export function MedicineUsageDeleteDialog({ isOpen, onClose, usage }: MedicineUs
             ) : (
               <>
                 <Trash2 className="h-4 w-4 mr-2" />
-                Xóa danh mục
+                Xóa nhóm
               </>
             )}
           </AlertDialogAction>

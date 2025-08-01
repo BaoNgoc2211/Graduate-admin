@@ -19,8 +19,8 @@ export const importBatchSchema = z
 
     distributor_id: z.string().min(1, "Nhà phân phối là bắt buộc"),
     importDate: z
-      .date()
-      .refine((date) => date <= new Date(), "Ngày nhập không được sau ngày hiện tại"),
+      .date(),
+      // .refine((date) => date <= new Date(), "Ngày nhập không được sau ngày hiện tại"),
     expiryDate: z
       .date()
       .refine((date) => date > new Date(), "Hạn sử dụng phải sau ngày nhập"),

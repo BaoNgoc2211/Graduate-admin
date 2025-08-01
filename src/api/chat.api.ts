@@ -13,7 +13,7 @@ export const getUnassignedRooms = async (): Promise<{ data: IChatRoom[] }> => {
 
 // Lấy tất cả phòng chat (cả assigned và unassigned)
 export const getAllChatRooms = async (): Promise<{ data: IChatRoom[] }> => {
-  const res = await APIConfig.get(`/api/chat/rooms`);
+  const res = await APIConfig.get(`/api/chat/all`);
   return res.data;
 };
 

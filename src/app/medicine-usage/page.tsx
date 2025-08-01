@@ -56,10 +56,10 @@ export default function MedicineUSagePage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Quản lý danh mục thuốc
+                Quản lý nhóm thuốc
               </h1>
               <p className="text-gray-600 mt-2">
-                Quản lý và phân loại các danh mục thuốc trong hệ thống
+                Quản lý và phân loại các nhóm thuốc trong hệ thống
               </p>
             </div>
           </div>
