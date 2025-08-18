@@ -34,7 +34,7 @@ export function MedicineCategoryStats() {
         <CardContent className="pt-6">
           <div className="flex items-center space-x-2 text-red-600">
             <AlertCircle className="h-4 w-4" />
-            <span className="text-sm">Không thể tải thống kê danh mục</span>
+            <span className="text-sm">Không thể tải thống kê danh mục. Vui lòng thử lại sau.</span>
           </div>
         </CardContent>
       </Card>

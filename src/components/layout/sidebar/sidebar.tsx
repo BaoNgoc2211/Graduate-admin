@@ -20,6 +20,8 @@ import {
   UngroupIcon,
 } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
 const Sidebar = () => {
   const [collapsed] = useState(false);
@@ -27,6 +29,17 @@ const Sidebar = () => {
     <aside className="border-[#00416A] w-60 h-fit bg-white text-[#00416A] pt-4 space-y-6">
       {/* Platform Section */}
       <SidebarSection title="">
+        <div className="flex justify-center ">
+          {" "}
+          <Link href="/">
+            <Image
+              src="/image/logo/log_medicine_03.png"
+              alt="Logo MediGo"
+              width={100}
+              height={100}
+            />
+          </Link>
+        </div>
         <SidebarGroup
           title="Thông tin thuốc"
           icon={Layers}
@@ -100,10 +113,10 @@ const Sidebar = () => {
           title="Người dùng"
           icon={Settings}
           items={[
-            { label: "Quản lý nhân viên", href: "/orders", icon: UserCog },
+            { label: "Quản lý nhân viên", href: "/admin", icon: UserCog },
             {
               label: "Quản lý khách hàng",
-              href: "/import-orders",
+              href: "/user",
               icon: Briefcase,
             },
             {

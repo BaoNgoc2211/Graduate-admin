@@ -57,19 +57,20 @@ export const useChatMessages = (roomId: string) => {
   });
 };
 
-// Gửi tin nhắn (admin hoặc staff)
+
 export const useSendMessage = () => {
   const queryClient = useQueryClient();
 
   return useMutation<{ data: IMessage }, Error, ISendMessagePayload>({
-    mutationFn: (payload: ISendMessagePayload) => sendMessage(payload),
+    mutationFn: (payload: ISendMessagePayload) => {
+      // ✅ Đảm bảo payload không có senderId
+      const { roomId, content, messageType, metadata } = payload;
+      return sendMessage({ roomId, content, messageType, metadata });
+    },
     onSuccess: (_res, variables) => {
-      // Refetch tin nhắn khi gửi thành công
       queryClient.invalidateQueries({
         queryKey: ["chat-messages", variables.roomId],
       });
-
-      // Also invalidate room lists to update lastMessage
       queryClient.invalidateQueries({
         queryKey: ["chat-rooms-unassigned"],
       });
@@ -82,6 +83,7 @@ export const useSendMessage = () => {
     },
     onError: (error) => {
       console.error("Error sending message:", error);
+      toast.error("Failed to send message");
     }
   });
 };

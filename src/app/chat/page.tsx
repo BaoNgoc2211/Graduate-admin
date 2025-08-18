@@ -24,7 +24,7 @@ export default function ChatPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-200px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Sidebar - Chat Room List */}
           <div className="lg:col-span-1">
             <ChatRoomList
