@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Urbanist, Open_Sans } from "next/font/google";
 import { cn } from "@/lib/utils";
-import Header from "@/components/layout/header";
+// import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import QueryProvider from "@/providers/query-provider";
 import { Toaster } from "sonner";
@@ -27,7 +27,7 @@ export default function RootLayout({
       <body className={cn("bg-white", open_sans.variable, urbanist.className)}>
         <QueryProvider>
           <Toaster position="top-right" richColors />
-          <Header />
+          {/* <Header /> */}
           <div className="flex min-h-screen">
             <div className="flex-shrink-0">
               <Sidebar />

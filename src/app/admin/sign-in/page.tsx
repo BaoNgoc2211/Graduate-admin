@@ -1,11 +1,9 @@
 "use client";
-// import { assets } from "../../../../public/assets";
 import Button from "@/components/ui/button-01";
 import { Lock, Phone } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-// import { signInAPI } from "@/api/auth.api";
 import { useRouter } from "next/navigation";
 import { signInAPI } from "@/api/admin.api";
 import { toast } from "sonner";

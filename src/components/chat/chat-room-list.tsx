@@ -131,7 +131,7 @@ export function ChatRoomList({
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-gray-500" />
             <span className="font-medium text-gray-900 text-sm">
-              {typeof room.user === "object" ? room.user.email : room.user}
+              {/* {typeof room.user === "object" ? room.user.email : room.user} */}
             </span>
           </div>
           <div className="flex items-center gap-1">

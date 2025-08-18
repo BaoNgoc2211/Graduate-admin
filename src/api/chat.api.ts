@@ -17,23 +17,36 @@ export const getAllChatRooms = async (): Promise<{ data: IChatRoom[] }> => {
   return res.data;
 };
 
-// Lấy phòng chat được gán cho staff hiện tại
 export const getAssignedRooms = async (): Promise<{ data: IChatRoom[] }> => {
-  const res = await APIConfig.get(`/api/chat/staff/messages`, {
-    withCredentials: true,
+  try {
+    console.log('🔍 Headers:', {
+      Authorization: localStorage.getItem('adminToken') ? 'Bearer ***' : 'Missing',
+      withCredentials: true
+    });
+    
+    const res = await APIConfig.get(`/api/chat/staff/messages`, {
+      withCredentials: true,
+    });
+    
+    console.log('Success response:', res.data);
+    return res.data;
+  } catch  {
+    console.error('API Error:', {
+      url: '/api/chat/staff/messages'
+    });
+    throw new Error('Failed to fetch assigned chat rooms. Please try again later.');
+  }
+};
+
+export const getMessages = async (
+  roomId: string
+): Promise<{ data: IMessage[] }> => {
+  const res = await APIConfig.get(`/api/chat/messages/${roomId}`, {
+    withCredentials: true, 
   });
   return res.data;
 };
 
-// Lấy danh sách tin nhắn theo room
-export const getMessages = async (
-  roomId: string
-): Promise<{ data: IMessage[] }> => {
-  const res = await APIConfig.get(`/api/chat/messages/${roomId}`);
-  return res.data;
-};
-
-// Gửi message (từ phía staff/admin)
 export const sendMessage = async (
   data: ISendMessagePayload
 ): Promise<{ data: IMessage }> => {

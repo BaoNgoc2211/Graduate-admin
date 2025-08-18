@@ -60,7 +60,7 @@ export interface IStartChatPayload {
 export interface ISendMessagePayload {
   roomId: string;
   content: string;
-  senderId: string;
+  // senderId: string;
   messageType?: "text" | "image" | "file"; 
   metadata?: IMessage["metadata"]; 
 }

@@ -38,29 +38,7 @@ export const deleteMedicineCategoryAPI = async (id: string): Promise<void> => {
   await APIConfig.delete(`/api/medicine/cate/${id}`);
 };
 
-export const getMedicineCategoryStatsAPI = async (): Promise<{
-  data: {
-    totalCategories: number;
-    totalMedicines: number;
-    categoriesWithMedicines: number;
-    emptyCategories: number;
-  };
-}> => {
-  // Dữ liệu ảo
-  const mockData = {
-    totalCategories: 8,
-    totalMedicines: 65,
-    categoriesWithMedicines: 6,
-    emptyCategories: 2,
-  };
-
-  return Promise.resolve({ data: mockData });
-  // const response = await APIConfig.get("/api/medicine/cate/stats");
-  // return response.data;
-};
-/**
- * Tìm kiếm danh mục thuốc
- */
+// Tìm kiếm danh mục thuốc
 export const searchMedicineCategoriesAPI = async (
   filter: IMedicineCategoryFilter
 ): Promise<{ data: IMedicineCategory[]; total: number }> => {
