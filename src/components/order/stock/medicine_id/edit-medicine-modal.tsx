@@ -32,13 +32,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-// Upload, 
 import { X, Image as ImageIcon, Package, Edit } from "lucide-react";
 import { useImportBatch } from "@/hooks/orders/purchase.hooks";
 import { IStock } from "@/interface/order/stock.interface";
 import { IMedicine } from "@/interface/medicine/medicine.interface";
 import { toast } from "sonner";
 import { useMedicines } from "@/hooks/medicine/medicine.hooks";
+import { useUpdateMedicineStockBatches } from "@/hooks/orders/stock.hooks"; // NEW IMPORT
 import Image from "next/image";
 
 // Schema for stock-specific medicine update
@@ -75,6 +75,9 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
   const { handleUpdate, handleUploadImage, isUpdating, isUploading } = useMedicines();
   const { data: batchData } = useImportBatch();
   const availableBatches = batchData?.data || [];
+  
+  // NEW HOOK for updating stock batches
+  const updateStockBatches = useUpdateMedicineStockBatches();
 
   const form = useForm<StockMedicineUpdateFormData>({
     resolver: zodResolver(stockMedicineUpdateSchema),
@@ -136,10 +139,6 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
     });
   };
 
-  // const getBatchInfo = (batchId: string): IImportBatch | undefined => {
-  //   return availableBatches.find(batch => batch._id === batchId);
-  // };
-
   const isStockBatch = (batchId: string): boolean => {
     return stocks.some(stock => 
       (typeof stock.importBatch === 'string' ? stock.importBatch : stock.importBatch?._id) === batchId
@@ -158,8 +157,8 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
         thumbnailUrl = uploadResult.url;
       }
 
-      // Prepare update data
-      const updateData = {
+      // Prepare medicine update data
+      const medicineUpdateData = {
         name: data.name,
         packaging: data.packaging,
         dosageForm: data.dosageForm,
@@ -167,15 +166,42 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
         thumbnail: thumbnailUrl,
       };
 
-      // Update medicine
-      await handleUpdate(medicine._id, updateData);
+      // Update medicine basic info
+      await handleUpdate(medicine._id, medicineUpdateData);
+
+      // NEW: Update stock batches if they changed
+      const currentBatches = stocks
+        .map(stock => typeof stock.importBatch === 'string' 
+          ? stock.importBatch 
+          : stock.importBatch?._id
+        )
+        .filter(Boolean) as string[];
+
+      const batchesChanged = 
+        selectedBatches.length !== currentBatches.length ||
+        selectedBatches.some(id => !currentBatches.includes(id)) ||
+        currentBatches.some(id => !selectedBatches.includes(id));
+
+      if (batchesChanged) {
+        console.log("Updating stock batches:", {
+          medicineId: medicine._id,
+          oldBatches: currentBatches,
+          newBatches: selectedBatches
+        });
+
+        await updateStockBatches.mutateAsync({
+          medicineId: medicine._id,
+          batchIds: selectedBatches,
+          stockIds: stocks.map(stock => stock._id).join(","),
+        });
+      }
       
       // Call parent callback if provided
       if (onUpdate) {
-        onUpdate(medicine._id, updateData);
+        onUpdate(medicine._id, medicineUpdateData);
       }
 
-      toast.success("Cập nhật thông tin thuốc thành công!");
+      toast.success("Cập nhật thông tin thuốc và lô hàng thành công!");
       onClose();
     } catch (error) {
       console.error("Error updating medicine:", error);
@@ -190,6 +216,8 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
       return "N/A";
     }
   };
+
+  const isSubmitting = isUpdating || isUploading || updateStockBatches.isPending;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -337,7 +365,7 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
                     Quản lý lô hàng
                   </FormLabel>
                   <p className="text-sm text-gray-500 mb-3">
-                    Chọn các lô hàng hiển thị trong tồn kho
+                    Chọn các lô hàng hiển thị trong tồn kho ({selectedBatches.length} đã chọn)
                   </p>
                   
                   <div className="max-h-48 overflow-y-auto space-y-2">
@@ -366,7 +394,7 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
                               <div className="flex gap-2">
                                 {isCurrentlyInStock && (
                                   <Badge variant="outline" className="text-green-600">
-                                    Đang hiển thị
+                                    Hiện tại
                                   </Badge>
                                 )}
                                 {isSelected && (
@@ -380,6 +408,12 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
                         </Card>
                       );
                     })}
+                    
+                    {availableBatches.length === 0 && (
+                      <div className="text-center py-4 text-gray-500">
+                        Không có lô hàng nào
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -391,10 +425,10 @@ const EditMedicineModal: React.FC<EditMedicineModalProps> = ({
               </Button>
               <Button 
                 type="submit" 
-                disabled={isUpdating || isUploading}
+                disabled={isSubmitting}
                 className="bg-blue-600 hover:bg-blue-700"
               >
-                {isUpdating || isUploading ? "Đang cập nhật..." : "Cập nhật"}
+                {isSubmitting ? "Đang cập nhật..." : "Cập nhật"}
               </Button>
             </DialogFooter>
           </form>

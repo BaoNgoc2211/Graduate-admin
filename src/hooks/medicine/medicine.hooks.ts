@@ -175,11 +175,6 @@ import { IMedicinePayload, MedicineFilters } from "@/interface/medicine/medicine
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-// import { medicineApi } from "@/api/medicine.api";
-// import type {
-//   IMedicinePayload,
-//   MedicineFilters,
-// } from "@/interfaces/medicine.interface";
 
 export const useMedicines = (initialPage = 1, initialLimit = 10) => {
   const [currentPage, setCurrentPage] = useState(initialPage);

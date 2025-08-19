@@ -1,39 +1,16 @@
-// import APIConfig from "../api.config";
-// import { IStock } from "@/interface/order/stock.interface";
-
-// export const getAllStockAPI = async (): Promise<{
-//   data: IStock[];
-// }> => {
-//   const response = await APIConfig.get(`/api/stock`);
-//   // return response.data as Promise<{ data: IStock[] }>;
-//   return response.data.data;
-// };
-// export const getLowStockAPI = async (): Promise<{
-//   data: IStock[];
-// }> => {
-//   const response = await APIConfig.get<{ data: IStock[] }>(`/api/stock/lowstock`);
-//   return response.data;
-// };
-// // export const getByMedicineStockAPI = async (
-// //   medicine_id: string
-// // ): Promise<{ data: IStock }> => {
-// //   const response = await APIConfig.get<{ data: IStock }>(
-// //     `/api/stock/medicine/${medicine_id}`
-// //   );
-// //   return response.data;
-// // };
-// export const getByMedicineStockAPI = async (
-//   medicineId: string
-// ): Promise<{ data: IStock[] }> => {
-//   const res = await APIConfig.get<{ data: IStock[] }>(
-//     `/api/stock/medicine/${medicineId}`
-//   );
-//   return res.data;
-// };
 import { IStockApiResponse, IStock } from "@/interface/order/stock.interface";
 import APIConfig from "../api.config";
-
-// Get all stocks with pagination
+interface MedicineUpdateResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    _id: string;
+    name: string;
+    importBatch_id: string[];
+    stock_id: string;
+    [key: string]: unknown;
+  };
+}
 export const getAllStockAPI = async (
   page: number = 1, 
   limit: number = 10
@@ -41,7 +18,6 @@ export const getAllStockAPI = async (
   try {
     const response = await APIConfig.get(`/api/stock?page=${page}&limit=${limit}`);
     
-    // Handle nested data structure from your API
     if (response.data.data && response.data.data.data) {
       return {
         success: true,
@@ -190,3 +166,39 @@ export const getStockStatsAPI = async (): Promise<{
     throw error;
   }
 };
+export const updateMedicineStockBatchesAPI = async (
+  medicineId: string,
+  batchIds: string[],
+  stockIds: string
+): Promise<MedicineUpdateResponse> => {
+  try {
+    const response = await APIConfig.put(`/api/medicine/${medicineId}`, {
+      importBatch_id: batchIds,
+      stock_id: stockIds
+    });
+    return response.data as MedicineUpdateResponse;
+  } catch (error) {
+    console.error("updateMedicineStockBatchesAPI error:", error);
+    throw error;
+  }
+};
+// export const updateMedicineStockBatchesAPI = async (
+//   medicineId: string,
+//   batchIds: string[],
+//   stockIds: string
+// ): Promise<{
+//   success: boolean;
+//   message: string;
+//   data?: any;
+// }> => {
+//   try {
+//     const response = await APIConfig.put(`/api/medicine/${medicineId}`, {
+//       importBatch_id: batchIds,
+//       stock_id: stockIds
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error("updateMedicineStockBatchesAPI error:", error);
+//     throw error;
+//   }
+// };

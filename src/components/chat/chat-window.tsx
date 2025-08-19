@@ -52,12 +52,11 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
   const unassignStaffMutation = useUnassignStaff();
   const closeChatRoomMutation = useCloseChatRoom();
 
-  // ✅ SỬA: Wrap messages trong useMemo để tránh thay đổi reference không cần thiết
   const messages = useMemo(() => {
     return messagesResponse?.data || [];
   }, [messagesResponse?.data]);
 
-  // ✅ SỬA: Auto-scroll to bottom when new messages arrive - giờ dependencies ổn định
+  // SỬA: Auto-scroll to bottom when new messages arrive - giờ dependencies ổn định
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -130,7 +129,7 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
     }
   };
 
-  // ✅ SỬA: Memoize groupMessagesByDate function để tránh tính toán lại không cần thiết
+  //  SỬA: Memoize groupMessagesByDate function để tránh tính toán lại không cần thiết
   const groupMessagesByDate = useMemo(() => {
     const groups: { [key: string]: IMessage[] } = {};
 
@@ -345,7 +344,7 @@ export function ChatWindow({ selectedRoom }: ChatWindowProps) {
             </div>
           ) : (
             <div>
-              {/* ✅ SỬA: Sử dụng memoized groupMessagesByDate */}
+              {/*  SỬA: Sử dụng memoized groupMessagesByDate */}
               {Object.entries(groupMessagesByDate).map(([date, dateMessages]) => (
                 <div key={date}>
                   <div className="flex justify-center my-4">

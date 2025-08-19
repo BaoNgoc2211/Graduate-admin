@@ -1,99 +1,3 @@
-// // import {
-// //   getAllStockAPI,
-// //   getByMedicineStockAPI,
-// //   getLowStockAPI,
-// // } from "@/api/order/stock.api";
-// // import { IStock } from "@/interface/order/stock.interface";
-// // import { useQuery } from "@tanstack/react-query";
-
-// // export const useAllStock = () => {
-// //   return useQuery<{ data: IStock[] }>({
-// //     queryKey: ["stock-list"],
-// //     queryFn: getAllStockAPI,
-// //   });
-// // };
-// // export const useLowStock = () => {
-// //   return useQuery<{ data: IStock }>({
-// //     queryKey: ["stock-low"],
-// //     queryFn: getLowStockAPI,
-// //   });
-// // };
-// // export const useByMedicineStock = () => {
-// //   const params = useParams<{ _id: string }>();
-// //   const medicineId = params._id;
-// //   console.log("Medicine ID:", medicineId);
-// //   const isIdReady = !!medicineId;
-// //   return useQuery({
-// //     queryKey: ["stock-by-medicine", medicineId],
-// //     queryFn: () => getByMedicineStockAPI(medicineId),
-// //     enabled: isIdReady,
-// //   });
-// // };
-// import {
-//   getAllStockAPI,
-//   getByMedicineStockAPI,
-//   getLowStockAPI,
-// } from "@/api/order/stock.api";
-// import { IStock } from "@/interface/order/stock.interface";
-// import { useQuery } from "@tanstack/react-query";
-// export const useAllStock = () =>
-//   useQuery<{ data: IStock[] }>({
-//     queryKey: ["stock-list"],
-//     queryFn: getAllStockAPI,
-//     staleTime: 5 * 60 * 1000,
-//   });
-// export const useLowStock = () => {
-//   return useQuery<{ data: IStock[] }>({
-//     queryKey: ["stock-low"],
-//     queryFn: getLowStockAPI,
-//   });
-// };
-// // export const useLowStock = (threshold = 10) => {
-// //   return useQuery({
-// //     queryKey: ["low-stock", threshold],
-// //     queryFn: async (): Promise<{ data: IStock[] }> => {
-// //       await new Promise((resolve) => setTimeout(resolve, 800));
-// //       const lowStockItems = mockStocks.filter(
-// //         (stock) => stock.quantity < threshold
-// //       );
-// //       return { data: lowStockItems };
-// //     },
-// //     staleTime: 5 * 60 * 1000,
-// //   });
-// // };
-
-// // export const useByMedicineStock = (medicineId: string) => {
-// //   return useQuery({
-// //     queryKey: ["medicine-stock", medicineId],
-// //     queryFn: async (): Promise<{ data: IStock[] }> => {
-// //       await new Promise((resolve) => setTimeout(resolve, 1200));
-// //       const medicineStocks = mockStocks.filter(
-// //         (stock) => stock.medicine_id._id === medicineId
-// //       );
-// //       return { data: medicineStocks };
-// //     },
-// //     enabled: !!medicineId,
-// //     staleTime: 5 * 60 * 1000,
-// //   });
-// // };
-// // export const useByMedicineStock = () => {
-// //   const params = useParams<{ medicine_id: string }>(); 
-// //   const medicineId = params?.medicine_id;
-// //   const isReady = !!medicineId;
-
-// //   return useQuery({
-// //     queryKey: ["stock-by-medicine", medicineId],
-// //     queryFn: () => getByMedicineStockAPI(medicineId),
-// //     enabled: isReady,
-// //   });
-// // };
-// export const useByMedicineStock = (medicineId: string) =>
-//   useQuery<{ data: IStock[] }>({          
-//     queryKey: ["stock-by-medicine", medicineId],
-//     queryFn: () => getByMedicineStockAPI(medicineId),
-//     enabled: !!medicineId,
-//   });
-// hooks/orders/stock.hooks.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAllStockAPI,
@@ -102,6 +6,7 @@ import {
   createStockAPI,
   deleteStockAPI,
   updateStockAPI,
+  updateMedicineStockBatchesAPI,
 } from "@/api/order/stock.api";
 import { IStock, IStockApiResponse } from "@/interface/order/stock.interface";
 import { toast } from "sonner";
@@ -141,7 +46,7 @@ export const useByMedicineStock = (medicineId: string) => {
 // Hook tạo stock mới
 export const useCreateStock = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: createStockAPI,
     onSuccess: (data) => {
@@ -164,7 +69,7 @@ export const useCreateStock = () => {
 // Hook cập nhật stock
 export const useUpdateStock = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<IStock> }) =>
       updateStockAPI(id, data),
@@ -188,7 +93,7 @@ export const useUpdateStock = () => {
 // Hook xóa stock
 export const useDeleteStock = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: deleteStockAPI,
     onSuccess: (data) => {
@@ -224,13 +129,18 @@ export const useStockStats = (stocks: IStock[]) => {
 
   const totalItems = stocks.length;
   const totalQuantity = stocks.reduce((sum, stock) => sum + stock.quantity, 0);
-  const totalValue = stocks.reduce((sum, stock) => sum + (stock.quantity * stock.sellingPrice), 0);
+  const totalValue = stocks.reduce(
+    (sum, stock) => sum + stock.quantity * stock.sellingPrice,
+    0
+  );
   const averagePrice = totalQuantity > 0 ? totalValue / totalQuantity : 0;
-  
-  const lowStockItems = stocks.filter(stock => stock.quantity <= 10).length;
-  const expiringSoonItems = stocks.filter(stock => {
+
+  const lowStockItems = stocks.filter((stock) => stock.quantity <= 10).length;
+  const expiringSoonItems = stocks.filter((stock) => {
     if (!stock.expiryDate) return false;
-    const diffDays = (new Date(stock.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    const diffDays =
+      (new Date(stock.expiryDate).getTime() - Date.now()) /
+      (1000 * 60 * 60 * 24);
     return diffDays > 0 && diffDays <= 60;
   }).length;
 
@@ -241,4 +151,40 @@ export const useStockStats = (stocks: IStock[]) => {
     lowStockItems,
     expiringSoonItems,
   };
+};
+export const useUpdateMedicineStockBatches = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      medicineId,
+      batchIds,
+      stockIds,
+    }: {
+      medicineId: string;
+      batchIds: string[];
+      stockIds: string;
+    }) => updateMedicineStockBatchesAPI(medicineId, batchIds, stockIds),
+    onSuccess: (data, variables) => {
+      if (data.success) {
+        // Invalidate all related queries
+        queryClient.invalidateQueries({ queryKey: ["stock-list"] });
+        queryClient.invalidateQueries({ queryKey: ["stock-low"] });
+        queryClient.invalidateQueries({
+          queryKey: ["stock-by-medicine", variables.medicineId],
+        });
+        queryClient.invalidateQueries({ queryKey: ["medicines"] });
+        queryClient.invalidateQueries({
+          queryKey: ["medicine", variables.medicineId],
+        });
+        toast.success("Cập nhật lô hàng thành công!");
+      } else {
+        toast.error(data.message || "Có lỗi xảy ra khi cập nhật lô hàng");
+      }
+    },
+    onError: (error) => {
+      console.error("Update medicine stock batches error:", error);
+      toast.error("Có lỗi xảy ra khi cập nhật lô hàng");
+    },
+  });
 };

@@ -55,9 +55,7 @@ export const fetchRevenueStats = async (period: "day" | "week" | "month" = "day"
   }
 }
 
-/**
- * Interface cho dữ liệu time series
- */
+// Interface cho dữ liệu time series
 interface TimeSeriesData {
   date?: string
   week?: string
@@ -66,9 +64,7 @@ interface TimeSeriesData {
   orders: number
 }
 
-/**
- * Tạo dữ liệu time series từ đơn hàng thật
- */
+// Tạo dữ liệu time series từ đơn hàng thật
 function generateTimeSeriesData(orders: IOrder[], period: "day" | "week" | "month"): TimeSeriesData[] {
   const now = new Date()
   const data: TimeSeriesData[] = []
@@ -134,9 +130,7 @@ function generateTimeSeriesData(orders: IOrder[], period: "day" | "week" | "mont
   return data
 }
 
-/**
- * Interface cho top product stats
- */
+// Interface cho top product stats
 interface TopProductStats {
   _id: string
   name: string
@@ -146,9 +140,7 @@ interface TopProductStats {
   revenue: number
 }
 
-/**
- * Tính top products từ order items thật
- */
+// Tính top products từ order items thật
 function calculateTopProducts(orders: IOrder[]): TopProductStats[] {
   const productStats: Record<string, TopProductStats> = {}
 
@@ -179,18 +171,14 @@ function calculateTopProducts(orders: IOrder[]): TopProductStats[] {
     .slice(0, 5)
 }
 
-/**
- * Interface cho status distribution
- */
+// Interface cho status distribution
 interface StatusDistribution {
   status: string
   count: number
   percentage: number
 }
 
-/**
- * Tính phân bố trạng thái từ đơn hàng thật
- */
+// Tính phân bố trạng thái từ đơn hàng thật
 function calculateStatusDistribution(orders: IOrder[]): StatusDistribution[] {
   const statusCount: Record<string, number> = {}
   const total = orders.length

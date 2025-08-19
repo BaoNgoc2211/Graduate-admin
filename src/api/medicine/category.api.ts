@@ -33,11 +33,61 @@ export const updateMedicineCategoryAPI = async (
   const response = await APIConfig.put(`/api/medicine/cate/${id}`, payload);
   return response.data;
 };
-
 export const deleteMedicineCategoryAPI = async (id: string): Promise<void> => {
   await APIConfig.delete(`/api/medicine/cate/${id}`);
 };
+export const getMedicineCategoryStatsAPI = async (): Promise<{
+  data: {
+    totalCategories: number;
+    totalMedicines: number;
+    categoriesWithMedicines: number;
+    emptyCategories: number;
+  };
+}> => {
+  try {
+    // lấy tất cả danh mục thuốc
+    const response = await APIConfig.get("/api/medicine/cate/");
 
+    console.log("Medicine Category API Response:", response.data);
+
+    const categories: IMedicineCategory[] =
+      response.data?.data?.data || response.data?.data || [];
+
+    // Kiểm tra xem categories có phải là array không
+    if (!Array.isArray(categories)) {
+      console.warn("Category data is not an array:", categories);
+      throw new Error("Invalid data format");
+    }
+
+    // Tính toán thống kê từ dữ liệu thật
+    const totalCategories = categories.length;
+    const totalMedicines = categories.reduce((sum, category) => {
+      return sum + (category.medicine?.length || 0);
+    }, 0);
+    const categoriesWithMedicines = categories.filter(
+      (category) => category.medicine && category.medicine.length > 0
+    ).length;
+    const emptyCategories = totalCategories - categoriesWithMedicines;
+
+    return {
+      data: {
+        totalCategories,
+        totalMedicines,
+        categoriesWithMedicines,
+        emptyCategories,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching medicine category stats:", error);
+    const fallbackData = {
+      totalCategories: 0,
+      totalMedicines: 0,
+      categoriesWithMedicines: 0,
+      emptyCategories: 0,
+    };
+    return { data: fallbackData };
+  }
+};
 // Tìm kiếm danh mục thuốc
 export const searchMedicineCategoriesAPI = async (
   filter: IMedicineCategoryFilter
