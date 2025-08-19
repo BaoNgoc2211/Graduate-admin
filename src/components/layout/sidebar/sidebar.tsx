@@ -11,7 +11,6 @@ import {
   Box,
   BookOpen,
   Sliders,
-  PlusCircle,
   Clock,
   UserCog,
   Briefcase,
@@ -87,8 +86,6 @@ const Sidebar = () => {
               href: "/disease-category",
               icon: Sliders,
             },
-
-            { label: "Dược liệu", href: "/herbs", icon: PlusCircle },
           ]}
         />
         <SidebarGroup
