@@ -42,13 +42,13 @@ interface DiseaseFormProps {
 }
 
 const RISK_GROUPS = [
+  "Nhũ nhi",
+  "Trẻ nhỏ",
+  "Trẻ mẫu giáo",
   "Trẻ em",
-  "Người cao tuổi",
-  "Phụ nữ mang thai",
-  "Người có bệnh mãn tính",
-  "Người suy giảm miễn dịch",
-  "Người lao động",
-  "Học sinh, sinh viên",
+  "Thiếu niên",
+  "Người trưởng thành",
+  "Người cao tuổi"
 ];
 
 const SEVERITY_LEVELS = [

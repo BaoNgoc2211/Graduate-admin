@@ -8,8 +8,8 @@ import QueryProvider from "@/providers/query-provider";
 import { Toaster } from "sonner";
 import Sidebar from "@/components/layout/sidebar/sidebar";
 export const metadata: Metadata = {
-  title: "Quản lý Danh mục Bệnh – MediGo",
-  description: "Trang quản lý danh mục bệnh trong hệ thống MediGo.",
+  title: "Trung tâm quản lý – MediGo",
+  description: "Trung tâm quản lý dữ liệu và vận hành của MediGo.",
 };
 const urbanist = Urbanist({ subsets: ["latin"] });
 const open_sans = Open_Sans({
