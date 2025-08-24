@@ -206,11 +206,23 @@
 
 import type React from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Package, Calendar, FileText, Shield, Pill, type LucideIcon } from "lucide-react";
+import {
+  Package,
+  Calendar,
+  FileText,
+  Shield,
+  Pill,
+  type LucideIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { IMedicine } from "@/interface/medicine/medicine.interface";
 
@@ -231,10 +243,15 @@ interface InfoItemProps {
   value?: string;
 }
 
-export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDetailModalProps) {
-  const manufacturerName = typeof medicine.manufacturer_id === "object" 
-    ? medicine.manufacturer_id.nameCo 
-    : "N/A";
+export function MedicineDetailModal({
+  medicine,
+  open,
+  onOpenChange,
+}: MedicineDetailModalProps) {
+  const manufacturerName =
+    typeof medicine.manufacturer_id === "object"
+      ? medicine.manufacturer_id.nameCo
+      : "N/A";
 
   const InfoSection = ({ title, children, icon: Icon }: InfoSectionProps) => (
     <div className="space-y-3">
@@ -256,7 +273,13 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
     );
   };
 
-  const InfoTextSection = ({ title, content }: { title: string; content?: string }) => {
+  const InfoTextSection = ({
+    title,
+    content,
+  }: {
+    title: string;
+    content?: string;
+  }) => {
     if (!content) return null;
     return (
       <div>
@@ -282,7 +305,9 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
               </AvatarFallback>
             </Avatar>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">{medicine.name}</h2>
+              <h2 className="text-xl font-bold text-gray-900">
+                {medicine.name}
+              </h2>
               <p className="text-sm text-gray-500">Mã: {medicine.code}</p>
             </div>
           </DialogTitle>
@@ -295,7 +320,17 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
               <dl className="divide-y divide-gray-100">
                 <InfoItem label="Dạng bào chế" value={medicine.dosageForm} />
                 <InfoItem label="Đóng gói" value={medicine.packaging} />
-                <InfoItem label="Nhóm tuổi" value={medicine.age_group} />
+                {/* <InfoItem label="Nhóm tuổi" value={medicine.age_group} /> */}
+                {/* <InfoItem label="Nhóm tuổi" value={medicine.age_group} /> */}
+                \
+                <InfoItem
+                  label="Nhóm tuổi"
+                  value={
+                    Array.isArray(medicine.age_group)
+                      ? medicine.age_group.join(", ")
+                      : medicine.age_group
+                  }
+                />
                 <InfoItem label="Liều dùng" value={medicine.dosage} />
                 <InfoItem label="Nhà sản xuất" value={manufacturerName} />
               </dl>
@@ -307,7 +342,10 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
             <InfoSection title="Cách sử dụng" icon={Pill}>
               <div className="space-y-4">
                 <InfoTextSection title="Cách dùng" content={medicine.use} />
-                <InfoTextSection title="Công dụng" content={medicine.indication} />
+                <InfoTextSection
+                  title="Công dụng"
+                  content={medicine.indication}
+                />
               </div>
             </InfoSection>
 
@@ -316,12 +354,30 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
             {/* Safety Information */}
             <InfoSection title="Thông tin an toàn" icon={Shield}>
               <div className="space-y-4">
-                <InfoTextSection title="Tác dụng phụ" content={medicine.adverse} />
-                <InfoTextSection title="Chống chỉ định" content={medicine.contraindication} />
-                <InfoTextSection title="Thận trọng" content={medicine.precaution} />
-                <InfoTextSection title="Thai kỳ và cho con bú" content={medicine.pregnancy} />
-                <InfoTextSection title="Tương tác thuốc" content={medicine.drugInteractions} />
-                <InfoTextSection title="Lái xe và vận hành máy móc" content={medicine.ability} />
+                <InfoTextSection
+                  title="Tác dụng phụ"
+                  content={medicine.adverse}
+                />
+                <InfoTextSection
+                  title="Chống chỉ định"
+                  content={medicine.contraindication}
+                />
+                <InfoTextSection
+                  title="Thận trọng"
+                  content={medicine.precaution}
+                />
+                <InfoTextSection
+                  title="Thai kỳ và cho con bú"
+                  content={medicine.pregnancy}
+                />
+                <InfoTextSection
+                  title="Tương tác thuốc"
+                  content={medicine.drugInteractions}
+                />
+                <InfoTextSection
+                  title="Lái xe và vận hành máy móc"
+                  content={medicine.ability}
+                />
                 <InfoTextSection title="Bảo quản" content={medicine.storage} />
               </div>
             </InfoSection>
@@ -342,7 +398,10 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
                           width={200}
                           height={150}
                           onError={(e) => {
-                            console.error(`Failed to load image at index ${index}:`, img);
+                            console.error(
+                              `Failed to load image at index ${index}:`,
+                              img
+                            );
                             // Optionally set a fallback image
                             const target = e.target as HTMLImageElement;
                             target.src = "/placeholder.svg";
@@ -360,7 +419,9 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
             {medicine.note && (
               <>
                 <InfoSection title="Ghi chú" icon={FileText}>
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{medicine.note}</p>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                    {medicine.note}
+                  </p>
                 </InfoSection>
                 <Separator />
               </>
@@ -371,15 +432,19 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
               <InfoSection title="Thông tin hệ thống" icon={Calendar}>
                 <dl className="divide-y divide-gray-100">
                   {medicine.createdAt && (
-                    <InfoItem 
-                      label="Ngày tạo" 
-                      value={new Date(medicine.createdAt).toLocaleString("vi-VN")} 
+                    <InfoItem
+                      label="Ngày tạo"
+                      value={new Date(medicine.createdAt).toLocaleString(
+                        "vi-VN"
+                      )}
                     />
                   )}
                   {medicine.updatedAt && (
                     <InfoItem
                       label="Cập nhật lần cuối"
-                      value={new Date(medicine.updatedAt).toLocaleString("vi-VN")}
+                      value={new Date(medicine.updatedAt).toLocaleString(
+                        "vi-VN"
+                      )}
                     />
                   )}
                 </dl>
@@ -389,8 +454,8 @@ export function MedicineDetailModal({ medicine, open, onOpenChange }: MedicineDe
         </ScrollArea>
 
         <div className="flex justify-end pt-4 border-t">
-          <Button 
-            onClick={() => onOpenChange(false)} 
+          <Button
+            onClick={() => onOpenChange(false)}
             className="bg-blue-900 hover:bg-blue-800"
           >
             Đóng

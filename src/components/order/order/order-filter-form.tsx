@@ -171,7 +171,7 @@ export default function OrderFilterForm({ filters, onFiltersChange, onReset }: O
                         mode="single"
                         selected={dateFrom}
                         onSelect={handleDateFromChange}
-                        disabled={(date) => date > new Date() || (dateTo && date > dateTo)}
+                        // disabled={(date) => date > new Date() || (dateTo && date > dateTo)}
                         initialFocus
                       />
                     </PopoverContent>
@@ -189,7 +189,7 @@ export default function OrderFilterForm({ filters, onFiltersChange, onReset }: O
                         mode="single"
                         selected={dateTo}
                         onSelect={handleDateToChange}
-                        disabled={(date) => date > new Date() || (dateFrom && date < dateFrom)}
+                        // disabled={(date) => date > new Date() || (dateFrom && date < dateFrom)}
                         initialFocus
                       />
                     </PopoverContent>

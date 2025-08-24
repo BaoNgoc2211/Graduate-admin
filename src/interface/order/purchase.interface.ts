@@ -95,8 +95,8 @@ export interface IPurchaseOrderItem {
   unit?: string;
   quantity: number;
   price: number;
-  VAT_Rate: number;
-  CK_Rate: number;
+  VAT_Rate?: number;
+  CK_Rate?: number;
   batch_id?: string;
   notes?: string;
 }
@@ -110,8 +110,8 @@ export interface IPurchaseOrder {
   medicines: IPurchaseOrderItem[];
   date_in: string;
   expectedDeliveryDate?: string;
-  totalAmount: number;
-  totalPrice: number; // Total price after applying VAT and CK
+  totalAmount?: number;
+  totalPrice?: number; // Total price after applying VAT and CK
   note?: "Đã thanh toán" | "Ghi nợ" | "Nháp";
   createdBy?: string;
   createdAt?: string;
@@ -132,8 +132,8 @@ export interface IPurchaseOrderPayload {
     medicine_id: string;
     quantity: number;
     price: number;
-    VAT_Rate: number;
-    CK_Rate: number;
+    VAT_Rate?: number;
+    CK_Rate?: number;
     batch_id?: string;
   }[];
 }

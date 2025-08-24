@@ -63,13 +63,13 @@ export default function AdminOrdersPage() {
   // Debug logs
   console.log("Current tab:", activeTab);
   // console.log("All orders:", allOrders?.length || 0);
-  // console.log("All orders sample:", allOrders?.[0]); // ✅ Thêm log để xem cấu trúc data
+  // console.log("All orders sample:", allOrders?.[0]); //  Thêm log để xem cấu trúc data
   // console.log("Filtered orders:", filteredOrders?.length || 0);
   // console.log("Current orders:", orders?.length || 0);
   // console.log("Loading state:", ordersLoading);
-  // console.log("Stats:", status); // ✅ Thêm log để debug stats
+  // console.log("Stats:", status); //  Thêm log để debug stats
 
-  // ✅ Safety check cho orders
+  //  Safety check cho orders
   const safeOrders = orders?.filter(order => order && order._id) || [];
   console.log("Safe orders count:", safeOrders.length);
 

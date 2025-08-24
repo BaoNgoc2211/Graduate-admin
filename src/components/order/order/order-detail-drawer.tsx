@@ -1181,7 +1181,7 @@ export default function OrderDetailDrawer({
                   <p><strong>Order Items Count:</strong> {safeOrder.orderItems.length}</p>
                   <p><strong>User Name:</strong> {safeOrder.user_id.name}</p>
                   <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
-                  <p><strong>Error:</strong> {error ? error.message : 'None'}</p>
+                  {/* <p><strong>Error:</strong> {error ? error.message : 'None'}</p> */}
                 </div>
               </CardContent>
             </Card>

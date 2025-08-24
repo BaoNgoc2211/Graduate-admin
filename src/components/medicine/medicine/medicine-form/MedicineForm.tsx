@@ -379,8 +379,8 @@
 //           isLoading={isLoading}
 //           isOpen={openSections.categories}
 //           onToggle={() => toggleSection("categories")}
-//           medCategory_id={categories} 
-//           medUsage_id={usages} 
+//           medCategory_id={categories}
+//           medUsage_id={usages}
 //           manufacturer_id={manufacturers}
 //           watchedCategories={watchedCategories}
 //           watchedUsages={watchedUsages}
@@ -482,13 +482,13 @@ export default function MedicineForm({
   } = useForm<MedicineFormData>({
     resolver: zodResolver(medicineSchema),
     defaultValues: {
-      code: defaultValue?.code || "",
-      name: defaultValue?.name || "",
-      thumbnail: defaultValue?.thumbnail || "",
+      code: defaultValue?.code,
+      name: defaultValue?.name,
+      thumbnail: defaultValue?.thumbnail,
       image: defaultValue?.image || [],
-      packaging: defaultValue?.packaging || "",
-      dosageForm: defaultValue?.dosageForm || "",
-      use: defaultValue?.use || "",
+      packaging: defaultValue?.packaging,
+      dosageForm: defaultValue?.dosageForm,
+      use: defaultValue?.use,
       dosage: defaultValue?.dosage || "",
       indication: defaultValue?.indication || "",
       adverse: defaultValue?.adverse || "",
@@ -498,19 +498,23 @@ export default function MedicineForm({
       pregnancy: defaultValue?.pregnancy || "",
       drugInteractions: defaultValue?.drugInteractions || "",
       storage: defaultValue?.storage || "",
-      note: defaultValue?.note || "",
-      age_group: defaultValue?.age_group || "Tất cả",
-      medCategory_id: defaultValue?.medCategory_id || [],
-      medUsage_id: defaultValue?.medUsage_id || [],
+      note: defaultValue?.note,
+      age_group: defaultValue?.age_group as string,
+      medCategory_id: defaultValue?.medCategory_id,
+      medUsage_id: defaultValue?.medUsage_id,
+      // manufacturer_id: {
+      //   _id:
+      //     typeof defaultValue?.manufacturer_id === "object"
+      //       ? defaultValue.manufacturer_id._id
+      //       : defaultValue?.manufacturer_id || "",
+      //   nameCo:
+      //     typeof defaultValue?.manufacturer_id === "object"
+      //       ? defaultValue.manufacturer_id.nameCo
+      //       : "",
+      // },
       manufacturer_id: {
-        _id:
-          typeof defaultValue?.manufacturer_id === "object"
-            ? defaultValue.manufacturer_id._id
-            : defaultValue?.manufacturer_id || "",
-        nameCo:
-          typeof defaultValue?.manufacturer_id === "object"
-            ? defaultValue.manufacturer_id.nameCo
-            : "",
+        _id: defaultValue?.manufacturer_id?._id || "",
+        nameCo: defaultValue?.manufacturer_id?.nameCo || "",
       },
     },
   });
@@ -529,7 +533,7 @@ export default function MedicineForm({
     try {
       setUploadingImages((prev) => [...prev, uploadId]);
 
-      const result = await handleUploadImage(file) as UploadResult;
+      const result = (await handleUploadImage(file)) as UploadResult;
 
       if (isThumb) {
         setValue("thumbnail", result.url);
@@ -541,9 +545,10 @@ export default function MedicineForm({
       toast.success("Tải ảnh thành công!");
     } catch (error) {
       console.error("Upload failed:", error);
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : "Tải ảnh thất bại. Vui lòng thử lại.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Tải ảnh thất bại. Vui lòng thử lại.";
       toast.error(errorMessage);
     } finally {
       setUploadingImages((prev) => prev.filter((id) => id !== uploadId));
@@ -631,11 +636,36 @@ export default function MedicineForm({
 
       // Validate required fields
       const validations = [
-        validateRequiredField(data.name, "name", "Tên thuốc không được để trống", "basic"),
-        validateRequiredField(data.code, "code", "Mã thuốc không được để trống", "basic"),
-        validateRequiredField(data.manufacturer_id?._id, "manufacturer_id._id" as keyof MedicineFormData, "Vui lòng chọn nhà sản xuất", "categories"),
-        validateArrayField(data.medCategory_id, "medCategory_id", "Vui lòng chọn ít nhất một danh mục thuốc", "categories"),
-        validateArrayField(data.medUsage_id, "medUsage_id", "Vui lòng chọn ít nhất một cách sử dụng thuốc", "categories"),
+        validateRequiredField(
+          data.name,
+          "name",
+          "Tên thuốc không được để trống",
+          "basic"
+        ),
+        validateRequiredField(
+          data.code,
+          "code",
+          "Mã thuốc không được để trống",
+          "basic"
+        ),
+        validateRequiredField(
+          data.manufacturer_id?._id,
+          "manufacturer_id._id" as keyof MedicineFormData,
+          "Vui lòng chọn nhà sản xuất",
+          "categories"
+        ),
+        validateArrayField(
+          data.medCategory_id,
+          "medCategory_id",
+          "Vui lòng chọn ít nhất một danh mục thuốc",
+          "categories"
+        ),
+        validateArrayField(
+          data.medUsage_id,
+          "medUsage_id",
+          "Vui lòng chọn ít nhất một cách sử dụng thuốc",
+          "categories"
+        ),
       ];
 
       // If any validation fails, stop execution
@@ -692,12 +722,12 @@ export default function MedicineForm({
       console.log("Form submitted successfully:", result);
     } catch (error) {
       console.error("Form submission error:", error);
-      
+
       const apiError = error as ApiError;
-      
+
       // Handle specific errors with proper type checking
       let errorMessage: string;
-      
+
       if (apiError?.response?.data?.message) {
         errorMessage = apiError.response.data.message;
       } else if (apiError?.message) {
@@ -707,7 +737,7 @@ export default function MedicineForm({
           ? "Cập nhật thuốc thất bại. Vui lòng thử lại."
           : "Tạo thuốc thất bại. Vui lòng thử lại.";
       }
-      
+
       toast.error(errorMessage);
     }
   };

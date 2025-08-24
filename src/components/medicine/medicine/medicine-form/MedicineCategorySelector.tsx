@@ -144,11 +144,11 @@ export default function MedicineCategorySelector({
                   </Select>
                 )}
               />
-              {errors.manufacturer_id?._id && (
+              {/* {errors.manufacturer_id?._id && (
                 <p className="text-sm text-red-600">
                   {errors.manufacturer_id._id.message}
                 </p>
-              )}
+              )} */}
             </div>
 
             {/* Medicine Categories */}

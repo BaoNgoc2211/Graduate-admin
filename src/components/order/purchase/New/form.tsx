@@ -267,7 +267,6 @@ export function PurchaseOrderForm({
   submitLabel = "Tạo đơn mua hàng",
 }: PurchaseOrderFormProps) {
   const [medicineSearch, setMedicineSearch] = useState("");
-
   const form = useForm<PurchaseOrderFormData>({
     resolver: zodResolver(purchaseOrderSchema),
     defaultValues: {
@@ -276,27 +275,56 @@ export function PurchaseOrderForm({
       expectedDeliveryDate: defaultValues?.expectedDeliveryDate
         ? new Date(defaultValues.expectedDeliveryDate)
         : undefined,
-      note: defaultValues?.note || "Nháp",
+      note: defaultValues?.note,
       totalAmount: defaultValues?.totalAmount || 0,
-      medicines: defaultValues?.medicines?.map((item) => ({
-        medicine_id: item.medicine_id,
-        quantity: item.quantity,
-        price: item.price,
-        CK_Rate: item.CK_Rate || 0,
-        VAT_Rate: item.VAT_Rate || 0,
-        batch_id: item.batch_id || "none",
-      })) || [
-        {
-          medicine_id: "",
-          quantity: 1,
-          price: 0,
-          CK_Rate: 0,
-          VAT_Rate: 0,
-          batch_id: "none",
-        },
-      ],
+      medicines: defaultValues?.medicines?.length 
+        ? defaultValues.medicines.map((item) => ({
+            medicine_id: item.medicine_id,
+            quantity: item.quantity,
+            price: item.price,
+            CK_Rate: item.CK_Rate ?? 0, // ✅ Sử dụng nullish coalescing thay vì ||
+            VAT_Rate: item.VAT_Rate ?? 0,
+            batch_id: item.batch_id || "none",
+          }))
+        : [{
+            medicine_id: "",
+            quantity: 1,
+            price: 0,
+            CK_Rate: 0,
+            VAT_Rate: 0,
+            batch_id: "none",
+          }],
     },
   });
+  // const form = useForm<PurchaseOrderFormData>({
+  //   resolver: zodResolver(purchaseOrderSchema),
+  //   defaultValues: {
+  //     supplierId: defaultValues?.supplierId || "",
+  //     date_in: defaultValues ? new Date(defaultValues.date_in) : new Date(),
+  //     expectedDeliveryDate: defaultValues?.expectedDeliveryDate
+  //       ? new Date(defaultValues.expectedDeliveryDate)
+  //       : undefined,
+  //     note: defaultValues?.note || "Nháp",
+  //     totalAmount: defaultValues?.totalAmount || 0,
+  //     medicines: defaultValues?.medicines?.map((item) => ({
+  //       medicine_id: item.medicine_id,
+  //       quantity: item.quantity,
+  //       price: item.price,
+  //       CK_Rate: item.CK_Rate || 0,
+  //       VAT_Rate: item.VAT_Rate || 0,
+  //       batch_id: item.batch_id || "none",
+  //     })) || [
+  //       {
+  //         medicine_id: "",
+  //         quantity: 1,
+  //         price: 0,
+  //         CK_Rate: 0,
+  //         VAT_Rate: 0,
+  //         batch_id: "none",
+  //       },
+  //     ],
+  //   },
+  // });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
