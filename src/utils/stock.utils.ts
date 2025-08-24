@@ -224,7 +224,7 @@ export const generateStockExportData = (stocks: IStock[]) => {
     'Ngày nhập': formatDate(stock.createdAt),
     'Cập nhật': formatDate(stock.updatedAt),
     'Trạng thái': getStockStatus(stock),
-    'Nhà sản xuất': stock.medicine?.manufacturer?.nameCo || '',
+    'Nhà sản xuất': stock.medicine?.manufacturer_id?.nameCo || '',
   }));
 };
 

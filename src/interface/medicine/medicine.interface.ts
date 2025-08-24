@@ -227,7 +227,7 @@ export interface IMedicineFormData {
   drugInteractions?: string;
   storage?: string;
   note: string;
-  age_group: string | string[];
+  age_group: string;
   medCategory_id: string[];
   medUsage_id: string[];
   manufacturer_id: {

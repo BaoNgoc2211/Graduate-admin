@@ -42,7 +42,6 @@ export function MedicineUSageTable({
 }: MedicineUsageTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: paginatedData, isLoading, error } = useMedicineUsages();
-  console.log("MedicineUsageTable paginatedData:", paginatedData);
 
   const usageList = paginatedData?.data ?? [];
 

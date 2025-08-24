@@ -97,7 +97,7 @@ const StockTable: React.FC<StockTableProps> = ({
                   className={`group cursor-pointer hover:bg-gray-50 transition-colors ${
                     isLowStock(stock.quantity) ? "bg-red-50" : ""
                   }`}
-                  onClick={() => handleRowClick(stock.medicine._id)}
+                  onClick={() => handleRowClick(stock.medicine._id || "")}
                 >
                   {/* Medicine Info */}
                   <td className="px-6 py-4">
@@ -167,7 +167,7 @@ const StockTable: React.FC<StockTableProps> = ({
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={(e) => handleViewDetails(e, stock.medicine._id)}
+                        onClick={(e) => handleViewDetails(e, stock.medicine._id || "")}
                         title="Xem chi tiết"
                       >
                         <Eye className="h-4 w-4" />
@@ -197,7 +197,7 @@ const StockTable: React.FC<StockTableProps> = ({
             className={`cursor-pointer hover:shadow-md transition-shadow ${
               isLowStock(stock.quantity) ? "border-red-200 bg-red-50" : ""
             }`}
-            onClick={() => handleRowClick(stock.medicine._id)}
+            onClick={() => handleRowClick(stock.medicine._id || "")}
           >
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
@@ -254,7 +254,7 @@ const StockTable: React.FC<StockTableProps> = ({
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={(e) => handleViewDetails(e, stock.medicine._id)}
+                      onClick={(e) => handleViewDetails(e, stock.medicine._id || "")}
                       title="Xem chi tiết"
                     >
                       <Eye className="h-4 w-4" />

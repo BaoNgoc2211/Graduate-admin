@@ -13,7 +13,7 @@ export const diseaseFormSchema = z.object({
   severityLevel: z.enum(["Nhẹ", "Trung bình", "Nặng", "Rất nặng", "Tử vong"]),
   treatmentPlan: z.string().min(1, "Kế hoạch điều trị không được để trống"),
   notes: z.string().optional(),
-  status: z.enum(["active", "inactive"]).default("active"),
+  status: z.enum(["active", "inactive"]),
   symptomIds: z.array(z.string()).optional(),
   diseaseCategory_id: z.array(z.string()).min(1, "Phải chọn ít nhất một danh mục bệnh"),
   diseaseUsageGroup_id: z.array(z.string()).min(1, "Phải chọn ít nhất một nhóm bệnh"),

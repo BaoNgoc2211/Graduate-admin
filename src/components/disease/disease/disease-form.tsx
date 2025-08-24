@@ -74,22 +74,22 @@ export function DiseaseForm({ disease, onCancel }: DiseaseFormProps) {
   const form = useForm<DiseaseFormData>({
     resolver: zodResolver(diseaseFormSchema),
     defaultValues: {
-      code: disease?.code || "",
-      name: disease?.name || "",
+      code: disease?.code ,
+      name: disease?.name,
       nameDiff: disease?.nameDiff || "",
       image: disease?.image || "",
       common: disease?.common || "",
-      riskGroup: disease?.riskGroup || [],
-      causes: disease?.causes || "",
-      diagnosis: disease?.diagnosis || "",
-      prevention: disease?.prevention || "",
-      severityLevel: disease?.severityLevel || "Nhẹ",
-      treatmentPlan: disease?.treatmentPlan || "",
+      riskGroup: disease?.riskGroup,
+      causes: disease?.causes ,
+      diagnosis: disease?.diagnosis ,
+      prevention: disease?.prevention ,
+      severityLevel: disease?.severityLevel,
+      treatmentPlan: disease?.treatmentPlan ,
       notes: disease?.notes || "",
-      status: disease?.status || "active",
+      status: disease?.status,
       symptomIds: disease?.symptomIds || [],
-      diseaseCategory_id: disease?.diseaseCategory_id || [],
-      diseaseUsageGroup_id: disease?.diseaseUsageGroup_id || [],
+      diseaseCategory_id: disease?.diseaseCategory_id,
+      diseaseUsageGroup_id: disease?.diseaseUsageGroup_id,
     },
   });
 
@@ -336,7 +336,10 @@ export function DiseaseForm({ disease, onCancel }: DiseaseFormProps) {
                             >
                               <FormControl>
                                 <Checkbox
-                                  checked={field.value?.includes(category._id)}
+                                  // checked={field.value?.includes(category._id)}
+                                  checked={field.value?.some(
+                                    (id) => id === category._id
+                                  )}
                                   onCheckedChange={(checked) => {
                                     if (checked) {
                                       field.onChange([
@@ -388,7 +391,10 @@ export function DiseaseForm({ disease, onCancel }: DiseaseFormProps) {
                             >
                               <FormControl>
                                 <Checkbox
-                                  checked={field.value?.includes(usage._id)}
+                                  // checked={field.value?.includes(usage._id)}
+                                  checked={field.value?.some(
+                                    (id) => id === usage._id
+                                  )}
                                   onCheckedChange={(checked) => {
                                     if (checked) {
                                       field.onChange([

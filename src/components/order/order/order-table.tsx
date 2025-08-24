@@ -1,3 +1,383 @@
+// "use client";
+
+// import { useState } from "react";
+// import {
+//   Eye,
+//   Edit,
+//   X,
+//   MoreHorizontal,
+//   Package,
+//   Truck,
+//   CheckCircle,
+//   XCircle,
+//   Clock,
+// } from "lucide-react";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table";
+// import { Button } from "@/components/ui/button";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuLabel,
+//   DropdownMenuSeparator,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// import type { IOrder } from "@/interface/order/order.interface";
+// import { format } from "date-fns";
+// import { vi } from "date-fns/locale";
+// import OrderStatusBadge from "./order-status-badge";
+
+// interface OrderTableProps {
+//   orders: IOrder[];
+//   isLoading?: boolean;
+//   onViewDetails: (orderId: string) => void;
+//   onUpdateStatus: (orderId: string, status: IOrder["status"]) => void;
+//   onCancelOrder: (orderId: string) => void;
+// }
+
+// export default function OrderTable({
+//   orders,
+//   isLoading,
+//   onViewDetails,
+//   onUpdateStatus,
+//   onCancelOrder,
+// }: OrderTableProps) {
+//   const [sortField, setSortField] = useState<keyof IOrder>("orderDate");
+//   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+//   const handleSort = (field: keyof IOrder) => {
+//     if (sortField === field) {
+//       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+//     } else {
+//       setSortField(field);
+//       setSortDirection("desc");
+//     }
+//   };
+
+//   const sortedOrders = [...orders].sort((a, b) => {
+//     const aValue = a[sortField];
+//     const bValue = b[sortField];
+
+//     if (typeof aValue === "string" && typeof bValue === "string") {
+//       return sortDirection === "asc"
+//         ? aValue.localeCompare(bValue)
+//         : bValue.localeCompare(aValue);
+//     }
+
+//     if (typeof aValue === "number" && typeof bValue === "number") {
+//       return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+//     }
+
+//     return 0;
+//   });
+
+//   const getStatusIcon = (status: IOrder["status"]) => {
+//     switch (status) {
+//       case "Chờ xác nhận": 
+//         return <Clock className="h-4 w-4" />;
+//       case "Chờ giao hàng": 
+//         return <Package className="h-4 w-4" />;
+//       case "Đang giao": 
+//         return <Truck className="h-4 w-4" />;
+//       case "Hoàn thành":  
+//         return <CheckCircle className="h-4 w-4" />;
+//       case "Đã hủy": 
+//         return <XCircle className="h-4 w-4" />;
+//       default:
+//         return null;
+//     }
+//   };
+
+//   const getNextStatus = (
+//     currentStatus: IOrder["status"]
+//   ): IOrder["status"] | null => {
+//     switch (currentStatus) {
+//       case "Chờ xác nhận": 
+//         return "Chờ giao hàng"; 
+//       case "Chờ giao hàng": 
+//         return "Đang giao"; 
+//       case "Đang giao": 
+//         return "Hoàn thành"; 
+//       default:
+//         return null;
+//     }
+//   };
+
+//   const getNextStatusLabel = (currentStatus: IOrder["status"]): string => {
+//     const nextStatus = getNextStatus(currentStatus);
+//     switch (nextStatus) {
+//       case "Chờ giao hàng": 
+//         return "Xác nhận đơn hàng";
+//       case "Đang giao": 
+//         return "Bắt đầu giao hàng";
+//       case "Hoàn thành": 
+//         return "Hoàn thành đơn hàng";
+//       default:
+//         return "";
+//     }
+//   };
+
+//   if (isLoading) {
+//     return (
+//       <div className="border rounded-lg">
+//         <Table>
+//           <TableHeader>
+//             <TableRow>
+//               <TableHead>Mã đơn hàng</TableHead>
+//               <TableHead>Khách hàng</TableHead>
+//               <TableHead>Sản phẩm</TableHead>
+//               <TableHead>Tổng tiền</TableHead>
+//               <TableHead>Trạng thái</TableHead>
+//               <TableHead>Ngày đặt</TableHead>
+//               <TableHead>Thao tác</TableHead>
+//             </TableRow>
+//           </TableHeader>
+//           <TableBody>
+//             {Array.from({ length: 5 }).map((_, index) => (
+//               <TableRow key={index}>
+//                 <TableCell>
+//                   <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+//                 </TableCell>
+//                 <TableCell>
+//                   <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+//                 </TableCell>
+//                 <TableCell>
+//                   <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+//                 </TableCell>
+//                 <TableCell>
+//                   <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+//                 </TableCell>
+//                 <TableCell>
+//                   <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
+//                 </TableCell>
+//                 <TableCell>
+//                   <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+//                 </TableCell>
+//                 <TableCell>
+//                   <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </div>
+//     );
+//   }
+
+//   if (orders.length === 0) {
+//     return (
+//       <div className="border rounded-lg p-8 text-center">
+//         <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+//         <h3 className="text-lg font-medium text-gray-900 mb-2">
+//           Không có đơn hàng nào
+//         </h3>
+//         <p className="text-gray-500">
+//           Chưa có đơn hàng nào phù hợp với bộ lọc hiện tại
+//         </p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="border rounded-lg overflow-hidden">
+//       <Table>
+//         <TableHeader>
+//           <TableRow className="bg-gray-50">
+//             <TableHead
+//               className="cursor-pointer hover:bg-gray-100 font-semibold"
+//               onClick={() => handleSort("_id")}
+//             >
+//               Mã đơn hàng
+//             </TableHead>
+//             <TableHead
+//               className="cursor-pointer hover:bg-gray-100 font-semibold"
+//               onClick={() => handleSort("user_id")}
+//             >
+//               Khách hàng
+//             </TableHead>
+//             <TableHead className="font-semibold">Sản phẩm</TableHead>
+//             <TableHead
+//               className="cursor-pointer hover:bg-gray-100 font-semibold text-right"
+//               onClick={() => handleSort("finalAmount")}
+//             >
+//               Tổng tiền
+//             </TableHead>
+//             <TableHead
+//               className="cursor-pointer hover:bg-gray-100 font-semibold"
+//               onClick={() => handleSort("status")}
+//             >
+//               Trạng thái
+//             </TableHead>
+//             <TableHead
+//               className="cursor-pointer hover:bg-gray-100 font-semibold"
+//               onClick={() => handleSort("orderDate")}
+//             >
+//               Ngày đặt
+//             </TableHead>
+//             <TableHead className="font-semibold">Thao tác</TableHead>
+//           </TableRow>
+//         </TableHeader>
+//         <TableBody>
+//           {sortedOrders.map((order) => (
+//             <TableRow key={order._id} className="hover:bg-gray-50">
+//               <TableCell className="font-medium">
+//                 <div className="flex flex-col">
+//                   <span className="text-blue-900 font-semibold">
+//                     #{order._id}
+//                   </span>
+//                   {order.trackingNumber && (
+//                     <span className="text-xs text-gray-500">
+//                       Mã vận đơn: {order.trackingNumber}
+//                     </span>
+//                   )}
+//                 </div>
+//               </TableCell>
+
+//               <TableCell>
+//                 <div className="flex items-center space-x-3">
+//                   <Avatar className="h-8 w-8">
+//                     <AvatarFallback className="bg-blue-100 text-blue-900 text-xs">
+//                       {(order?.user_id?.name &&
+//                         order.user_id.name.charAt(0).toUpperCase()) ||
+//                         "?"}
+//                     </AvatarFallback>
+//                   </Avatar>
+
+//                   <div className="flex flex-col">
+//                     <span className="font-medium text-sm">
+//                       {/* {order.user_id.name} */}
+//                       {order.user_id.name || "Khách hàng không xác định"}
+//                     </span>
+//                     <span className="text-xs text-gray-500">
+//                       {order.user_id.phone}
+//                     </span>
+//                   </div>
+//                 </div>
+//               </TableCell>
+
+//               <TableCell>
+//                 <div className="flex flex-col">
+//                   <span className="text-sm font-medium">
+//                     {order.orderItems.length} sản phẩm
+//                   </span>
+//                   <span className="text-xs text-gray-500">
+//                     {order.orderItems[0]?.medicine_id.name}
+//                     {order.orderItems.length > 1 &&
+//                       ` +${order.orderItems.length - 1} khác`}
+//                   </span>
+//                 </div>
+//               </TableCell>
+
+//               <TableCell className="text-right">
+//                 <div className="flex flex-col">
+//                   <span className="font-semibold text-blue-900">
+//                     {order.finalAmount.toLocaleString("vi-VN")}đ
+//                   </span>
+//                   {order.discount > 0 && (
+//                     <span className="text-xs text-green-600">
+//                       Giảm {order.discount.toLocaleString("vi-VN")}đ
+//                     </span>
+//                   )}
+//                 </div>
+//               </TableCell>
+
+//               <TableCell>
+//                 <div className="flex items-center space-x-2">
+//                   {getStatusIcon(order.status)}
+//                   <OrderStatusBadge status={order.status} />
+//                 </div>
+//               </TableCell>
+
+//               <TableCell>
+//                 <div className="flex flex-col">
+//                   <span className="text-sm">
+//                     {format(new Date(order.orderDate), "dd/MM/yyyy", {
+//                       locale: vi,
+//                     })}
+//                   </span>
+//                   <span className="text-xs text-gray-500">
+//                     {format(new Date(order.orderDate), "HH:mm", { locale: vi })}
+//                   </span>
+//                 </div>
+//               </TableCell>
+
+//               <TableCell>
+//                 <div className="flex items-center space-x-2">
+//                   <Button
+//                     variant="outline"
+//                     size="sm"
+//                     onClick={() => onViewDetails(order._id)}
+//                     className="bg-transparent"
+//                   >
+//                     <Eye className="h-4 w-4" />
+//                   </Button>
+
+//                   <DropdownMenu>
+//                     <DropdownMenuTrigger asChild>
+//                       <Button
+//                         variant="outline"
+//                         size="sm"
+//                         className="bg-transparent"
+//                       >
+//                         <MoreHorizontal className="h-4 w-4" />
+//                       </Button>
+//                     </DropdownMenuTrigger>
+//                     <DropdownMenuContent align="end">
+//                       <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+//                       <DropdownMenuSeparator />
+
+//                       <DropdownMenuItem
+//                         onClick={() => onViewDetails(order._id)}
+//                       >
+//                         <Eye className="mr-2 h-4 w-4" />
+//                         Xem chi tiết
+//                       </DropdownMenuItem>
+
+//                       {getNextStatus(order.status) && (
+//                         <DropdownMenuItem
+//                           onClick={() =>
+//                             onUpdateStatus(
+//                               order._id,
+//                               getNextStatus(order.status)!
+//                             )
+//                           }
+//                         >
+//                           <Edit className="mr-2 h-4 w-4" />
+//                           {getNextStatusLabel(order.status)}
+//                         </DropdownMenuItem>
+//                       )}
+
+//                       {order.status === "Chờ xác nhận" && ( 
+//                         <>
+//                           <DropdownMenuSeparator />
+//                           <DropdownMenuItem
+//                             onClick={() => onCancelOrder(order._id)}
+//                             className="text-red-600"
+//                           >
+//                             <X className="mr-2 h-4 w-4" />
+//                             Hủy đơn hàng
+//                           </DropdownMenuItem>
+//                         </>
+//                       )}
+//                     </DropdownMenuContent>
+//                   </DropdownMenu>
+//                 </div>
+//               </TableCell>
+//             </TableRow>
+//           ))}
+//         </TableBody>
+//       </Table>
+//     </div>
+//   );
+// }
 "use client";
 
 import { useState } from "react";
@@ -41,6 +421,8 @@ interface OrderTableProps {
   onViewDetails: (orderId: string) => void;
   onUpdateStatus: (orderId: string, status: IOrder["status"]) => void;
   onCancelOrder: (orderId: string) => void;
+  // ✅ Thêm prop để custom empty message
+  emptyMessage?: string;
 }
 
 export default function OrderTable({
@@ -49,6 +431,7 @@ export default function OrderTable({
   onViewDetails,
   onUpdateStatus,
   onCancelOrder,
+  emptyMessage = "Chưa có đơn hàng nào phù hợp với bộ lọc hiện tại"
 }: OrderTableProps) {
   const [sortField, setSortField] = useState<keyof IOrder>("orderDate");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -62,7 +445,8 @@ export default function OrderTable({
     }
   };
 
-  const sortedOrders = [...orders].sort((a, b) => {
+  // ✅ Safe sorting với fallback values
+  const sortedOrders = [...(orders || [])].sort((a, b) => {
     const aValue = a[sortField];
     const bValue = b[sortField];
 
@@ -125,6 +509,7 @@ export default function OrderTable({
     }
   };
 
+  // ✅ Loading state
   if (isLoading) {
     return (
       <div className="border rounded-lg">
@@ -172,7 +557,8 @@ export default function OrderTable({
     );
   }
 
-  if (orders.length === 0) {
+  // ✅ Empty state với custom message
+  if (!orders || orders.length === 0) {
     return (
       <div className="border rounded-lg p-8 text-center">
         <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -180,7 +566,7 @@ export default function OrderTable({
           Không có đơn hàng nào
         </h3>
         <p className="text-gray-500">
-          Chưa có đơn hàng nào phù hợp với bộ lọc hiện tại
+          {emptyMessage}
         </p>
       </div>
     );
@@ -226,153 +612,177 @@ export default function OrderTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedOrders.map((order) => (
-            <TableRow key={order._id} className="hover:bg-gray-50">
-              <TableCell className="font-medium">
-                <div className="flex flex-col">
-                  <span className="text-blue-900 font-semibold">
-                    #{order._id}
-                  </span>
-                  {order.trackingNumber && (
-                    <span className="text-xs text-gray-500">
-                      Mã vận đơn: {order.trackingNumber}
-                    </span>
-                  )}
-                </div>
-              </TableCell>
+          {sortedOrders.map((order) => {
+            // ✅ Safe fallbacks cho mọi field
+            const safeOrder = {
+              ...order,
+              _id: order._id || "N/A",
+              user_id: order.user_id || {
+                _id: "",
+                name: "Khách hàng không xác định",
+                email: "",
+                phone: "",
+                address: ""
+              },
+              orderItems: order.orderItems || [],
+              finalAmount: order.finalAmount || 0,
+              totalAmount: order.totalAmount || 0,
+              discount: order.discount || 0,
+              shippingFee: order.shippingFee || 0,
+              status: order.status || "Chờ xác nhận",
+              orderDate: order.orderDate || order.createdAt || new Date().toISOString(),
+              trackingNumber: order.trackingNumber || ""
+            };
 
-              <TableCell>
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-blue-100 text-blue-900 text-xs">
-                      {(order?.user_id?.name &&
-                        order.user_id.name.charAt(0).toUpperCase()) ||
-                        "?"}
-                    </AvatarFallback>
-                  </Avatar>
-
+            return (
+              <TableRow key={safeOrder._id} className="hover:bg-gray-50">
+                <TableCell className="font-medium">
                   <div className="flex flex-col">
-                    <span className="font-medium text-sm">
-                      {/* {order.user_id.name} */}
-                      {order.user_id.name || "Khách hàng không xác định"}
+                    <span className="text-blue-900 font-semibold">
+                      #{safeOrder._id.slice(-8)}
+                    </span>
+                    {safeOrder.trackingNumber && (
+                      <span className="text-xs text-gray-500">
+                        Mã vận đơn: {safeOrder.trackingNumber}
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center space-x-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-blue-100 text-blue-900 text-xs">
+                        {safeOrder.user_id.name?.charAt(0).toUpperCase() || "?"}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex flex-col">
+                      <span className="font-medium text-sm">
+                        {safeOrder.user_id.name}
+                      </span>
+                      {safeOrder.user_id.phone && (
+                        <span className="text-xs text-gray-500">
+                          {safeOrder.user_id.phone}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">
+                      {safeOrder.orderItems.length} sản phẩm
+                    </span>
+                    {safeOrder.orderItems.length > 0 && safeOrder.orderItems[0]?.medicine_id?.name && (
+                      <span className="text-xs text-gray-500">
+                        {safeOrder.orderItems[0].medicine_id.name}
+                        {safeOrder.orderItems.length > 1 &&
+                          ` +${safeOrder.orderItems.length - 1} khác`}
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+
+                <TableCell className="text-right">
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-blue-900">
+                      {safeOrder.finalAmount.toLocaleString("vi-VN")}đ
+                    </span>
+                    {safeOrder.discount > 0 && (
+                      <span className="text-xs text-green-600">
+                        Giảm {safeOrder.discount.toLocaleString("vi-VN")}đ
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    {getStatusIcon(safeOrder.status)}
+                    <OrderStatusBadge status={safeOrder.status} />
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex flex-col">
+                    <span className="text-sm">
+                      {format(new Date(safeOrder.orderDate), "dd/MM/yyyy", {
+                        locale: vi,
+                      })}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {order.user_id.phone}
+                      {format(new Date(safeOrder.orderDate), "HH:mm", { locale: vi })}
                     </span>
                   </div>
-                </div>
-              </TableCell>
+                </TableCell>
 
-              <TableCell>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">
-                    {order.orderItems.length} sản phẩm
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {order.orderItems[0]?.medicine_id.name}
-                    {order.orderItems.length > 1 &&
-                      ` +${order.orderItems.length - 1} khác`}
-                  </span>
-                </div>
-              </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onViewDetails(safeOrder._id)}
+                      className="bg-transparent"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
 
-              <TableCell className="text-right">
-                <div className="flex flex-col">
-                  <span className="font-semibold text-blue-900">
-                    {order.finalAmount.toLocaleString("vi-VN")}đ
-                  </span>
-                  {order.discount > 0 && (
-                    <span className="text-xs text-green-600">
-                      Giảm {order.discount.toLocaleString("vi-VN")}đ
-                    </span>
-                  )}
-                </div>
-              </TableCell>
-
-              <TableCell>
-                <div className="flex items-center space-x-2">
-                  {getStatusIcon(order.status)}
-                  <OrderStatusBadge status={order.status} />
-                </div>
-              </TableCell>
-
-              <TableCell>
-                <div className="flex flex-col">
-                  <span className="text-sm">
-                    {format(new Date(order.orderDate), "dd/MM/yyyy", {
-                      locale: vi,
-                    })}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {format(new Date(order.orderDate), "HH:mm", { locale: vi })}
-                  </span>
-                </div>
-              </TableCell>
-
-              <TableCell>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onViewDetails(order._id)}
-                    className="bg-transparent"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="bg-transparent"
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-
-                      <DropdownMenuItem
-                        onClick={() => onViewDetails(order._id)}
-                      >
-                        <Eye className="mr-2 h-4 w-4" />
-                        Xem chi tiết
-                      </DropdownMenuItem>
-
-                      {getNextStatus(order.status) && (
-                        <DropdownMenuItem
-                          onClick={() =>
-                            onUpdateStatus(
-                              order._id,
-                              getNextStatus(order.status)!
-                            )
-                          }
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-transparent"
                         >
-                          <Edit className="mr-2 h-4 w-4" />
-                          {getNextStatusLabel(order.status)}
-                        </DropdownMenuItem>
-                      )}
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
 
-                      {order.status === "Chờ xác nhận" && ( 
-                        <>
-                          <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => onViewDetails(safeOrder._id)}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          Xem chi tiết
+                        </DropdownMenuItem>
+
+                        {getNextStatus(safeOrder.status) && (
                           <DropdownMenuItem
-                            onClick={() => onCancelOrder(order._id)}
-                            className="text-red-600"
+                            onClick={() =>
+                              onUpdateStatus(
+                                safeOrder._id,
+                                getNextStatus(safeOrder.status)!
+                              )
+                            }
                           >
-                            <X className="mr-2 h-4 w-4" />
-                            Hủy đơn hàng
+                            <Edit className="mr-2 h-4 w-4" />
+                            {getNextStatusLabel(safeOrder.status)}
                           </DropdownMenuItem>
-                        </>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+                        )}
+
+                        {safeOrder.status === "Chờ xác nhận" && ( 
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => onCancelOrder(safeOrder._id)}
+                              className="text-red-600"
+                            >
+                              <X className="mr-2 h-4 w-4" />
+                              Hủy đơn hàng
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

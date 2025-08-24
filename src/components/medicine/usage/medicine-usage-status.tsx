@@ -8,7 +8,6 @@ import { useMedicineUsageStatus } from "@/hooks/medicine/usage.hooks"
 
 export function MedicineUsageStatus() {
   const { data: stats, isLoading, error } = useMedicineUsageStatus()
-  console.log("MedicineUsageStatus stats:", stats)
 
   if (isLoading) {
     return (

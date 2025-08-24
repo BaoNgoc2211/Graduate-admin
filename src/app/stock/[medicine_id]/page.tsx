@@ -285,7 +285,7 @@ const StockDetailPage: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                       <InfoRow
                         label="Nhà sản xuất"
-                        value={medicine.manufacturer?.nameCo || "—"}
+                        value={medicine.manufacturer_id?.nameCo || "—"}
                       />
                       <InfoRow
                         label="Dạng bào chế"

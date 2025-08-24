@@ -1,15 +1,27 @@
 export interface IMedicine {
-  _id: string;
-  code: string;
-  name: string;
-  thumbnail?: string;
-  dosageForm: string;
-  packaging: string;
-  manufacturer?: {
-    _id?: string;
-    nameCo?: string;
-    country?: string;
+  _id?: string;
+  code: string; // Mã thuốc
+  name: string; // Tên thuốc
+  thumbnail: string; // Ảnh đại diện
+  image?: string[]; // Danh sách ảnh
+  packaging: string; // Đóng gói
+  dosageForm: string; // Dạng bào chế
+  use: string;
+  note: string;
+  age_group: string;
+  medCategory_id: string[];
+  medUsage_id: string[];
+  manufacturer_id: {
+    _id: string;
+    nameCo: string;
+    country: string;
   };
+  active: "TRUE" | "FALSE" | "active" | "inactive"; 
+  // manufacturer?: {
+  //   _id?: string;
+  //   nameCo?: string;
+  //   country?: string;
+  // };
 }
 
 export interface IPurchaseOrder {

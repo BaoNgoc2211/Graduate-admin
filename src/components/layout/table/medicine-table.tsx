@@ -22,12 +22,12 @@ const MedicineTable = (props: IMedicine) => {
             <TableCell className="w-[250px] max-w-[250px] px-4 py-3 font-medium truncate">
               {props.dosageForm}
             </TableCell>
-            <TableCell className="w-[100px] max-w-[150px] px-4 py-3 font-medium text-center">
+            {/* <TableCell className="w-[100px] max-w-[150px] px-4 py-3 font-medium text-center">
               {props.quantity}
             </TableCell>
             <TableCell className="w-[120px] max-w-[150px] px-4 py-3 font-medium text-center">
               {props.sellingPrice}
-            </TableCell>
+            </TableCell> */}
             <TableCell className="w-[180px] max-w-[200px] px-4 py-3 text-center">
               <div className="flex items-center justify-center gap-2 flex-wrap sm:flex-nowrap">
                 <Button name="Chi tiết" />

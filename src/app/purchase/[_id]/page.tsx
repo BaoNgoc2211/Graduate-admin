@@ -759,7 +759,8 @@ export default function PurchaseOrderDetailPage() {
                 <div className="text-right">
                   <p className="text-sm text-gray-500">Tổng tiền</p>
                   <p className="text-3xl font-bold text-blue-900">
-                    {formatCurrency(order.totalPrice)}
+                    {/* {formatCurrency(order.totalPrice)} */}
+                    {formatCurrency(order.totalAmount ?? 0)}
                   </p>
                 </div>
               </div>
