@@ -1,7 +1,7 @@
 import Footer from "@/components/layout/footer";
 import Sidebar from "@/components/layout/sidebar/sidebar";
 
-const MedicineUsagePageLayout = ({
+const ManufacturePageLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
@@ -20,4 +20,4 @@ const MedicineUsagePageLayout = ({
   );
 };
 
-export default MedicineUsagePageLayout;
+export default ManufacturePageLayout;

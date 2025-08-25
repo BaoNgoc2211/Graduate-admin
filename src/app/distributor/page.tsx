@@ -110,7 +110,7 @@ export default function DistributorPage() {
   return (
     <div className="min-h-screen bg-white">
       <PageHeader
-        title="Quản lý Distributor"
+        title="Quản lý Nhà Phân Phối"
         subtitle="Danh sách và quản lý các nhà phân phối"
       />
       <div className="container mx-auto px-4 py-8">
