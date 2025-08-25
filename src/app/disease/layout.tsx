@@ -1,9 +1,23 @@
-import type React from "react"
+import Footer from "@/components/layout/footer";
+import Sidebar from "@/components/layout/sidebar/sidebar";
 
-export default function DiseasesLayout({
+const DiseasePageLayout = ({
   children,
-}: {
-  children: React.ReactNode
-}) {
-  return <div className="min-h-screen bg-gray-50">{children}</div>
-}
+}: Readonly<{ children: React.ReactNode }>) => {
+  return (
+    <div>
+      {" "}
+      <div className="flex min-h-screen">
+        <div className="flex-shrink-0">
+          <Sidebar />
+        </div>
+        <main className="flex-14">
+          <section className="w-full">{children}</section>
+        </main>
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+export default DiseasePageLayout;
